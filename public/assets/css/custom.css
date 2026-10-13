@@ -1,0 +1,22 @@
+/**
+ * Estilos personalizados para los alumnos
+ * Aquí pueden agregar sus propias reglas CSS sin modificar el núcleo de AdminLTE.
+ */
+
+/* Ajustes suaves de tarjetas y sombras */
+.card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Efecto hover en botones de acción */
+.btn-group .btn {
+    transition: all 0.15s ease-in-out;
+}
+
+/* Tablas con mejor espaciado */
+.table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+}
