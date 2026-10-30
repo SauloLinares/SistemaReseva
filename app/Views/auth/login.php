@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><?= htmlspecialchars($pageTitle ?? 'Iniciar Sesión') ?> | Sistema de Reserva</title>
+
+    <!-- Script de inicialización de tema claro/oscuro (AdminLTE v4) -->
+    <script>
+        (() => {
+            'use strict';
+            const root = document.documentElement;
+            const STORAGE_KEY = 'lte-theme';
+            let stored = null;
+            try {
+                stored = localStorage.getItem(STORAGE_KEY);
+            } catch {}
+            const authored = root.getAttribute('data-bs-theme');
+            let resolved = stored || authored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            root.setAttribute('data-bs-theme', resolved);
+        })();
+    </script>
+
+    <!-- Fuentes de Google -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" />
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+
+    <!-- AdminLTE v4 CSS -->
+    <link rel="stylesheet" href="<?= asset('adminlte/css/adminlte.min.css') ?>" />
+
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="<?= asset('css/custom.css') ?>" />
+
+    <style>
+        .login-page {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .theme-toggle-top {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .login-box .card {
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .input-group-text {
+            background-color: transparent;
+        }
+
+        .btn-toggle-password {
+            cursor: pointer;
+            border-left: none;
+        }
+
+        .demo-credentials-box {
+            font-size: 0.85rem;
+            border-left: 4px solid #0d6efd;
+            background-color: rgba(13, 110, 253, 0.06);
+        }
+    </style>
+</head>
+
+<body class="login-page bg-body-secondary">
+
+    <!-- Botón de cambio de tema en esquina superior -->
+    <div class="theme-toggle-top dropdown">
+        <button class="btn btn-outline-secondary btn-sm dropdown-toggle d-flex align-items-center shadow-sm"
+            id="bd-theme" type="button" aria-expanded="false" data-bs-toggle="dropdown" data-bs-display="static">
+            <span class="theme-icon-active me-1"><i class="bi bi-circle-half"></i></span> Tema
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bd-theme">
+            <li>
+                <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light">
+                    <i class="bi bi-sun-fill me-2 opacity-50"></i> Claro
+                </button>
+            </li>
+            <li>
+                <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark">
+                    <i class="bi bi-moon-stars-fill me-2 opacity-50"></i> Oscuro
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <div class="login-box">
+
+        <!-- Tarjeta de Login -->
+        <div class="card card-outline card-primary shadow">
+            <div class="card-header text-center py-3 bg-body">
+                <!-- Logo y Nombre del Sistema -->
+                <div class="login-logo text-center mb-3">
+                    <a href="<?= url('login') ?>" class="text-decoration-none d-inline-flex align-items-center justify-content-center">
+                        <img src="<?= asset('adminlte/img/AdminLTELogo.png') ?>" alt="Logo" class="rounded me-2 shadow-sm" style="width: 42px; height: 42px;" />
+                    </a>
+                </div>
+                <div class="text-center">
+                    <h4 class="fw-bold text-primary mb-0">Sistema de Reserva</h4>
+                    <small class="text-muted">Inicia sesión para continuar</small>
+                </div>
+            </div>
+
+            <div class="card-body login-card-body p-4">
+
+                <!-- Mensajes Flash de Sesión -->
+                <?php if (!empty($_SESSION['flash'])): ?>
+                    <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['tipo']) ?> alert-dismissible fade show shadow-sm" role="alert">
+                        <div class="d-flex align-items-center">
+                            <i class="bi <?= $_SESSION['flash']['tipo'] === 'success' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill' ?> me-2 fs-5"></i>
+                            <div><?= htmlspecialchars($_SESSION['flash']['mensaje']) ?></div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <?php unset($_SESSION['flash']); ?>
+                <?php endif; ?>
+
+                <!-- Formulario de Autenticación -->
+                <form action="<?= url('login/autenticar') ?>" method="POST" autocomplete="on">
+
+                    <!-- Campo Correo -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label small fw-semibold text-muted">Correo Electrónico</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope-at text-muted"></i></span>
+                            <input type="email"
+                                name="email"
+                                id="email"
+                                class="form-control"
+                                placeholder="ejemplo@correo.com"
+                                value="<?= htmlspecialchars($correoPrevio ?? '') ?>"
+                                required
+                                autofocus />
+                        </div>
+                    </div>
+
+                    <!-- Campo Contraseña -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label small fw-semibold text-muted">Contraseña</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock text-muted"></i></span>
+                            <input type="password"
+                                name="password"
+                                id="password"
+                                class="form-control"
+                                placeholder="••••••••"
+                                required />
+                            <button type="button"
+                                class="btn btn-outline-secondary btn-toggle-password"
+                                id="togglePasswordBtn"
+                                title="Mostrar u ocultar contraseña">
+                                <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Recordarme y Botón -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="recordar" name="recordar" checked>
+                            <label class="form-check-label small text-muted" for="recordar">
+                                Recordar sesión
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Botón de Ingreso -->
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary py-2 fw-semibold shadow-sm">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar Sesión
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Caja de Credenciales Didácticas / Demo -->
+                <div class="demo-credentials-box p-3 rounded mb-2">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <span class="fw-bold text-primary"><i class="bi bi-key-fill me-1"></i> Credenciales de prueba:</span>
+                        <button type="button" class="btn btn-sm btn-outline-primary py-0 px-2" id="btnAutocompletar" style="font-size: 0.75rem;">
+                            Autocompletar
+                        </button>
+                    </div>
+                    <div class="text-body-secondary">
+                        <div><strong>Usuario:</strong> <code>admin@admin.com</code></div>
+                        <div><strong>Clave:</strong> <code>admin123</code></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Funcionalidad para alternar ver/ocultar contraseña
+        const toggleBtn = document.getElementById('togglePasswordBtn');
+        const passInput = document.getElementById('password');
+        const toggleIcon = document.getElementById('togglePasswordIcon');
+
+        if (toggleBtn && passInput && toggleIcon) {
+            toggleBtn.addEventListener('click', function() {
+                const isPassword = passInput.type === 'password';
+                passInput.type = isPassword ? 'text' : 'password';
+                toggleIcon.classList.toggle('bi-eye', !isPassword);
+                toggleIcon.classList.toggle('bi-eye-slash', isPassword);
+            });
+        }
+
+        // Funcionalidad para autocompletar credenciales de prueba
+        const btnAuto = document.getElementById('btnAutocompletar');
+        if (btnAuto) {
+            btnAuto.addEventListener('click', function() {
+                document.getElementById('email').value = 'admin@admin.com';
+                document.getElementById('password').value = 'admin123';
+                document.getElementById('password').focus();
+            });
+        }
+
+        // Manejador del tema claro/oscuro
+        document.querySelectorAll('[data-bs-theme-value]').forEach(button => {
+            button.addEventListener('click', () => {
+                const theme = button.getAttribute('data-bs-theme-value');
+                document.documentElement.setAttribute('data-bs-theme', theme);
+                try {
+                    localStorage.setItem('lte-theme', theme);
+                } catch {}
+            });
+        });
+    </script>
+</body>
+
+</html>

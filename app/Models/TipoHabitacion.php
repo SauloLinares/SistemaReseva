@@ -1,0 +1,82 @@
+<?php
+
+namespace App\Models;
+
+use App\Core\Model;
+use PDO;
+
+class TipoHabitacion extends Model
+{
+    public function listarTodos(): array
+    {
+        $sql = "SELECT th.*, COUNT(h.id) as total_habitaciones 
+                FROM tipos_habitacion th
+                LEFT JOIN habitaciones h ON h.tipo_id = th.id
+                GROUP BY th.id
+                ORDER BY th.id ASC";
+        return $this->db->query($sql)->fetchAll();
+    }
+
+    public function listarActivos(): array
+    {
+        $sql = "SELECT * FROM tipos_habitacion WHERE estado = 1 ORDER BY nombre ASC";
+        return $this->db->query($sql)->fetchAll();
+    }
+
+    public function obtenerPorId(int $id): ?array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM tipos_habitacion WHERE id = :id LIMIT 1");
+        $stmt->execute([':id' => $id]);
+        $row = $stmt->fetch();
+        return $row ?: null;
+    }
+
+    public function crear(array $datos): bool
+    {
+        $sql = "INSERT INTO tipos_habitacion (nombre, descripcion, capacidad, precio_base, caracteristicas, estado)
+                VALUES (:nombre, :descripcion, :capacidad, :precio_base, :caracteristicas, :estado)";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':nombre'          => trim($datos['nombre'] ?? ''),
+            ':descripcion'     => trim($datos['descripcion'] ?? ''),
+            ':capacidad'       => (int)($datos['capacidad'] ?? 1),
+            ':precio_base'     => (float)($datos['precio_base'] ?? 0),
+            ':caracteristicas' => trim($datos['caracteristicas'] ?? ''),
+            ':estado'          => isset($datos['estado']) ? (int)$datos['estado'] : 1
+        ]);
+    }
+
+    public function actualizar(int $id, array $datos): bool
+    {
+        $sql = "UPDATE tipos_habitacion 
+                SET nombre = :nombre, 
+                    descripcion = :descripcion, 
+                    capacidad = :capacidad, 
+                    precio_base = :precio_base, 
+                    caracteristicas = :caracteristicas, 
+                    estado = :estado 
+                WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':id'              => $id,
+            ':nombre'          => trim($datos['nombre'] ?? ''),
+            ':descripcion'     => trim($datos['descripcion'] ?? ''),
+            ':capacidad'       => (int)($datos['capacidad'] ?? 1),
+            ':precio_base'     => (float)($datos['precio_base'] ?? 0),
+            ':caracteristicas' => trim($datos['caracteristicas'] ?? ''),
+            ':estado'          => isset($datos['estado']) ? (int)$datos['estado'] : 1
+        ]);
+    }
+
+    public function eliminar(int $id): bool
+    {
+        // Verificar si tiene habitaciones asignadas
+        $check = $this->db->prepare("SELECT COUNT(*) FROM habitaciones WHERE tipo_id = :id");
+        $check->execute([':id' => $id]);
+        if ((int)$check->fetchColumn() > 0) {
+            return false;
+        }
+        $stmt = $this->db->prepare("DELETE FROM tipos_habitacion WHERE id = :id");
+        return $stmt->execute([':id' => $id]);
+    }
+}
