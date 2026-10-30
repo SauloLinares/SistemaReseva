@@ -99,6 +99,55 @@ class PagoController extends Controller
     }
 
     /**
+     * Endpoint API para registrar pago vía AJAX (Modal Cobro Rápido)
+     */
+    public function apiGuardar(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->json(['success' => false, 'mensaje' => 'Método no permitido.']);
+            return;
+        }
+
+        $reservaId = (int)($_POST['reserva_id'] ?? 0);
+        $monto = (float)($_POST['monto'] ?? 0);
+
+        if (!$reservaId || $monto <= 0) {
+            $this->json(['success' => false, 'mensaje' => 'Debe ingresar un monto válido mayor a cero.']);
+            return;
+        }
+
+        $reserva = $this->reservaModel->obtenerPorId($reservaId);
+        if (!$reserva) {
+            $this->json(['success' => false, 'mensaje' => 'Reserva no encontrada.']);
+            return;
+        }
+
+        $_POST['huesped_id'] = $reserva['huesped_id'];
+        if (empty($_POST['comprobante_tipo'])) {
+            $_POST['comprobante_tipo'] = 'Boleta';
+        }
+        if (empty($_POST['comprobante_numero'])) {
+            $_POST['comprobante_numero'] = $this->pagoModel->generarNumeroComprobante($_POST['comprobante_tipo']);
+        }
+
+        $pagoId = $this->pagoModel->registrarPago($_POST);
+
+        if ($pagoId) {
+            $reservaActualizada = $this->reservaModel->obtenerPorId($reservaId);
+            $this->json([
+                'success' => true,
+                'mensaje' => '¡Pago registrado exitosamente!',
+                'pago_id' => $pagoId,
+                'nuevo_saldo' => (float)$reservaActualizada['saldo'],
+                'comprobante_numero' => $_POST['comprobante_numero'],
+                'url_comprobante' => url('pagos/comprobante/' . $pagoId)
+            ]);
+        } else {
+            $this->json(['success' => false, 'mensaje' => 'Error al procesar el pago en la base de datos.']);
+        }
+    }
+
+    /**
      * Listar anticipos exclusivamente
      */
     public function anticipos(): void

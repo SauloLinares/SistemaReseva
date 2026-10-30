@@ -55,9 +55,9 @@
                                             <span class="fs-4 fw-bold"><?= dinero($estanciaSeleccionada['reserva_saldo']) ?></span>
                                         </div>
                                         <div class="d-flex gap-2">
-                                            <a href="<?= url('pagos/crear?reserva_id=' . $estanciaSeleccionada['reserva_id']) ?>" class="btn btn-sm btn-danger fw-bold">
-                                                <i class="bi bi-cash me-1"></i> Cobrar Ahora en Caja
-                                            </a>
+                                            <button type="button" class="btn btn-sm btn-danger fw-bold shadow-xs" data-bs-toggle="modal" data-bs-target="#modalCobroRapido">
+                                                <i class="bi bi-cash-coin me-1"></i> Cobrar Ahora en Caja
+                                            </button>
                                             <div class="form-check align-self-center ms-2">
                                                 <input class="form-check-input" type="checkbox" name="confirmar_saldo" value="1" id="checkSaldo">
                                                 <label class="form-check-label small" for="checkSaldo">
@@ -160,10 +160,164 @@
     </div>
 </div>
 
+<?php if ($estanciaSeleccionada): ?>
+<!-- MODAL: COBRO RÁPIDO EN CAJA (CHECK-OUT) -->
+<div class="modal fade" id="modalCobroRapido" tabindex="-1" aria-labelledby="modalCobroRapidoLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-success text-white py-3">
+                <h5 class="modal-title fw-bold" id="modalCobroRapidoLabel">
+                    <i class="bi bi-cash-stack me-2"></i>Registrar Pago / Liquidar Cuenta
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <form id="formModalCobro">
+                <input type="hidden" name="reserva_id" value="<?= $estanciaSeleccionada['reserva_id'] ?>">
+                <div class="modal-body p-4">
+                    <div class="alert alert-danger d-none py-2 px-3 small" id="alertModalCobro" role="alert"></div>
+
+                    <!-- Ficha Resumen del Huésped -->
+                    <div class="p-3 bg-body-secondary rounded border mb-3">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted small">Huésped Titular:</span>
+                            <span class="fw-bold small"><?= htmlspecialchars($estanciaSeleccionada['huesped_nombre']) ?></span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="text-muted small">Habitación:</span>
+                            <span class="fw-bold small">Hab. <?= htmlspecialchars($estanciaSeleccionada['habitacion_numero']) ?></span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted small">Código Reserva:</span>
+                            <span class="fw-bold small text-primary"><?= htmlspecialchars($estanciaSeleccionada['codigo_reserva']) ?></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Monto a Cobrar (S/.) <span class="text-danger">*</span></label>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-text fw-bold text-success">S/.</span>
+                            <input type="number" step="0.01" name="monto" id="inputMontoCobro" class="form-control fw-bold fs-4 text-success" value="<?= $estanciaSeleccionada['reserva_saldo'] ?>" required>
+                        </div>
+                        <div class="form-text">Saldo pendiente actual: <strong><?= dinero($estanciaSeleccionada['reserva_saldo']) ?></strong></div>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold small">Método de Pago <span class="text-danger">*</span></label>
+                            <select name="metodo_pago" class="form-select" required>
+                                <option value="Efectivo" selected>Efectivo</option>
+                                <option value="Yape">Yape</option>
+                                <option value="Plin">Plin</option>
+                                <option value="Tarjeta">Tarjeta Débito/Crédito</option>
+                                <option value="Transferencia">Transferencia Bancaria</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold small">Comprobante <span class="text-danger">*</span></label>
+                            <select name="comprobante_tipo" class="form-select" required>
+                                <option value="Boleta" selected>Boleta de Venta</option>
+                                <option value="Factura">Factura</option>
+                                <option value="Recibo de Caja">Recibo de Caja</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-2">
+                        <label class="form-label fw-semibold small">Notas / Observación</label>
+                        <input type="text" name="notas" class="form-control" placeholder="Ej: Liquidación total en Check-out">
+                    </div>
+                </div>
+                <div class="modal-footer bg-body-tertiary px-4 py-3">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-success fw-bold" id="btnGuardarCobroModal">
+                        <i class="bi bi-check-circle-fill me-1"></i> Cobrar e Imprimir
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
+
 <script>
 function cambiarEstancia(id) {
     if (id) {
         window.location.href = '<?= url("recepcion/checkout?id=") ?>' + id;
     }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    const formModalCobro = document.getElementById('formModalCobro');
+    const btnGuardarCobro = document.getElementById('btnGuardarCobroModal');
+    const modalCobroEl = document.getElementById('modalCobroRapido');
+    const alertModalCobro = document.getElementById('alertModalCobro');
+
+    if (formModalCobro && btnGuardarCobro) {
+        formModalCobro.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alertModalCobro.classList.add('d-none');
+            alertModalCobro.textContent = '';
+
+            const formData = new FormData(formModalCobro);
+            const originalBtnHtml = btnGuardarCobro.innerHTML;
+
+            btnGuardarCobro.disabled = true;
+            btnGuardarCobro.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Procesando...';
+
+            fetch('<?= url("pagos/apiGuardar") ?>', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                btnGuardarCobro.disabled = false;
+                btnGuardarCobro.innerHTML = originalBtnHtml;
+
+                if (!data.success) {
+                    alertModalCobro.textContent = data.mensaje || 'Error al procesar el pago.';
+                    alertModalCobro.classList.remove('d-none');
+                    return;
+                }
+
+                // Cerrar modal
+                const modalInstance = bootstrap.Modal.getInstance(modalCobroEl);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        title: '¡Cobro Registrado!',
+                        text: `Se emitió el comprobante ${data.comprobante_numero} con éxito.`,
+                        icon: 'success',
+                        showCancelButton: true,
+                        confirmButtonText: '<i class="bi bi-printer me-1"></i> Ver Comprobante',
+                        cancelButtonText: 'Continuar Check-out',
+                        confirmButtonColor: '#2563eb',
+                        cancelButtonColor: '#16a34a'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.open(data.url_comprobante, '_blank');
+                        }
+                        // Recargar para reflejar saldo 0 y cuenta al día
+                        window.location.reload();
+                    });
+                } else {
+                    window.location.reload();
+                }
+            })
+            .catch(err => {
+                btnGuardarCobro.disabled = false;
+                btnGuardarCobro.innerHTML = originalBtnHtml;
+                alertModalCobro.textContent = 'Ocurrió un error inesperado al procesar el pago.';
+                alertModalCobro.classList.remove('d-none');
+            });
+        });
+    }
+});
 </script>

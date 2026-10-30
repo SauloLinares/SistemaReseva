@@ -36,10 +36,12 @@ class RecepcionController extends Controller
     {
         $activas = $this->estanciaModel->listarActivas();
         $historial = $this->estanciaModel->listarHistorial();
+        $servicios = (new \App\Models\Servicio())->listarActivos();
 
         $this->render('recepcion/estadias', [
             'activas'   => $activas,
-            'historial' => $historial
+            'historial' => $historial,
+            'servicios' => $servicios
         ], 'Control de Estadías - Recepción');
     }
 

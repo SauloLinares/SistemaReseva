@@ -74,6 +74,56 @@ class HuespedController extends Controller
     }
 
     /**
+     * Endpoint API para crear un huésped vía AJAX (Modal)
+     */
+    public function apiGuardar(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->json(['success' => false, 'mensaje' => 'Método no permitido.']);
+            return;
+        }
+
+        $numDoc = trim($_POST['numero_documento'] ?? '');
+        $nombres = trim($_POST['nombres'] ?? '');
+        $apellidos = trim($_POST['apellidos'] ?? '');
+
+        if (empty($numDoc) || empty($nombres) || empty($apellidos)) {
+            $this->json(['success' => false, 'mensaje' => 'El número de documento, nombres y apellidos son obligatorios.']);
+            return;
+        }
+
+        $existe = $this->huespedModel->buscarPorDocumento($numDoc);
+        if ($existe) {
+            $this->json([
+                'success' => false,
+                'mensaje' => 'Ya existe un huésped registrado con el documento ' . htmlspecialchars($numDoc) . ' (' . htmlspecialchars($existe['nombres'] . ' ' . $existe['apellidos']) . ').'
+            ]);
+            return;
+        }
+
+        $id = $this->huespedModel->crear($_POST);
+        if ($id) {
+            $nuevo = $this->huespedModel->obtenerPorId($id);
+            $textoSelect = $nuevo['nombres'] . ' ' . $nuevo['apellidos'] . ' (Doc: ' . $nuevo['tipo_documento'] . ' ' . $nuevo['numero_documento'] . ' - Tel: ' . ($nuevo['telefono'] ?: 'S/N') . ')';
+
+            $this->json([
+                'success' => true,
+                'mensaje' => '¡Huésped registrado correctamente!',
+                'huesped' => [
+                    'id'               => $id,
+                    'nombre_completo'  => $nuevo['nombres'] . ' ' . $nuevo['apellidos'],
+                    'tipo_documento'   => $nuevo['tipo_documento'],
+                    'numero_documento' => $nuevo['numero_documento'],
+                    'telefono'         => $nuevo['telefono'] ?: 'S/N',
+                    'texto_select'     => $textoSelect
+                ]
+            ]);
+        } else {
+            $this->json(['success' => false, 'mensaje' => 'No se pudo guardar el huésped en la base de datos.']);
+        }
+    }
+
+    /**
      * Formulario para editar huésped
      */
     public function editar(?string $id = null): void

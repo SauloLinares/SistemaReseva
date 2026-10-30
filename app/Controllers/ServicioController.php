@@ -118,6 +118,37 @@ class ServicioController extends Controller
     }
 
     /**
+     * Endpoint API para registrar consumo vía AJAX (Modal Rápido)
+     */
+    public function apiGuardarConsumo(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->json(['success' => false, 'mensaje' => 'Método no permitido.']);
+            return;
+        }
+
+        $reservaId = (int)($_POST['reserva_id'] ?? 0);
+        $servicioId = (int)($_POST['servicio_id'] ?? 0);
+        $cantidad = (int)($_POST['cantidad'] ?? 1);
+
+        if (!$reservaId || !$servicioId || $cantidad < 1) {
+            $this->json(['success' => false, 'mensaje' => 'Debe seleccionar un servicio válido e ingresar una cantidad mayor a cero.']);
+            return;
+        }
+
+        $ok = $this->servicioModel->registrarConsumo($_POST);
+
+        if ($ok) {
+            $this->json([
+                'success' => true,
+                'mensaje' => '¡Consumo registrado exitosamente en la cuenta de la habitación!'
+            ]);
+        } else {
+            $this->json(['success' => false, 'mensaje' => 'Error al registrar el consumo.']);
+        }
+    }
+
+    /**
      * Servicios por huésped (Listado de consumos)
      */
     public function porHuesped(): void

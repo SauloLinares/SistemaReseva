@@ -36,9 +36,9 @@
                             <h5 class="card-title mb-0 fw-bold">
                                 <i class="bi bi-person-circle text-primary me-2"></i>1. Seleccionar o Registrar Huésped
                             </h5>
-                            <a href="<?= url('huespedes/crear') ?>" target="_blank" class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-person-plus me-1"></i> Nuevo Huésped
-                            </a>
+                            <button type="button" class="btn btn-sm btn-primary shadow-xs" data-bs-toggle="modal" data-bs-target="#modalNuevoHuesped">
+                                <i class="bi bi-person-plus me-1"></i> + Nuevo Huésped
+                            </button>
                         </div>
                         <div class="card-body">
                             <div class="row g-3">
@@ -52,7 +52,7 @@
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
-                                    <div class="form-text">Si el cliente es nuevo, regístralo primero en el botón "Nuevo Huésped".</div>
+                                    <div class="form-text">Si el cliente es nuevo, regístralo rápidamente con el botón <strong>"+ Nuevo Huésped"</strong> sin salir de esta pantalla.</div>
                                 </div>
                             </div>
                         </div>
@@ -436,5 +436,166 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Inicializar cálculos
     calcular();
+
+    // -------------------------------------------------------------
+    // GESTIÓN DEL MODAL DE REGISTRO RÁPIDO DE HUÉSPED VÍA AJAX
+    // -------------------------------------------------------------
+    const formModalHuesped = document.getElementById('formModalHuesped');
+    const btnGuardarModal = document.getElementById('btnGuardarHuespedModal');
+    const modalHuespedEl = document.getElementById('modalNuevoHuesped');
+    const alertModalHuesped = document.getElementById('alertModalHuesped');
+
+    if (formModalHuesped && btnGuardarModal) {
+        formModalHuesped.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alertModalHuesped.classList.add('d-none');
+            alertModalHuesped.textContent = '';
+
+            const formData = new FormData(formModalHuesped);
+            const originalBtnHtml = btnGuardarModal.innerHTML;
+
+            btnGuardarModal.disabled = true;
+            btnGuardarModal.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
+
+            fetch('<?= url("huespedes/apiGuardar") ?>', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                btnGuardarModal.disabled = false;
+                btnGuardarModal.innerHTML = originalBtnHtml;
+
+                if (!data.success) {
+                    alertModalHuesped.textContent = data.mensaje || 'Error al guardar el huésped.';
+                    alertModalHuesped.classList.remove('d-none');
+                    return;
+                }
+
+                // Inyectar en el selector de huésped
+                const selectHuesped = document.getElementById('huesped_id');
+                if (selectHuesped) {
+                    if (selectHuesped.tomselect) {
+                        selectHuesped.tomselect.addOption({
+                            value: data.huesped.id,
+                            text: data.huesped.texto_select
+                        });
+                        selectHuesped.tomselect.setValue(data.huesped.id);
+                    } else {
+                        const nuevaOpcion = new Option(data.huesped.texto_select, data.huesped.id, true, true);
+                        selectHuesped.add(nuevaOpcion);
+                        selectHuesped.value = data.huesped.id;
+                    }
+                }
+
+                // Limpiar formulario y cerrar modal
+                formModalHuesped.reset();
+                const modalInstance = bootstrap.Modal.getInstance(modalHuespedEl);
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+
+                // Notificación visual de éxito
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: '¡Huésped registrado y seleccionado!',
+                        text: data.huesped.nombre_completo,
+                        showConfirmButton: false,
+                        timer: 3500,
+                        timerProgressBar: true
+                    });
+                }
+            })
+            .catch(err => {
+                btnGuardarModal.disabled = false;
+                btnGuardarModal.innerHTML = originalBtnHtml;
+                alertModalHuesped.textContent = 'Ocurrió un error inesperado al conectar con el servidor.';
+                alertModalHuesped.classList.remove('d-none');
+            });
+        });
+    }
 });
 </script>
+
+<!-- MODAL: REGISTRO RÁPIDO DE HUÉSPED (POPUP SIN RECARGAR PÁGINA) -->
+<div class="modal fade" id="modalNuevoHuesped" tabindex="-1" aria-labelledby="modalNuevoHuespedLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white py-3">
+                <h5 class="modal-title fw-bold" id="modalNuevoHuespedLabel">
+                    <i class="bi bi-person-plus-fill me-2"></i>Registrar Nuevo Huésped
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <form id="formModalHuesped">
+                <div class="modal-body p-4">
+                    <!-- Mensaje de alerta en caso de error -->
+                    <div class="alert alert-danger d-none py-2 px-3 small" id="alertModalHuesped" role="alert"></div>
+
+                    <div class="row g-3">
+                        <div class="col-12 col-md-5">
+                            <label class="form-label fw-semibold small">Tipo de Documento <span class="text-danger">*</span></label>
+                            <select name="tipo_documento" class="form-select" required>
+                                <option value="DNI" selected>DNI (Documento Nacional)</option>
+                                <option value="Pasaporte">Pasaporte</option>
+                                <option value="Carnet Extranjeria">Carné de Extranjería</option>
+                                <option value="RUC">RUC</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-7">
+                            <label class="form-label fw-semibold small">Número de Documento <span class="text-danger">*</span></label>
+                            <input type="text" name="numero_documento" class="form-control" placeholder="Ej: 71829341" required autofocus>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold small">Nombres <span class="text-danger">*</span></label>
+                            <input type="text" name="nombres" class="form-control" placeholder="Ej: Juan Carlos" required>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold small">Apellidos <span class="text-danger">*</span></label>
+                            <input type="text" name="apellidos" class="form-control" placeholder="Ej: Pérez Rodríguez" required>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold small">Teléfono / WhatsApp</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                <input type="tel" name="telefono" class="form-control" placeholder="+51 987 654 321">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold small">Correo Electrónico</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                <input type="email" name="correo" class="form-control" placeholder="cliente@correo.com">
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold small">Nacionalidad</label>
+                            <input type="text" name="nacionalidad" class="form-control" value="Perú" placeholder="Ej: Perú, Chile, Argentina">
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label fw-semibold small">Dirección / Procedencia</label>
+                            <input type="text" name="direccion" class="form-control" placeholder="Ciudad o dirección de origen">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer bg-body-tertiary px-4 py-3">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary fw-semibold" id="btnGuardarHuespedModal">
+                        <i class="bi bi-check-circle me-1"></i> Guardar y Seleccionar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
