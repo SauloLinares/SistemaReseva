@@ -344,7 +344,7 @@ if (!empty($estadiasActivas)) {
                                             </div>
                                         </div>
                                         <div>
-                                            <a href="<?= url('recepcion/checkout') ?>" class="btn btn-sm btn-outline-danger" title="Procesar Check-out">
+                                            <a href="<?= url('recepcion/checkout?id=' . $est['id']) ?>" class="btn btn-sm btn-outline-danger" title="Check-out de Hab. <?= e($est['habitacion_numero']) ?>">
                                                 <i class="bi bi-box-arrow-right me-1"></i> Salida
                                             </a>
                                         </div>
