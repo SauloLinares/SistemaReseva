@@ -3,6 +3,7 @@
     'icono'     => 'bi-archive',
     'subtitulo' => 'Auditoría completa de turnos, arqueos físicos y diferencias',
     'acciones'  => [
+        ['texto' => 'Exportar', 'exportar' => '#tablaHistorialCaja', 'nombre' => 'historial-caja', 'icono' => 'bi-download', 'variante' => 'outline-secondary'],
         ['texto' => 'Ir a Caja Actual', 'url' => 'caja', 'icono' => 'bi-calculator'],
     ],
 ]) ?>

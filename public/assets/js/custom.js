@@ -354,7 +354,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const tables = document.querySelectorAll('.table-datatable, .datatable-init');
     tables.forEach(function (table) {
         if (typeof simpleDatatables !== 'undefined') {
-            new simpleDatatables.DataTable(table, {
+            // Se guardan la instancia y los títulos originales: Exportar necesita todas las filas
+            // (no solo la página visible) y los títulos tal como se escribieron
+            table.titulosOriginales = [...table.querySelectorAll('thead th')].map(th => th.textContent.trim());
+            table.tablaDatos = new simpleDatatables.DataTable(table, {
                 searchable: true,
                 fixedHeight: false,
                 perPage: 10,
@@ -647,6 +650,70 @@ document.addEventListener('DOMContentLoaded', function () {
     // Montos y cantidades: teclado numérico en el celular
     document.querySelectorAll('input[type="number"]:not([inputmode])').forEach(function (input) {
         input.setAttribute('inputmode', /[.,]/.test(input.step || '') ? 'decimal' : 'numeric');
+    });
+
+    // ---------------------------------------------------------------
+    // 6.2 MENÚ «⋯» DE ACCIONES DE CADA FILA (partials/acciones_menu.php)
+    // Posición fija: dentro de una tabla con scroll, un menú normal quedaría recortado.
+    // Delegado porque DataTables vuelve a crear las filas al paginar o buscar.
+    // ---------------------------------------------------------------
+    // En fase de captura, antes que Bootstrap: este crea la instancia con esta configuración
+    // y luego la abre o cierra él mismo (también al hacer clic fuera o con Esc)
+    document.addEventListener('click', function (e) {
+        const boton = e.target.closest('[data-menu-acciones]');
+        if (!boton || typeof bootstrap === 'undefined') return;
+        bootstrap.Dropdown.getOrCreateInstance(boton, { popperConfig: { strategy: 'fixed' } });
+    }, true);
+
+    // ---------------------------------------------------------------
+    // 6.3 EXPORTAR UNA TABLA A CSV (se abre en Excel con tildes y columnas correctas)
+    // <button data-exportar="#idTabla" data-exportar-nombre="reservas">. Con DataTables
+    // se exportan todas las filas, no solo la página visible. Se omiten las columnas de
+    // acciones y las marcadas con data-no-exportar.
+    // ---------------------------------------------------------------
+    const textoCelda = function (texto) {
+        return String(texto ?? '').replace(/\s*\n\s*/g, ' · ').replace(/\s+/g, ' ').trim();
+    };
+    const campoCsv = function (valor) {
+        const v = textoCelda(valor);
+        return /[";\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v;
+    };
+
+    window.exportarTabla = function (tabla, nombre) {
+        const encabezados = [...tabla.querySelectorAll('thead th')];
+        const incluir = encabezados.map(th => !th.hasAttribute('data-no-exportar') && !/^acciones$/i.test(th.textContent.trim()));
+        let filas;
+        const dt = tabla.tablaDatos;
+        if (dt && dt.data && dt.data.data) {
+            filas = dt.data.data.map(fila => fila.cells.map(c => c.text ?? (typeof c.data === 'string' ? c.data : '')));
+        } else {
+            filas = [...tabla.querySelectorAll('tbody tr')]
+                .filter(tr => tr.cells.length === encabezados.length) // sin las filas de "no hay datos"
+                .map(tr => [...tr.cells].map(td => td.innerText));
+        }
+        const titulos = tabla.titulosOriginales || encabezados.map(th => th.textContent);
+        const lineas = [titulos.filter((_, i) => incluir[i]).map(campoCsv)]
+            .concat(filas.map(f => f.filter((_, i) => incluir[i]).map(campoCsv)));
+        // BOM para que Excel lea UTF-8; ";" es el separador de Excel en español
+        const csv = '﻿' + lineas.map(l => l.join(';')).join('\r\n');
+        const enlace = document.createElement('a');
+        enlace.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+        const hoy = new Date();
+        const fecha = hoy.getFullYear() + '-' + String(hoy.getMonth() + 1).padStart(2, '0') + '-' + String(hoy.getDate()).padStart(2, '0');
+        enlace.download = (nombre || 'exportacion') + '-' + fecha + '.csv';
+        document.body.appendChild(enlace);
+        enlace.click();
+        setTimeout(() => { URL.revokeObjectURL(enlace.href); enlace.remove(); }, 1000);
+        return filas.length;
+    };
+
+    document.addEventListener('click', function (e) {
+        const boton = e.target.closest('[data-exportar]');
+        if (!boton) return;
+        const tabla = document.querySelector(boton.dataset.exportar);
+        if (!tabla) return;
+        const cantidad = window.exportarTabla(tabla, boton.dataset.exportarNombre);
+        window.showToast?.(cantidad === 1 ? 'Se exportó 1 fila.' : 'Se exportaron ' + cantidad + ' filas.', 'success');
     });
 
     // ---------------------------------------------------------------

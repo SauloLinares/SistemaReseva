@@ -3,6 +3,7 @@
     'icono'     => 'bi-credit-card-2-front',
     'subtitulo' => 'Historial de pagos, ingresos de caja y comprobantes tributarios',
     'acciones'  => [
+        ['texto' => 'Exportar', 'exportar' => '#tablaPagos', 'nombre' => 'pagos', 'icono' => 'bi-download', 'variante' => 'outline-secondary'],
         ['texto' => 'Saldos Pendientes', 'url' => 'pagos/pendientes', 'icono' => 'bi-exclamation-circle', 'variante' => 'outline-secondary'],
         ['texto' => 'Anticipos', 'url' => 'pagos/anticipos', 'icono' => 'bi-wallet2', 'variante' => 'outline-secondary'],
         ['texto' => 'Registrar Pago', 'url' => 'pagos/crear', 'icono' => 'bi-cash-coin'],
@@ -41,7 +42,7 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0 datatable-init">
+                    <table id="tablaPagos" class="table table-hover align-middle mb-0 datatable-init">
                         <thead class="table-light">
                             <tr>
                                 <th>Comprobante</th>

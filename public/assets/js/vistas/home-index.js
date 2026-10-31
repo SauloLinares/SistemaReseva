@@ -136,3 +136,20 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('mBtnLiberarMantenimiento')?.addEventListener('click', () => actualizarEstado('disponible'));
     document.getElementById('mBtnLimpiezaDesdeMantenimiento')?.addEventListener('click', () => actualizarEstado('limpieza'));
 });
+
+// Aviso de lo pendiente hoy: se muestra al entrar y, si se cierra, no vuelve hasta mañana
+(function () {
+    const aviso = document.getElementById('avisoInicio');
+    if (!aviso) return;
+    const usuario = (window.leerJson('app-config') || {}).usuario || 0;
+    const clave = 'aviso-inicio-cerrado:' + usuario;
+    let cerradoHoy = false;
+    try { cerradoHoy = localStorage.getItem(clave) === aviso.dataset.dia; } catch (e) { /* sin almacenamiento */ }
+    if (cerradoHoy) return;
+
+    aviso.hidden = false;
+    aviso.querySelector('[data-cerrar-aviso]').addEventListener('click', function () {
+        aviso.hidden = true;
+        try { localStorage.setItem(clave, aviso.dataset.dia); } catch (e) { /* sin almacenamiento */ }
+    });
+})();

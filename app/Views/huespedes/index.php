@@ -4,6 +4,7 @@
     'subtitulo' => 'Directorio de clientes, historial de visitas y registro',
     'migas'     => ['Huéspedes' => null],
     'acciones'  => [
+        ['texto' => 'Exportar', 'exportar' => '#tablaHuespedes', 'nombre' => 'huespedes', 'icono' => 'bi-download', 'variante' => 'outline-secondary'],
         ['texto' => 'Registrar Huésped', 'url' => 'huespedes/crear', 'icono' => 'bi-person-plus'],
         ['texto' => 'Buscar por DNI', 'url' => 'huespedes/buscar', 'icono' => 'bi-search', 'variante' => 'outline-primary'],
     ],
@@ -39,7 +40,7 @@
             <?php partial('card_header', ['titulo' => 'Huéspedes Registrados (' . count($huespedes) . ')', 'icono' => 'bi-card-list']) ?>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0 datatable-init">
+                    <table id="tablaHuespedes" class="table table-hover align-middle mb-0 datatable-init">
                         <thead class="table-light">
                             <tr>
                                 <th>Huésped</th>

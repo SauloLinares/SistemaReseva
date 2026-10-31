@@ -546,4 +546,33 @@ $accesos = [
     </div>
 </div>
 
+<?php if ($salidasPendientes > 0 || $llegadasPendientes > 0): ?>
+    <!-- Aviso de lo pendiente hoy en recepción (se puede cerrar hasta mañana: home-index.js) -->
+    <aside class="aviso-inicio card shadow" id="avisoInicio" data-dia="<?= e($hoy) ?>" role="status" aria-labelledby="avisoInicioTitulo" hidden>
+        <div class="card-body d-flex gap-3">
+            <i class="bi bi-bell-fill fs-4 text-warning" aria-hidden="true"></i>
+            <div class="flex-grow-1">
+                <div class="fw-bold mb-1" id="avisoInicioTitulo">Pendiente hoy en recepción</div>
+                <ul class="list-unstyled small mb-2">
+                    <?php if ($salidasPendientes > 0): ?>
+                        <li><?= $salidasPendientes ?> <?= $salidasPendientes === 1 ? 'salida' : 'salidas' ?> por registrar</li>
+                    <?php endif; ?>
+                    <?php if ($llegadasPendientes > 0): ?>
+                        <li><?= $llegadasPendientes ?> <?= $llegadasPendientes === 1 ? 'llegada' : 'llegadas' ?> por recibir</li>
+                    <?php endif; ?>
+                </ul>
+                <div class="d-flex flex-wrap gap-2">
+                    <?php if ($salidasPendientes > 0): ?>
+                        <a href="<?= url('recepcion/checkout') ?>" class="btn btn-sm btn-primary">Ver check-out</a>
+                    <?php endif; ?>
+                    <?php if ($llegadasPendientes > 0): ?>
+                        <a href="<?= url('recepcion/checkin') ?>" class="btn btn-sm btn-outline-primary">Ver check-in</a>
+                    <?php endif; ?>
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-cerrar-aviso aria-label="Cerrar el aviso hasta mañana"></button>
+        </div>
+    </aside>
+<?php endif; ?>
+
 <?= script_js('vistas/home-index.js') ?>

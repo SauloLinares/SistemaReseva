@@ -6,6 +6,7 @@
  *   ['texto' => '', 'url' => 'ruta',       'icono' => 'bi-*', 'variante' => 'primary']
  *   ['texto' => '', 'modal' => '#idModal', 'icono' => 'bi-*', 'variante' => 'primary']
  *   ['texto' => '', 'imprimir' => true,    'icono' => 'bi-printer', 'variante' => 'outline-secondary']
+ *   ['texto' => '', 'exportar' => '#idTabla', 'nombre' => 'archivo', 'icono' => 'bi-download'] (CSV para Excel, custom.js)
  */
 foreach ($acciones as $accion):
     $clase = 'btn btn-sm btn-' . ($accion['variante'] ?? 'primary');
@@ -13,6 +14,10 @@ foreach ($acciones as $accion):
 ?>
     <?php if (!empty($accion['modal'])): ?>
         <button type="button" class="<?= e($clase) ?>" data-bs-toggle="modal" data-bs-target="<?= e($accion['modal']) ?>">
+            <?= $icono ?><?= e($accion['texto']) ?>
+        </button>
+    <?php elseif (!empty($accion['exportar'])): ?>
+        <button type="button" class="<?= e($clase) ?>" data-exportar="<?= e($accion['exportar']) ?>" data-exportar-nombre="<?= e($accion['nombre'] ?? 'exportacion') ?>">
             <?= $icono ?><?= e($accion['texto']) ?>
         </button>
     <?php elseif (!empty($accion['imprimir'])): ?>

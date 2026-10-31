@@ -3,6 +3,7 @@
     'icono'     => 'bi-file-earmark-bar-graph',
     'subtitulo' => 'Análisis detallado de reservas por rango de fechas y estado',
     'acciones'  => [
+        ['texto' => 'Exportar', 'exportar' => '#tablaReporteReservas', 'nombre' => 'reporte-reservas', 'icono' => 'bi-download', 'variante' => 'outline-secondary'],
         ['texto' => 'Imprimir Reporte', 'imprimir' => true, 'icono' => 'bi-printer', 'variante' => 'outline-secondary'],
     ],
 ]) ?>
@@ -41,19 +42,54 @@
             </div>
         </div>
 
+        <?php
+            // Las canceladas no son venta: se cuentan aparte
+            $validas = array_filter($reservas, fn($r) => $r['estado'] !== 'cancelada');
+            $canceladas = count($reservas) - count($validas);
+            $totalMonto = array_sum(array_map(fn($r) => (float)$r['total'], $validas));
+            $nochesVendidas = array_sum(array_map(fn($r) => (int)$r['noches'], $validas));
+            $ticketPromedio = $validas ? $totalMonto / count($validas) : 0;
+            $tasaCancelacion = $reservas ? round($canceladas * 100 / count($reservas), 1) : 0;
+        ?>
+        <div class="row g-3 mb-4">
+            <div class="col-6 col-lg-3">
+                <div class="cash-stat">
+                    <span class="cash-stat-label">Total facturado</span>
+                    <span class="cash-stat-valor"><?= dinero($totalMonto) ?></span>
+                    <span class="cash-stat-nota"><?= count($validas) ?> reservas, sin canceladas</span>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="cash-stat">
+                    <span class="cash-stat-label">Noches vendidas</span>
+                    <span class="cash-stat-valor"><?= $nochesVendidas ?></span>
+                    <span class="cash-stat-nota"><?= $validas ? round($nochesVendidas / count($validas), 1) : 0 ?> noches por reserva</span>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="cash-stat">
+                    <span class="cash-stat-label">Ticket promedio</span>
+                    <span class="cash-stat-valor"><?= dinero($ticketPromedio) ?></span>
+                    <span class="cash-stat-nota"><?= $nochesVendidas ? dinero($totalMonto / $nochesVendidas) . ' por noche' : '—' ?></span>
+                </div>
+            </div>
+            <div class="col-6 col-lg-3">
+                <div class="cash-stat">
+                    <span class="cash-stat-label">Canceladas</span>
+                    <span class="cash-stat-valor"><?= $canceladas ?> <span class="fs-6 fw-normal text-body-secondary"><?= $tasaCancelacion ?>%</span></span>
+                    <span class="cash-stat-nota">del total del período</span>
+                </div>
+            </div>
+        </div>
+
         <!-- Tabla del Reporte -->
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">Resultados (<?= count($reservas) ?> reservas encontradas)</h5>
-                <?php
-                    $totalMonto = 0;
-                    foreach ($reservas as $r) $totalMonto += (float)$r['total'];
-                ?>
-                <span class="badge badge-soft-primary">Total Facturado: <?= dinero($totalMonto) ?></span>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
+                    <table id="tablaReporteReservas" class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th>Código</th>

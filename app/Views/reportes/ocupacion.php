@@ -107,12 +107,15 @@
 
         <!-- Habitaciones más solicitadas -->
         <div class="card">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center gap-2">
                 <h5 class="card-title mb-0"><i class="bi bi-trophy text-warning me-2"></i>Habitaciones Más Solicitadas (Ranking)</h5>
+                <button type="button" class="btn btn-sm btn-outline-secondary d-print-none" data-exportar="#tablaRankingHabitaciones" data-exportar-nombre="ranking-habitaciones">
+                    <i class="bi bi-download me-1"></i>Exportar
+                </button>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
+                    <table id="tablaRankingHabitaciones" class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th>Ranking</th>
@@ -126,8 +129,10 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <?php $maxRecaudado = max(1, ...array_map(fn($p) => (float)$p['total_recaudado'], $populares ?: [['total_recaudado' => 0]])); ?>
                             <?php $pos = 1; foreach ($populares as $pop): ?>
-                                <tr>
+                                <!-- Las habitaciones sin reservas se atenúan: lo que importa está arriba -->
+                                <tr class="<?= (int)$pop['total_veces_reservada'] === 0 ? 'fila-sin-actividad' : '' ?>">
                                     <td>
                                         <span class="badge <?= ($pos === 1) ? 'badge-soft-warning' : (($pos === 2) ? 'badge-soft-primary' : 'badge-soft-secondary') ?>">
                                             #<?= $pos++ ?>
@@ -139,7 +144,10 @@
                                     <td><?= dinero($pop['precio_diario']) ?></td>
                                     <td><span class="badge badge-soft-info"><?= $pop['total_veces_reservada'] ?> veces</span></td>
                                     <td><strong><?= $pop['total_noches'] ?> noches</strong></td>
-                                    <td class="text-end pe-3 text-nowrap fw-semibold"><?= dinero($pop['total_recaudado']) ?></td>
+                                    <td class="text-end pe-3 text-nowrap">
+                                        <div class="fw-semibold"><?= dinero($pop['total_recaudado']) ?></div>
+                                        <div class="barra-ranking" aria-hidden="true"><span style="width: <?= round((float)$pop['total_recaudado'] * 100 / $maxRecaudado) ?>%"></span></div>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>

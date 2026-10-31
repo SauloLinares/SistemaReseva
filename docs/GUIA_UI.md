@@ -119,6 +119,20 @@ Todos los colores, radios y sombras salen de los tokens de `public/assets/css/cu
 - **Búsquedas:** `data-limpiable` agrega el botón × para vaciar el campo (los buscadores de las tablas
   ya lo traen). Los `input type="number"` reciben `inputmode` para mostrar el teclado numérico.
 
+## 5.5 Listados y reportes
+
+- **Acciones de una fila:** `partial('acciones_menu', ['visibles' => [...], 'menu' => [...]])`. A la
+  vista, solo 1 o 2 acciones de uso diario; el resto en el menú «⋯». Las peligrosas (`'peligro' => true`)
+  van al final, separadas y en rojo. El menú se abre con posición fija y no lo recorta la tabla.
+- **Exportar:** en `page_header`/`card_header`, `['texto' => 'Exportar', 'exportar' => '#idTabla',
+  'nombre' => 'archivo', 'icono' => 'bi-download']`, o un botón con `data-exportar="#idTabla"`. Genera
+  un CSV que Excel abre bien (BOM y `;`), con todas las filas de DataTables y sin la columna Acciones
+  (o las marcadas con `data-no-exportar`).
+- **Indicadores de reportes:** tarjetas `.cash-stat` (`-label`, `-valor`, `-nota`). Las cifras de venta
+  no incluyen las reservas canceladas.
+- **Rankings:** `<div class="barra-ranking"><span style="width: N%"></span></div>` debajo de la cifra
+  (100 % = el primero). Las filas sin actividad llevan `.fila-sin-actividad`.
+
 ## 6. Mensajes flash
 
 Los muestra `layouts/header.php` como toast. **No** agregues bloques `$_SESSION['flash']` en las vistas.

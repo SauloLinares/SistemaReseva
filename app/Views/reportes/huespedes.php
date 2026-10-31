@@ -3,6 +3,7 @@
     'icono'     => 'bi-people-fill',
     'subtitulo' => 'Fidelización de clientes, historial de visitas y gasto acumulado',
     'acciones'  => [
+        ['texto' => 'Exportar', 'exportar' => '#tablaReporteHuespedes', 'nombre' => 'reporte-huespedes', 'icono' => 'bi-download', 'variante' => 'outline-secondary'],
         ['texto' => 'Imprimir Reporte', 'imprimir' => true, 'icono' => 'bi-printer', 'variante' => 'outline-secondary'],
     ],
 ]) ?>
@@ -16,7 +17,7 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
+                    <table id="tablaReporteHuespedes" class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th>#</th>
@@ -30,6 +31,7 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <?php $maxGasto = max(1, ...array_map(fn($h) => (float)$h['total_gastado'], $huespedes ?: [['total_gastado' => 0]])); ?>
                             <?php $i = 1; foreach ($huespedes as $h): ?>
                                 <tr>
                                     <td>
@@ -48,7 +50,10 @@
                                     <td><?= htmlspecialchars($h['nacionalidad'] ?: 'Perú') ?></td>
                                     <td><span class="badge badge-soft-primary"><?= $h['total_reservas'] ?> reservas</span></td>
                                     <td><small class="text-muted"><?= fecha_es($h['ultima_visita']) ?></small></td>
-                                    <td class="text-end pe-3 fw-bold text-success fs-6"><?= dinero($h['total_gastado']) ?></td>
+                                    <td class="text-end pe-3">
+                                        <div class="fw-bold text-success fs-6"><?= dinero($h['total_gastado']) ?></div>
+                                        <div class="barra-ranking" aria-hidden="true"><span style="width: <?= round((float)$h['total_gastado'] * 100 / $maxGasto) ?>%"></span></div>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>

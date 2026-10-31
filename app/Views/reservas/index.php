@@ -3,6 +3,7 @@
     'icono'     => 'bi-calendar-check',
     'subtitulo' => 'Administración, filtros y control de reservas hoteleras',
     'acciones'  => [
+        ['texto' => 'Exportar', 'exportar' => '#tablaReservas', 'nombre' => 'reservas', 'icono' => 'bi-download', 'variante' => 'outline-secondary'],
         ['texto' => 'Registrar Reserva', 'url' => 'reservas/crear', 'icono' => 'bi-plus-circle'],
         ['texto' => 'Disponibilidad', 'url' => 'reservas/disponibilidad', 'icono' => 'bi-calendar-range', 'variante' => 'outline-info'],
         ['texto' => 'Calendario', 'url' => 'reservas/calendario', 'icono' => 'bi-calendar3', 'variante' => 'outline-secondary'],
@@ -56,7 +57,7 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0 datatable-init">
+                    <table id="tablaReservas" class="table table-hover align-middle mb-0 datatable-init">
                         <thead class="table-light">
                             <tr>
                                 <th>Código</th>
@@ -108,16 +109,22 @@
                                         </td>
                                         <td><?= badge_estado_reserva($r['estado']) ?></td>
                                         <td class="text-end pe-3">
-                                            <div class="table-actions">
-                                                <a href="<?= url('reservas/editar/' . $r['id']) ?>" class="btn btn-icon btn-outline-primary" title="Editar / Ver Detalle">
-                                                    <i class="bi bi-pencil-square"></i>
-                                                </a>
-                                                <?php if ($r['estado'] === 'confirmada' || $r['estado'] === 'pendiente'): ?>
-                                                    <button type="button" class="btn btn-icon btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modalCancelar<?= $r['id'] ?>" title="Cancelar reserva">
-                                                        <i class="bi bi-x-circle"></i>
-                                                    </button>
-                                                <?php endif; ?>
-                                            </div>
+                                            <?php
+                                                $activa = in_array($r['estado'], ['confirmada', 'pendiente'], true);
+                                                $menu = [['texto' => 'Voucher y WhatsApp', 'icono' => 'bi-whatsapp', 'url' => 'reservas/voucher/' . $r['id']]];
+                                                if ((float)$r['saldo'] > 0 && $r['estado'] !== 'cancelada') {
+                                                    $menu[] = ['texto' => 'Registrar pago', 'icono' => 'bi-cash-coin', 'url' => 'pagos/crear?reserva_id=' . $r['id']];
+                                                }
+                                                if ($activa) {
+                                                    $menu[] = ['texto' => 'Hacer check-in', 'icono' => 'bi-box-arrow-in-right', 'url' => 'recepcion/checkin?reserva_id=' . $r['id']];
+                                                    $menu[] = ['texto' => 'Cancelar reserva', 'icono' => 'bi-x-circle', 'modal' => '#modalCancelar' . $r['id'], 'peligro' => true];
+                                                }
+                                                partial('acciones_menu', [
+                                                    'visibles' => [['url' => 'reservas/editar/' . $r['id'], 'icono' => 'bi-pencil-square', 'titulo' => 'Editar / ver detalle', 'variante' => 'outline-primary']],
+                                                    'menu'     => $menu,
+                                                    'titulo'   => 'Más acciones de ' . $r['codigo_reserva'],
+                                                ]);
+                                            ?>
 
                                             <!-- Modal Cancelación -->
                                             <div class="modal fade" id="modalCancelar<?= $r['id'] ?>" tabindex="-1" aria-hidden="true">

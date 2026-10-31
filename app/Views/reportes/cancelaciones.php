@@ -3,6 +3,7 @@
     'icono'     => 'bi-x-octagon',
     'subtitulo' => 'Auditoría y análisis de reservas canceladas y motivos',
     'acciones'  => [
+        ['texto' => 'Exportar', 'exportar' => '#tablaReporteCancelaciones', 'nombre' => 'reporte-cancelaciones', 'icono' => 'bi-download', 'variante' => 'outline-secondary'],
         ['texto' => 'Imprimir Reporte', 'imprimir' => true, 'icono' => 'bi-printer', 'variante' => 'outline-secondary'],
     ],
 ]) ?>
@@ -16,7 +17,7 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
+                    <table id="tablaReporteCancelaciones" class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th>Código Reserva</th>

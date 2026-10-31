@@ -173,9 +173,10 @@ class Reporte extends Model
     public function habitacionesMasSolicitadas(): array
     {
         $sql = "SELECT h.numero, h.piso, th.nombre as tipo_nombre, h.precio_diario,
-                COUNT(rh.id) as total_veces_reservada,
-                IFNULL(SUM(rh.noches), 0) as total_noches,
-                IFNULL(SUM(rh.subtotal), 0) as total_recaudado
+                -- Solo reservas no canceladas: r queda NULL para las canceladas (condición en el JOIN)
+                COUNT(r.id) as total_veces_reservada,
+                IFNULL(SUM(CASE WHEN r.id IS NOT NULL THEN rh.noches END), 0) as total_noches,
+                IFNULL(SUM(CASE WHEN r.id IS NOT NULL THEN rh.subtotal END), 0) as total_recaudado
                 FROM habitaciones h
                 INNER JOIN tipos_habitacion th ON th.id = h.tipo_id
                 LEFT JOIN reserva_habitaciones rh ON rh.habitacion_id = h.id
