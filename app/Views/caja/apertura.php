@@ -16,8 +16,8 @@
                 <div class="card border-0">
                     <div class="card-header bg-success text-white py-3 text-center">
                         <i class="bi bi-lock-fill fs-2 d-block mb-1"></i>
-                        <h5 class="card-title mb-0 text-white">Apertura de Turno de Recepción</h5>
-                        <small class="text-white-50">Inicia tu jornada registrando el fondo inicial de caja</small>
+                        <h5 class="card-title float-none mb-0 text-white">Apertura de Turno de Recepción</h5>
+                        <small class="d-block text-white-50">Inicia tu jornada registrando el fondo inicial de caja</small>
                     </div>
                     <div class="card-body p-4">
                         <div class="alert alert-info py-2 px-3 small rounded-3 mb-4 d-flex align-items-center gap-2">

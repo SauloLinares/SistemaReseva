@@ -318,6 +318,28 @@ document.addEventListener('DOMContentLoaded', function () {
         const trigger = e.target.closest('[data-confirm], a.btn-confirm-action');
         if (trigger) {
             e.preventDefault();
+            const form = trigger.tagName === 'A' ? null : (trigger.form || trigger.closest('form'));
+
+            // Validar el formulario ANTES de pedir confirmación (campos required, min, etc.)
+            if (form && !form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            // Ejecuta la acción confirmada. requestSubmit() respeta la validación,
+            // dispara el evento submit (protección de doble envío) y envía el name/value del botón.
+            const ejecutar = function () {
+                if (trigger.tagName === 'A' && trigger.href) {
+                    window.location.href = trigger.href;
+                } else if (form) {
+                    if (typeof form.requestSubmit === 'function') {
+                        form.requestSubmit(trigger.type === 'submit' ? trigger : undefined);
+                    } else {
+                        form.submit();
+                    }
+                }
+            };
+
             const message = trigger.getAttribute('data-confirm') || '¿Estás seguro de realizar esta acción?';
             const isDanger = trigger.classList.contains('btn-danger') || 
                              trigger.classList.contains('btn-outline-danger') || 
@@ -339,23 +361,13 @@ document.addEventListener('DOMContentLoaded', function () {
                     focusCancel: true
                 }).then(function (result) {
                     if (result.isConfirmed) {
-                        if (trigger.tagName === 'A' && trigger.href) {
-                            window.location.href = trigger.href;
-                        } else if (trigger.form) {
-                            trigger.form.submit();
-                        } else if (trigger.closest('form')) {
-                            trigger.closest('form').submit();
-                        }
+                        ejecutar();
                     }
                 });
             } else {
                 // Fallback tradicional
                 if (confirm(message)) {
-                    if (trigger.tagName === 'A' && trigger.href) {
-                        window.location.href = trigger.href;
-                    } else if (trigger.closest('form')) {
-                        trigger.closest('form').submit();
-                    }
+                    ejecutar();
                 }
             }
         }

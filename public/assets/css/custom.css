@@ -1374,7 +1374,7 @@ body {
 /* Botón cuadrado solo con icono (Ver / Editar / Eliminar) */
 .table .btn-group .btn,
 .table td .btn-action,
-.btn-icon {
+.btn.btn-icon {
     --bs-btn-padding-x: 0;
     --bs-btn-padding-y: 0;
     --bs-btn-font-size: 0.9rem;
