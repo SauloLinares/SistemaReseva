@@ -108,7 +108,8 @@ El sistema está organizado en **10 módulos funcionales** accesibles desde la b
 - **Correo Electrónico:** `admin@admin.com`
 - **Contraseña:** `admin123`
 
-> Cambia esta contraseña al publicar el sistema. La caja "Credenciales de prueba" del login solo aparece
+> Cambia esta contraseña al publicar el sistema: fuera de desarrollo, quien ingrese con ella deberá crear una
+> propia antes de continuar (lo mismo que un usuario nuevo o al que el administrador le restableció la clave). La caja "Credenciales de prueba" del login solo aparece
 > en desarrollo: una visita desde el propio equipo a `localhost`, `*.test` o `*.localhost`. Para fijar el
 > entorno a mano, define la variable `APP_ENV` (`desarrollo` o `produccion`) en el servidor.
 

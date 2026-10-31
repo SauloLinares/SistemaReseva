@@ -78,16 +78,28 @@ class LoginController extends Controller
         session_regenerate_id(true);
 
         // Guardar datos en la sesión
+        // Debe cambiar la contraseña si se la asignó el administrador, o si sigue usando la
+        // contraseña inicial fuera de desarrollo (la conoce cualquiera que lea el README)
+        $debeCambiar = (int)($usuario['debe_cambiar_clave'] ?? 0) === 1
+            || (!\App\Config\App::esDesarrollo() && hash_equals(Usuario::CLAVE_INICIAL, $password));
+
         $_SESSION['usuario'] = [
-            'id'           => $usuario['id'],
-            'nombre'       => $usuario['nombre'],
-            'email'        => $usuario['email'],
-            'rol'          => $usuario['rol'] ?? 'Administrador',
-            'ultimo_login' => $usuario['ultimo_login']
+            'id'                 => $usuario['id'],
+            'nombre'             => $usuario['nombre'],
+            'email'              => $usuario['email'],
+            'foto'               => $usuario['foto'] ?? null,
+            'rol'                => $usuario['rol'] ?? 'Administrador',
+            'ultimo_login'       => $usuario['ultimo_login'],
+            'debe_cambiar_clave' => $debeCambiar,
         ];
 
         // Registrar timestamp de último login
         $this->usuarioModel->actualizarUltimoLogin((int)$usuario['id']);
+
+        if ($debeCambiar) {
+            $this->setFlash('warning', 'Antes de continuar, crea tu propia contraseña.');
+            redirect('perfil/clave');
+        }
 
         $this->setFlash('success', '¡Bienvenido(a), ' . htmlspecialchars($usuario['nombre']) . '!');
         redirect('');

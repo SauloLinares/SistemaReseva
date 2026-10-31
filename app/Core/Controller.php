@@ -93,6 +93,13 @@ abstract class Controller
             $this->setFlash('warning', 'Debes iniciar sesión para acceder al sistema.');
             redirect('login');
         }
+
+        // Contraseña asignada por el administrador (o la inicial): no se usa el sistema hasta cambiarla
+        $ruta = strtolower(trim(explode('?', $_GET['url'] ?? '')[0], '/'));
+        if (auth_user('debe_cambiar_clave') && !in_array($ruta, ['perfil/clave', 'perfil/guardarclave'], true)) {
+            $this->setFlash('warning', 'Antes de continuar, crea tu propia contraseña.');
+            redirect('perfil/clave');
+        }
     }
 
     /**

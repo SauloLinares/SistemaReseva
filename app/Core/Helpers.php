@@ -147,6 +147,24 @@ if (!function_exists('foto_habitacion')) {
     }
 }
 
+if (!function_exists('avatar_usuario')) {
+    /**
+     * Foto del usuario (Mi perfil) o, si no tiene, un círculo con sus iniciales.
+     * $clase: clases extra (tamaño), ej. 'avatar-sm' o 'avatar-xl'.
+     */
+    function avatar_usuario(?string $foto, string $nombre, string $clase = ''): string
+    {
+        $archivo = $foto ? dirname(__DIR__, 2) . '/public/uploads/usuarios/' . basename($foto) : '';
+        if ($archivo !== '' && is_file($archivo)) {
+            return '<img src="' . e(base_url('uploads/usuarios/' . basename($foto))) . '" class="avatar-usuario ' . e($clase)
+                . '" alt="Foto de ' . e($nombre) . '" />';
+        }
+        $partes = preg_split('/\s+/', trim($nombre)) ?: [];
+        $iniciales = mb_strtoupper(mb_substr($partes[0] ?? '?', 0, 1) . (count($partes) > 1 ? mb_substr(end($partes), 0, 1) : ''));
+        return '<span class="avatar-usuario avatar-iniciales ' . e($clase) . '" aria-hidden="true">' . e($iniciales) . '</span>';
+    }
+}
+
 if (!function_exists('rutas_en_formularios_get')) {
     /**
      * Un <form method="GET"> descarta la consulta de su action al enviarse: con

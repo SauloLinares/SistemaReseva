@@ -3885,3 +3885,50 @@ input[type="time"]:focus::-webkit-calendar-picker-indicator {
     padding: 0.15rem 0.6rem;
     font-weight: 600;
 }
+
+/* ====================================================================
+   27. CUENTA DEL USUARIO: avatar (foto o iniciales) y reglas de contraseña
+   ==================================================================== */
+.avatar-usuario {
+    --avatar: 2rem;
+    width: var(--avatar);
+    height: var(--avatar);
+    flex-shrink: 0;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.avatar-iniciales {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in srgb, var(--hm-primary) 15%, var(--bs-body-bg));
+    color: var(--hm-primary);
+    font-weight: 700;
+    font-size: calc(var(--avatar) * 0.4);
+    line-height: 1;
+    user-select: none;
+}
+.avatar-sm { --avatar: 2rem; }
+.avatar-lg { --avatar: 4.5rem; }
+.avatar-xl { --avatar: 5.5rem; }
+.user-header .avatar-iniciales {
+    background: rgb(255 255 255 / 0.2);
+    color: #fff;
+}
+
+.reglas-clave li {
+    color: var(--bs-secondary-color);
+    transition: color 0.15s ease;
+}
+.reglas-clave li.cumple {
+    color: var(--bs-success-text-emphasis);
+}
+.reglas-clave li.cumple i {
+    color: var(--bs-success);
+}
+.menu-cuenta {
+    min-width: 17rem;
+}
+.menu-cuenta .min-w-0 {
+    min-width: 0;
+}

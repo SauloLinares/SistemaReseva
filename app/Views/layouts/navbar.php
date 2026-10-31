@@ -227,29 +227,27 @@ try {
                 </div>
             </li>
 
-            <!-- Perfil de Usuario Autenticado -->
+            <!-- Cuenta del usuario: Mi perfil, contraseña y salir -->
+            <?php $nombreUsuario = auth_user('nombre') ?? 'Usuario'; ?>
             <li class="nav-item dropdown user-menu">
-                <a href="#" class="nav-link d-flex align-items-center gap-2 py-0" data-bs-toggle="dropdown">
-                    <img src="<?= asset('adminlte/img/avatar.png') ?>" class="user-image rounded-circle shadow-xs" alt="User Image" />
-                    <span class="d-none d-md-inline fw-semibold text-truncate mw-140"><?= htmlspecialchars(auth_user('nombre') ?? 'Usuario') ?></span>
+                <a href="#" class="nav-link d-flex align-items-center gap-2 py-0" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Mi cuenta">
+                    <?= avatar_usuario(auth_user('foto'), $nombreUsuario, 'avatar-sm shadow-xs') ?>
+                    <span class="d-none d-md-inline fw-semibold text-truncate mw-140"><?= e($nombreUsuario) ?></span>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end shadow">
-                    <li class="user-header text-bg-primary">
-                        <img src="<?= asset('adminlte/img/avatar.png') ?>" class="rounded-circle shadow" alt="User Image" />
-                        <p>
-                            <?= htmlspecialchars(auth_user('nombre') ?? 'Usuario') ?>
-                            <small class="d-block text-white-50"><?= htmlspecialchars(auth_user('email') ?? '') ?></small>
-                            <span class="badge badge-soft-secondary mt-1"><?= htmlspecialchars(auth_user('rol') ?? 'Administrador') ?></span>
-                        </p>
+                <ul class="dropdown-menu dropdown-menu-end shadow menu-cuenta">
+                    <li class="px-3 py-2 d-flex align-items-center gap-3">
+                        <?= avatar_usuario(auth_user('foto'), $nombreUsuario, 'avatar-lg') ?>
+                        <div class="min-w-0">
+                            <div class="fw-semibold text-truncate"><?= e($nombreUsuario) ?></div>
+                            <div class="small text-body-secondary text-truncate"><?= e(auth_user('email') ?? '') ?></div>
+                            <span class="badge badge-soft-secondary mt-1"><?= e(auth_user('rol') ?? '') ?></span>
+                        </div>
                     </li>
-                    <li class="user-footer d-flex justify-content-between">
-                        <a href="<?= url('clientes') ?>" class="btn btn-outline-secondary btn-sm">
-                            <i class="bi bi-people-fill me-1"></i> Clientes
-                        </a>
-                        <a href="<?= url('login/logout') ?>" class="btn btn-outline-danger btn-sm">
-                            <i class="bi bi-box-arrow-right me-1"></i> Cerrar Sesión
-                        </a>
-                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="<?= url('perfil') ?>"><i class="bi bi-person-circle me-2"></i>Mi perfil</a></li>
+                    <li><a class="dropdown-item" href="<?= url('perfil/clave') ?>"><i class="bi bi-key me-2"></i>Cambiar contraseña</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="<?= url('login/logout') ?>"><i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión</a></li>
                 </ul>
             </li>
         </ul>

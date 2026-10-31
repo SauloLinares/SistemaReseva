@@ -82,8 +82,8 @@
                 </div>
                 <div class="mb-3">
                     <label for="userPassword" class="form-label">Contraseña</label>
-                    <input type="password" name="password" id="userPassword" class="form-control" placeholder="Dejar en blanco si no se desea modificar">
-                    <div class="form-text">Mínimo 6 caracteres con números y letras recomendados.</div>
+                    <input type="password" name="password" id="userPassword" class="form-control" minlength="8" required autocomplete="new-password" placeholder="Dejar en blanco si no se desea modificar" aria-describedby="ayudaPassword">
+                    <div class="form-text" id="ayudaPassword">Contraseña temporal de al menos 8 caracteres: la persona deberá cambiarla por una propia al ingresar.</div>
                 </div>
                 <div class="row g-2 mb-3">
                     <div class="col-6">

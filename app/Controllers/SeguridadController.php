@@ -50,10 +50,21 @@ class SeguridadController extends Controller
         }
 
         $id = !empty($_POST['id']) ? (int)$_POST['id'] : null;
+        $clave = (string)($_POST['password'] ?? '');
+
+        // Contraseña temporal: la persona la cambia por una propia al ingresar
+        if ((!$id || $clave !== '') && mb_strlen($clave) < \App\Controllers\PerfilController::CLAVE_MINIMO) {
+            $this->setFlash('danger', 'La contraseña debe tener al menos ' . \App\Controllers\PerfilController::CLAVE_MINIMO . ' caracteres.');
+            redirect('seguridad/usuarios');
+        }
 
         if ($id) {
-            $ok = $this->usuarioModel->actualizar($id, $_POST);
+            $propio = $id === (int) auth_user('id');
+            $ok = $this->usuarioModel->actualizar($id, $_POST, !$propio);
             $msg = $ok ? 'Usuario actualizado con éxito.' : 'Error al actualizar usuario.';
+            if ($ok && $clave !== '' && !$propio) {
+                $msg .= ' Deberá cambiar la contraseña al ingresar.';
+            }
         } else {
             $email = trim($_POST['email'] ?? '');
             if ($this->usuarioModel->obtenerPorEmail($email)) {
@@ -61,7 +72,7 @@ class SeguridadController extends Controller
                 redirect('seguridad/usuarios');
             }
             $ok = $this->usuarioModel->crear($_POST);
-            $msg = $ok ? 'Usuario creado correctamente.' : 'Error al crear usuario.';
+            $msg = $ok ? 'Usuario creado correctamente. Deberá cambiar la contraseña al ingresar.' : 'Error al crear usuario.';
         }
 
         $this->auditoriaModel->registrar('Seguridad', 'Usuarios', ($id ? 'Actualizar' : 'Crear') . ' usuario ' . ($_POST['email'] ?? ''));

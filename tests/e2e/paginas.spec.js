@@ -13,6 +13,7 @@ const PANTALLAS = [
     'pagos', 'pagos/crear', 'pagos/pendientes', 'servicios', 'servicios/consumo',
     'caja', 'caja/historial', 'reportes', 'reportes/ocupacion', 'reportes/ingresos',
     'seguridad/usuarios', 'seguridad/roles', 'configuracion/hotel', 'configuracion/parametros', 'productos',
+    'perfil', 'perfil/clave',
 ];
 
 for (const pantalla of PANTALLAS) {
@@ -29,7 +30,7 @@ for (const pantalla of PANTALLAS) {
 }
 
 test('las etiquetas de formulario apuntan a un campo y no hay ids repetidos', async ({ page }) => {
-    for (const pantalla of ['huespedes/crear', 'reservas/crear', 'pagos/crear', 'habitaciones/crear', 'configuracion/hotel']) {
+    for (const pantalla of ['huespedes/crear', 'reservas/crear', 'pagos/crear', 'habitaciones/crear', 'configuracion/hotel', 'perfil', 'perfil/clave']) {
         await page.goto(ruta(pantalla));
         const resultado = await page.evaluate(() => {
             const sinCampo = [...document.querySelectorAll('label.form-label')]

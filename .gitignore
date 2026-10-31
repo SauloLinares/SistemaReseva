@@ -10,3 +10,6 @@ tests/e2e/.auth/
 
 # Capturas de la comparación visual (dependen de los datos y la fecha)
 tests/e2e/*-snapshots/
+
+# Fotos de los usuarios (datos personales, no van al repositorio)
+public/uploads/usuarios/
