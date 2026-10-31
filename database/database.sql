@@ -268,6 +268,18 @@ CREATE TABLE IF NOT EXISTS configuracion (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
+-- Envíos ya procesados (evita registrar dos veces un cobro por doble clic o reintento)
+CREATE TABLE IF NOT EXISTS operaciones (
+    clave VARCHAR(64) NOT NULL PRIMARY KEY,
+    usuario_id INT NOT NULL DEFAULT 0,
+    ruta VARCHAR(150) NOT NULL DEFAULT '',
+    estado ENUM('en_curso','completada') NOT NULL DEFAULT 'en_curso',
+    tipo ENUM('json','redireccion') NULL,
+    respuesta TEXT NULL,
+    creado TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_creado (creado)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 -- 14. AUDITORÍA DEL SISTEMA
 CREATE TABLE IF NOT EXISTS auditoria (
     id INT AUTO_INCREMENT PRIMARY KEY,

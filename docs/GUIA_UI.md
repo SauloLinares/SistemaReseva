@@ -88,6 +88,21 @@ Todos los colores, radios y sombras salen de los tokens de `public/assets/css/cu
 - En tablas con DataTables usa delegación (`document.addEventListener('click', ...)` + `closest()`): DataTables reconstruye las filas.
 - `!important` solo cuando hay que ganarle a AdminLTE/Bootstrap y no alcanza con la especificidad.
 
+## 5.3 Envíos seguros y borradores
+
+- **Sin cobros duplicados:** todo POST (formulario o `fetch`) viaja con una clave de operación que
+  pone `envios.js`. Si se reenvía lo mismo sin que el servidor lo haya confirmado (doble clic, corte
+  de red, F5), la clave se repite y `App\Core\Operacion` responde como la primera vez sin volver a
+  registrar. No hay que hacer nada en el formulario. `data-sin-operacion` lo excluye.
+  Para que funcione, la acción debe terminar con `redirect()` (éxito) o `volverConErrores()` /
+  flash `danger` (error), o con JSON `{"success": true|false}`.
+- **Borrador:** `<form data-borrador>` guarda lo que se va llenando (por usuario, 12 h) y lo
+  recupera con un aviso y un botón «Descartar». Se borra cuando el servidor confirma el envío.
+  Usarlo en formularios largos o que se llenan mientras se atiende (POS de reserva, consumo).
+- **Conexión y sesión:** sin conexión aparece una barra roja arriba y los formularios no se envían.
+  Si la sesión venció, cualquier `fetch` lleva al login con un aviso. Un error inesperado del
+  servidor muestra una página o un JSON con un código de referencia, que queda en el log de PHP.
+
 ## 6. Mensajes flash
 
 Los muestra `layouts/header.php` como toast. **No** agregues bloques `$_SESSION['flash']` en las vistas.

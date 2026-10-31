@@ -13,7 +13,7 @@
 
         <div class="row justify-content-center">
             <div class="col-12 col-lg-8">
-                <form action="<?= url('servicios/guardarConsumo') ?>" method="POST" class="card">
+                <form action="<?= url('servicios/guardarConsumo') ?>" method="POST" class="card" data-borrador>
                     <div class="card-header">
                         <h5 class="card-title mb-0"><i class="bi bi-cart4 me-2"></i>Cargar Consumo</h5>
                     </div>

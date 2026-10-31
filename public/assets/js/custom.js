@@ -634,25 +634,7 @@ function restaurarFormularioPrevio(previo) {
     });
 
     // 1. Volver a poner lo que se había escrito
-    Object.entries(datos).forEach(function ([nombre, valor]) {
-        campos(nombre).forEach(function (el) {
-            // Los archivos no se pueden reponer y el id oculto ya viene correcto del servidor
-            if (el.type === 'file' || (el.type === 'hidden' && nombre === 'id')) return;
-            const valores = Array.isArray(valor) ? valor.map(String) : [String(valor)];
-            if (el.type === 'checkbox' || el.type === 'radio') {
-                el.checked = valores.includes(el.value);
-            } else if (el.tomselect) {
-                el.tomselect.setValue(valores); // sin modo silencioso: dispara change en el select
-                return;
-            } else if (el.multiple) {
-                [...el.options].forEach(o => { o.selected = valores.includes(o.value); });
-            } else {
-                el.value = valores[0];
-            }
-            // Avisar a los scripts de la vista (ej. recálculo de saldo o totales) como si lo hubiera hecho el usuario
-            el.dispatchEvent(new Event(el.tagName === 'SELECT' || el.type === 'checkbox' || el.type === 'radio' ? 'change' : 'input', { bubbles: true }));
-        });
-    });
+    reponerCampos(form, datos);
 
     // 2. Marcar los campos con error y mostrar el mensaje debajo
     let primero = null;
@@ -705,4 +687,34 @@ function restaurarFormularioPrevio(previo) {
         (primero.tomselect ? primero.tomselect : primero).focus();
         primero.closest('.card, form')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
     }
+}
+
+/**
+ * Pone valores en los campos de un formulario y avisa a los scripts de la vista como si
+ * los hubiera escrito el usuario (recálculo de totales, saldo, disponibilidad...).
+ * datos: { "nombre": "valor", "habitaciones[]": ["3", "5"], "servicios[2]": "1" }
+ * Lo usan la restauración tras un error de validación y los borradores (borrador.js).
+ */
+function reponerCampos(form, datos) {
+    const campos = function (nombre) {
+        return [...form.elements].filter(el => el.name === nombre || el.name === nombre + '[]');
+    };
+    Object.entries(datos).forEach(function ([nombre, valor]) {
+        campos(nombre).forEach(function (el) {
+            // Los archivos no se pueden reponer y el id oculto ya viene correcto del servidor
+            if (el.type === 'file' || (el.type === 'hidden' && nombre === 'id')) return;
+            const valores = Array.isArray(valor) ? valor.map(String) : [String(valor)];
+            if (el.type === 'checkbox' || el.type === 'radio') {
+                el.checked = valores.includes(el.value);
+            } else if (el.tomselect) {
+                el.tomselect.setValue(valores); // sin modo silencioso: dispara change en el select
+                return;
+            } else if (el.multiple) {
+                [...el.options].forEach(o => { o.selected = valores.includes(o.value); });
+            } else {
+                el.value = valores[0];
+            }
+            el.dispatchEvent(new Event(el.tagName === 'SELECT' || el.type === 'checkbox' || el.type === 'radio' ? 'change' : 'input', { bubbles: true }));
+        });
+    });
 }

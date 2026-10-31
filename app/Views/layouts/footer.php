@@ -44,6 +44,16 @@
         <?php unset($_SESSION['form_previo']); ?>
     <?php endif; ?>
 
+    <?php if (!empty($_SESSION['operaciones_completadas'])): ?>
+        <!-- Envíos que el servidor ya registró: el navegador olvida esos intentos pendientes -->
+        <script type="application/json" id="operaciones-completadas"><?= json_encode(array_values($_SESSION['operaciones_completadas'])) ?></script>
+        <?php unset($_SESSION['operaciones_completadas']); ?>
+    <?php endif; ?>
+
+    <!-- Envíos seguros (sin duplicar cobros, aviso de conexión) y borradores de formularios -->
+    <?= script_js('envios.js') ?>
+    <?= script_js('borrador.js') ?>
+
     <!-- Scripts personalizados con control de caché dinámico -->
     <script src="<?= asset('js/custom.js') ?>?v=<?= file_exists(__DIR__ . '/../../../public/assets/js/custom.js') ? filemtime(__DIR__ . '/../../../public/assets/js/custom.js') : time() ?>"></script>
     <!--end::Scripts-->

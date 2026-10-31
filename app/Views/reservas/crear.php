@@ -12,7 +12,7 @@
 <div class="app-content pos-split-wrapper">
     <div class="container-fluid">
 
-        <form action="<?= url('reservas/guardar') ?>" method="POST" id="formReserva" class="pos-split-form">
+        <form action="<?= url('reservas/guardar') ?>" method="POST" id="formReserva" class="pos-split-form" data-borrador>
             <div class="row g-3 pos-split-row">
                 <!-- Columna Izquierda: Datos del Huésped, Fechas, Habitaciones y Servicios (Scroll Independiente) -->
                 <div class="col-12 col-lg-7 col-xl-8 pos-split-left">

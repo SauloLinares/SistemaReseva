@@ -120,7 +120,7 @@ abstract class Controller
         // Nunca se devuelven contraseñas ni el token al navegador
         $datos = array_filter(
             $_POST,
-            fn($clave) => $clave !== '_csrf' && stripos((string)$clave, 'password') === false && stripos((string)$clave, 'clave') === false,
+            fn($clave) => !in_array($clave, ['_csrf', '_operacion'], true) && stripos((string)$clave, 'password') === false && stripos((string)$clave, 'clave') === false,
             ARRAY_FILTER_USE_KEY
         );
 

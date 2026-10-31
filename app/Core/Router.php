@@ -25,6 +25,11 @@ class Router
             return;
         }
 
+        // 0.1 Un envío repetido (doble clic, reintento tras un corte) no se registra dos veces
+        if ($esPost) {
+            Operacion::iniciar();
+        }
+
         // 1. Obtener la ruta solicitada
         $url = $_GET['url'] ?? '';
 
@@ -123,7 +128,8 @@ class Router
         if ($esAjax) {
             http_response_code(403);
             header('Content-Type: application/json; charset=utf-8');
-            echo json_encode(['success' => false, 'message' => $mensaje], JSON_UNESCAPED_UNICODE);
+            // sesion_vencida: el navegador (envios.js) lleva al login en lugar de mostrar el error
+            echo json_encode(['success' => false, 'message' => $mensaje, 'mensaje' => $mensaje, 'sesion_vencida' => !auth_check()], JSON_UNESCAPED_UNICODE);
             return;
         }
 
