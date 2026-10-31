@@ -99,6 +99,7 @@
     --hm-input-border: var(--hm-slate-200);
     --hm-input-border-focus: var(--hm-blue-500);
     --hm-focus-ring: 0 0 0 4px rgba(59, 130, 246, 0.15);
+    --hm-focus-color: var(--hm-blue-600);
     --hm-addon-bg: var(--hm-slate-100);
 
     /* --- Escala de radios, espaciado de controles y sombras --- */
@@ -160,6 +161,7 @@
     --hm-text-muted: var(--hm-slate-400);
 
     --hm-input-bg: var(--hm-slate-900);
+    --hm-focus-color: var(--hm-blue-400);
     --hm-input-border: var(--hm-slate-700);
     --hm-addon-bg: var(--hm-slate-900);
 
@@ -568,16 +570,36 @@ body {
     color: var(--hm-blue-400);
 }
 
-.nav-alert-badge {
-    font-size: 0.65rem !important;
-    padding: 0.25em 0.5em !important;
+/* Contador de alertas: apoyado dentro de la esquina superior derecha de la campana,
+   sin salirse de la barra (antes se centraba en la esquina y quedaba cortado arriba) */
+.badge.nav-alert-badge {
+    position: absolute;
+    top: 4px;
+    right: -3px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.68rem !important;
+    font-weight: 700 !important;
+    line-height: 1;
+    border-radius: var(--hm-radius-pill) !important;
+    box-shadow: 0 0 0 2px var(--hm-surface);
+    pointer-events: none;
     animation: alertPulse 2s infinite ease-in-out;
 }
 
 @keyframes alertPulse {
-    0% { transform: translate(-50%, -50%) scale(1); }
-    50% { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 0 8px rgba(220, 53, 69, 0.6); }
-    100% { transform: translate(-50%, -50%) scale(1); }
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.12); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .badge.nav-alert-badge {
+        animation: none;
+    }
 }
 
 .alert-dropdown-menu {
@@ -1044,7 +1066,6 @@ body {
     border-radius: var(--hm-radius) !important;
     transition: box-shadow 0.15s ease, border-color 0.15s ease;
     position: relative;
-    cursor: pointer;
     background: var(--hm-surface) !important;
     border: 1px solid var(--hm-border);
     border-top: 3px solid var(--room-color) !important;
@@ -1057,6 +1078,11 @@ body {
 
 .room-card-modern .room-icon {
     color: var(--room-color);
+}
+
+/* Solo las tarjetas del panel abren un detalle al hacer clic */
+.room-card-interactive {
+    cursor: pointer;
 }
 
 /* Estados de habitación */
@@ -3302,4 +3328,148 @@ a.estado-stat {
     .modal-backdrop.show {
         opacity: var(--bs-backdrop-opacity) !important;
     }
+}
+
+/* ====================================================================
+   20. FOCO VISIBLE PARA TECLADO
+   Varias reglas anulan la sombra de foco de Bootstrap (box-shadow: none
+   en botones de la barra, iconos de tabla...). Se usa outline, que esas
+   reglas no tocan, y solo con :focus-visible (teclado, no clic del ratón).
+   ==================================================================== */
+a:focus-visible,
+button:focus-visible,
+.btn:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible,
+.form-check-input:focus-visible {
+    outline: 2px solid var(--hm-focus-color) !important;
+    outline-offset: 2px;
+}
+/* El menú lateral siempre es oscuro */
+.app-sidebar a:focus-visible,
+.app-sidebar button:focus-visible {
+    outline-color: var(--hm-blue-400) !important;
+    outline-offset: -2px;
+}
+/* Reparto por método de pago (reporte de ingresos) */
+.barra-metodo + .barra-metodo {
+    margin-top: 0.85rem;
+}
+
+/* ====================================================================
+   21. AJUSTES PARA TELÉFONOS
+   ==================================================================== */
+@media (max-width: 575.98px) {
+    /* Indicadores del panel de dos en dos: número, nombre y enlace; sin icono ni detalle */
+    .small-box .inner {
+        padding: 0.85rem 0.9rem 0.7rem !important;
+    }
+    .small-box .inner h3 {
+        font-size: 1.4rem !important;
+    }
+    .small-box .inner p {
+        font-size: 0.82rem !important;
+        line-height: 1.25;
+    }
+    .small-box .inner small,
+    .small-box .inner .d-flex,
+    .small-box .small-box-icon {
+        display: none !important;
+    }
+    .small-box-footer {
+        padding: 0.45rem 0.9rem !important;
+        font-size: 0.76rem;
+    }
+}
+
+/* ====================================================================
+   22. GRÁFICO DE BARRAS POR DÍA (reporte de ocupación) y desplegables
+   ==================================================================== */
+.grafico-dias {
+    display: flex;
+    align-items: stretch;
+    gap: 3px;
+    height: 220px;
+    padding-top: 1.25rem;
+    border-bottom: 1px solid var(--hm-border);
+    overflow-x: auto;
+}
+.grafico-dia {
+    flex: 1 0 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 12px;
+}
+.grafico-barra-zona {
+    position: relative;
+    flex: 1;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+.grafico-barra {
+    width: 100%;
+    max-width: 28px;
+    border-radius: 4px 4px 0 0;
+    background: var(--hm-primary);
+}
+.grafico-dia:hover .grafico-barra {
+    background: var(--hm-primary-hover);
+}
+/* El porcentaje se muestra al pasar el ratón: con 31 barras angostas se encimaban */
+.grafico-valor {
+    position: absolute;
+    top: -1.1rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--hm-text);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    pointer-events: none;
+}
+.grafico-dia:hover .grafico-valor {
+    opacity: 1;
+}
+.grafico-etiqueta {
+    margin-top: 0.3rem;
+    font-size: 0.72rem;
+    color: var(--hm-text-muted);
+}
+
+/* Tarjeta desplegable con <details> */
+.detalle-desplegable > summary {
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.detalle-desplegable > summary::-webkit-details-marker {
+    display: none;
+}
+.detalle-desplegable > summary::after {
+    content: "\F282"; /* bi-chevron-down */
+    font-family: "bootstrap-icons";
+    transition: transform 0.2s ease;
+}
+.detalle-desplegable > summary .card-title {
+    float: none;
+}
+.detalle-desplegable[open] > summary::after {
+    transform: rotate(180deg);
+}
+
+/* Huéspedes frecuentes: el nombre usa hasta 2 líneas antes de cortarse */
+.nombre-frecuente {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.25;
+}
+.min-w-0 {
+    min-width: 0;
 }

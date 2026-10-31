@@ -128,6 +128,11 @@ try {
             </a>
         </div>
 
+        <!-- En móvil las acciones rápidas se ocultan: queda un acceso directo a Nueva Reserva -->
+        <a href="<?= url('reservas/crear') ?>" class="btn btn-primary btn-icon d-md-none ms-auto me-2" title="Nueva reserva" aria-label="Nueva reserva">
+            <i class="bi bi-plus-lg"></i>
+        </a>
+
         <!-- Menú de la derecha: Tema & Perfil -->
         <ul class="navbar-nav d-flex align-items-center gap-2">
             <!-- Interruptor Tic-Tac Modo Claro / Oscuro -->
@@ -154,7 +159,7 @@ try {
                    href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Centro de Alertas">
                     <i class="bi bi-bell-fill fs-5"></i>
                     <?php if ($totalAlertas > 0): ?>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light nav-alert-badge">
+                        <span class="badge rounded-pill bg-danger nav-alert-badge">
                             <?= $totalAlertas > 99 ? '99+' : $totalAlertas ?>
                             <span class="visually-hidden">alertas pendientes</span>
                         </span>

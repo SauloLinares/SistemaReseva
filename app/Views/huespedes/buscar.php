@@ -158,7 +158,7 @@
                                                         <div class="avatar-circle avatar-xs fw-bold flex-shrink-0 <?= $esVip ? 'avatar-warning' : 'avatar-primary' ?>">
                                                             <?= $iniHf ?>
                                                         </div>
-                                                        <h6 class="fw-bold mb-0 text-truncate text-body mw-140" title="<?= htmlspecialchars($hf['nombres'] . ' ' . $hf['apellidos']) ?>">
+                                                        <h6 class="fw-bold mb-0 text-body nombre-frecuente" title="<?= htmlspecialchars($hf['nombres'] . ' ' . $hf['apellidos']) ?>">
                                                             <?= htmlspecialchars($hf['nombres'] . ' ' . $hf['apellidos']) ?>
                                                         </h6>
                                                     </div>

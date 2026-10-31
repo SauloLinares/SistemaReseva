@@ -36,7 +36,7 @@ if (!empty($estadiasActivas)) {
         <!-- Tarjetas de Estadísticas Principales (KPIs) -->
         <div class="row g-3 mb-4">
             <!-- 1. Total Habitaciones -->
-            <div class="col-12 col-sm-6 col-xl-3">
+            <div class="col-6 col-xl-3">
                 <div class="small-box text-bg-primary h-100">
                     <div class="inner">
                         <h3><?= $conteoHab['total'] ?></h3>
@@ -53,7 +53,7 @@ if (!empty($estadiasActivas)) {
             </div>
 
             <!-- 2. Disponibles vs Ocupadas -->
-            <div class="col-12 col-sm-6 col-xl-3">
+            <div class="col-6 col-xl-3">
                 <div class="small-box text-bg-success h-100">
                     <div class="inner">
                         <h3><?= $disponibles ?> <span class="fs-6 fw-semibold text-body-secondary">/ <?= $ocupadas ?> Ocup.</span></h3>
@@ -73,7 +73,7 @@ if (!empty($estadiasActivas)) {
             </div>
 
             <!-- 3. Movimientos de Hoy -->
-            <div class="col-12 col-sm-6 col-xl-3">
+            <div class="col-6 col-xl-3">
                 <div class="small-box text-bg-warning h-100">
                     <div class="inner">
                         <h3><?= count($reservasHoy) ?></h3>
@@ -90,7 +90,7 @@ if (!empty($estadiasActivas)) {
             </div>
 
             <!-- 4. Ingresos del Día y del Mes -->
-            <div class="col-12 col-sm-6 col-xl-3">
+            <div class="col-6 col-xl-3">
                 <div class="small-box text-bg-info h-100">
                     <div class="inner">
                         <h3><?= dinero($ingresosHoy) ?></h3>

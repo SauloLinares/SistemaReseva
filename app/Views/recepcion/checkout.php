@@ -14,13 +14,11 @@
             <!-- Formulario de Check-out -->
             <div class="col-12 col-lg-6">
                 <div class="card">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0"><i class="bi bi-door-closed text-danger me-2"></i>Procesar Salida de Habitación</h5>
-                    </div>
+                    <?php partial('card_header', ['titulo' => 'Registrar salida de huésped', 'icono' => 'bi-door-closed']) ?>
                     <div class="card-body">
                         <form method="POST" action="<?= url('recepcion/procesarCheckout') ?>">
                             <div class="mb-3">
-                                <label for="estancia_id" class="form-label">Seleccionar Huésped / Habitación Alojada <span class="text-danger">*</span></label>
+                                <label for="estancia_id" class="form-label">Huésped alojado <span class="text-danger">*</span></label>
                                 <select id="estancia_id" name="estancia_id" class="form-select select-search" required onchange="cambiarEstancia(this.value)" placeholder="Escribe el número de habitación, nombre de huésped o código...">
                                     <option value="">-- Seleccionar huésped alojado --</option>
                                     <?php foreach ($activas as $act): ?>
@@ -33,16 +31,17 @@
 
                             <?php if ($estanciaSeleccionada): ?>
                                 <?php if ((float)$estanciaSeleccionada['reserva_saldo'] > 0): ?>
-                                    <div class="alert alert-danger py-3">
-                                        <div class="d-flex justify-content-between align-items-center mb-2">
-                                            <strong><i class="bi bi-exclamation-triangle-fill me-2"></i>Saldo Pendiente de Cobro:</strong>
-                                            <span class="fs-4 fw-bold"><?= dinero($estanciaSeleccionada['reserva_saldo']) ?></span>
+                                    <!-- Hay deuda: es lo único que debe llamar la atención en esta pantalla -->
+                                    <div class="alert alert-danger mb-3">
+                                        <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+                                            <strong><i class="bi bi-exclamation-triangle me-2"></i>Saldo pendiente</strong>
+                                            <span class="fs-5 fw-bold text-nowrap"><?= dinero($estanciaSeleccionada['reserva_saldo']) ?></span>
                                         </div>
-                                        <div class="d-flex gap-2">
-                                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modalCobroRapido">
-                                                <i class="bi bi-cash-coin me-1"></i> Cobrar Ahora en Caja
+                                        <div class="d-flex flex-wrap align-items-center gap-3">
+                                            <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modalCobroRapido">
+                                                <i class="bi bi-cash-coin me-1"></i>Cobrar ahora
                                             </button>
-                                            <div class="form-check align-self-center ms-2">
+                                            <div class="form-check mb-0">
                                                 <input class="form-check-input" type="checkbox" name="confirmar_saldo" value="1" id="checkSaldo">
                                                 <label class="form-check-label small" for="checkSaldo">
                                                     Permitir salida con saldo pendiente
@@ -51,26 +50,23 @@
                                         </div>
                                     </div>
                                 <?php else: ?>
-                                    <div class="alert alert-success py-2 small d-flex align-items-center">
-                                        <i class="bi bi-check-circle-fill me-2 fs-5"></i>
-                                        <div><strong>¡Cuenta al día!</strong> No existen saldos pendientes por concepto de habitación.</div>
-                                    </div>
+                                    <p class="text-success small mb-3"><i class="bi bi-check2-circle me-1"></i>Cuenta al día: no hay saldo pendiente.</p>
                                 <?php endif; ?>
                             <?php endif; ?>
 
                             <div class="mb-3">
-                                <label for="observaciones" class="form-label">Observaciones de Salida / Estado de la Habitación</label>
+                                <label for="observaciones" class="form-label">Observaciones / estado de la habitación</label>
                                 <textarea id="observaciones" name="observaciones" class="form-control" rows="3" placeholder="Ej: Se recibieron todas las llaves, toallas completas, sin desperfectos..."></textarea>
                             </div>
 
-                            <div class="alert alert-info py-2 small d-flex align-items-center">
-                                <i class="bi bi-stars me-2 fs-5"></i>
-                                <div>Al confirmar, la habitación pasará automáticamente a estado <strong>LIMPIEZA</strong> y se generará una orden para el personal de limpieza.</div>
+                            <div class="alert alert-info py-2 small d-flex align-items-center gap-2 mb-0">
+                                <i class="bi bi-info-circle fs-5 flex-shrink-0"></i>
+                                <div>Al confirmar, la habitación pasa a <strong>Limpieza</strong> y se crea la orden para housekeeping.</div>
                             </div>
 
                             <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-danger btn-lg">
-                                    <i class="bi bi-box-arrow-right me-2"></i>Finalizar Estadía y Liberar Habitación
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Confirmar Check-out
                                 </button>
                             </div>
                         </form>
@@ -82,60 +78,59 @@
             <div class="col-12 col-lg-6">
                 <?php if ($estanciaSeleccionada): ?>
                     <div class="card">
-                        <div class="card-header">
-                            <h5 class="card-title mb-0">
-                                <i class="bi bi-door-open me-2"></i>Habitación <?= htmlspecialchars($estanciaSeleccionada['habitacion_numero']) ?> (Piso <?= $estanciaSeleccionada['piso'] ?>)
-                            </h5>
-                        </div>
+                        <?php partial('card_header', [
+                            'titulo' => 'Hab. ' . $estanciaSeleccionada['habitacion_numero'] . ' · Piso ' . $estanciaSeleccionada['piso'],
+                            'icono'  => 'bi-door-open',
+                        ]) ?>
                         <div class="card-body">
-                            <h5 class="fw-bold mb-1"><?= htmlspecialchars($estanciaSeleccionada['huesped_nombre']) ?></h5>
-                            <div class="text-muted small mb-3">
-                                Documento: <?= htmlspecialchars($estanciaSeleccionada['numero_documento']) ?> | Tel: <?= htmlspecialchars($estanciaSeleccionada['telefono'] ?: 'N/A') ?>
+                            <h5 class="fw-bold mb-1"><?= e($estanciaSeleccionada['huesped_nombre']) ?></h5>
+                            <div class="text-body-secondary small mb-3">
+                                <?= e($estanciaSeleccionada['numero_documento']) ?> · Tel. <?= e($estanciaSeleccionada['telefono'] ?: 'N/A') ?>
                             </div>
 
                             <div class="row g-2 mb-3">
                                 <div class="col-6">
                                     <div class="p-2 border rounded bg-body-secondary">
-                                        <small class="text-muted d-block">Ingreso Registrado:</small>
-                                        <strong class="text-success"><i class="bi bi-clock me-1"></i><?= fecha_es($estanciaSeleccionada['fecha_checkin'], true) ?></strong>
+                                        <small class="text-body-secondary d-block">Ingreso registrado</small>
+                                        <strong><i class="bi bi-box-arrow-in-right text-success me-1"></i><?= fecha_es($estanciaSeleccionada['fecha_checkin'], true) ?></strong>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="p-2 border rounded bg-body-secondary">
-                                        <small class="text-muted d-block">Código de Reserva:</small>
-                                        <strong class="text-primary"><?= htmlspecialchars($estanciaSeleccionada['codigo_reserva']) ?></strong>
+                                        <small class="text-body-secondary d-block">Código de reserva</small>
+                                        <strong class="font-monospace"><?= e($estanciaSeleccionada['codigo_reserva']) ?></strong>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="p-3 bg-body-secondary rounded border mb-3">
                                 <div class="d-flex justify-content-between mb-1">
-                                    <span>Costo Total Reserva:</span>
-                                    <span class="fw-bold"><?= dinero($estanciaSeleccionada['reserva_total']) ?></span>
+                                    <span>Total de la reserva</span>
+                                    <span class="fw-semibold"><?= dinero($estanciaSeleccionada['reserva_total']) ?></span>
                                 </div>
-                                <div class="d-flex justify-content-between mb-1 text-success">
-                                    <span>Total Pagado:</span>
-                                    <span class="fw-bold"><?= dinero($estanciaSeleccionada['anticipo']) ?></span>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <span>Pagado</span>
+                                    <span class="fw-semibold"><?= dinero($estanciaSeleccionada['anticipo']) ?></span>
                                 </div>
                                 <hr class="my-2">
                                 <div class="d-flex justify-content-between">
-                                    <span class="fw-bold">Saldo Pendiente:</span>
+                                    <span class="fw-bold">Saldo</span>
                                     <span class="fw-bold fs-5 <?= ((float)$estanciaSeleccionada['reserva_saldo'] > 0) ? 'text-danger' : 'text-success' ?>">
                                         <?= dinero($estanciaSeleccionada['reserva_saldo']) ?>
                                     </span>
                                 </div>
                             </div>
 
-                            <a href="<?= url('reservas/editar/' . $estanciaSeleccionada['reserva_id']) ?>" class="btn btn-outline-primary btn-sm w-100">
-                                <i class="bi bi-card-text me-1"></i> Ver Cuenta Completa de la Reserva
+                            <a href="<?= url('reservas/editar/' . $estanciaSeleccionada['reserva_id']) ?>" class="btn btn-outline-secondary btn-sm w-100">
+                                <i class="bi bi-card-text me-1"></i>Ver cuenta completa
                             </a>
                         </div>
                     </div>
                 <?php else: ?>
-                    <div class="card border-dashed text-center p-5 text-muted">
-                        <i class="bi bi-box-arrow-right display-3 mb-3 text-secondary"></i>
-                        <h5>Selecciona un huésped o habitación para realizar el Check-out</h5>
-                        <p class="small">El formulario cargará el saldo pendiente y el tiempo de estadía transcurrido.</p>
+                    <div class="empty-state">
+                        <i class="bi bi-box-arrow-right"></i>
+                        <p class="fw-semibold mb-1">Ningún huésped seleccionado</p>
+                        <p class="mb-0">Elige un huésped alojado para ver su saldo y su estadía.</p>
                     </div>
                 <?php endif; ?>
             </div>

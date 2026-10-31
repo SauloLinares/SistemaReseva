@@ -23,38 +23,46 @@
                         <input id="hasta" type="date" name="hasta" class="form-control form-control-sm" value="<?= htmlspecialchars($hasta) ?>">
                     </div>
                     <div class="col-12 col-md-4 d-flex gap-2">
-                        <button type="submit" class="btn btn-sm btn-primary w-100"><i class="bi bi-funnel me-1"></i> Filtrar Período</button>
-                        <a href="<?= url('reportes/ingresos') ?>" class="btn btn-sm btn-outline-secondary">Mes Actual</a>
+                        <button type="submit" class="btn btn-sm btn-primary flex-grow-1 text-nowrap"><i class="bi bi-funnel me-1"></i>Filtrar</button>
+                        <a href="<?= url('reportes/ingresos') ?>" class="btn btn-sm btn-outline-secondary text-nowrap">Mes actual</a>
                     </div>
                 </form>
             </div>
         </div>
 
-        <!-- Resumen por Método de Pago -->
+        <!-- Resumen: total y reparto por método de pago -->
         <div class="row g-3 mb-4">
-            <div class="col-12 col-md-4">
-                <div class="card bg-success text-white p-3 shadow-xs h-100">
-                    <small class="text-uppercase fw-semibold opacity-75">Total Ingresos Netos</small>
-                    <h2 class="fw-bold mb-0 mt-1"><?= dinero($totalIngresos) ?></h2>
-                    <small class="opacity-75 mt-2 d-block"><?= count($pagos) ?> operaciones registradas</small>
+            <div class="col-12 col-lg-4">
+                <div class="small-box text-bg-success h-100">
+                    <div class="inner">
+                        <h3><?= dinero($totalIngresos) ?></h3>
+                        <p class="mb-1">Ingresos netos del período</p>
+                        <small><?= count($pagos) ?> operaciones registradas</small>
+                    </div>
+                    <div class="small-box-icon"><i class="bi bi-cash-stack"></i></div>
                 </div>
             </div>
-            <div class="col-12 col-md-8">
+            <div class="col-12 col-lg-8">
                 <div class="card h-100">
-                    <div class="card-header py-2">
-                        <h6 class="card-title mb-0 small text-uppercase">Distribución por Método de Pago</h6>
-                    </div>
-                    <div class="card-body p-2">
-                        <div class="row g-2">
+                    <?php partial('card_header', ['titulo' => 'Distribución por método de pago', 'icono' => 'bi-pie-chart']) ?>
+                    <div class="card-body">
+                        <?php if (empty($porMetodo) || $totalIngresos <= 0): ?>
+                            <p class="text-body-secondary mb-0">Sin cobros en el período.</p>
+                        <?php else: ?>
+                            <?php arsort($porMetodo); ?>
                             <?php foreach ($porMetodo as $metodo => $monto): ?>
-                                <div class="col-6 col-sm-4">
-                                    <div class="border rounded p-2 text-center bg-light">
-                                        <small class="text-muted d-block"><?= htmlspecialchars($metodo) ?></small>
-                                        <span class="fw-bold text-success"><?= dinero($monto) ?></span>
+                                <?php $porcentaje = round(((float) $monto / (float) $totalIngresos) * 100, 1); ?>
+                                <div class="barra-metodo">
+                                    <div class="d-flex justify-content-between small mb-1">
+                                        <span><?= e($metodo) ?></span>
+                                        <span class="text-nowrap"><strong><?= dinero($monto) ?></strong> <span class="text-body-secondary">· <?= $porcentaje ?>%</span></span>
+                                    </div>
+                                    <div class="progress progress-sm" role="progressbar" aria-label="<?= e($metodo) ?>" aria-valuenow="<?= $porcentaje ?>" aria-valuemin="0" aria-valuemax="100">
+                                        <div class="progress-bar" style="width: <?= $porcentaje ?>%"></div>
                                     </div>
                                 </div>
                             <?php endforeach; ?>
-                        </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -82,14 +90,14 @@
                         <tbody>
                             <?php foreach ($pagos as $p): ?>
                                 <tr>
-                                    <td><?= fecha_es($p['fecha_pago'], true) ?></td>
-                                    <td><strong><?= htmlspecialchars($p['comprobante_tipo'] . ' ' . $p['comprobante_numero']) ?></strong></td>
-                                    <td><?= htmlspecialchars($p['codigo_reserva']) ?></td>
-                                    <td><?= htmlspecialchars($p['huesped_nombre']) ?></td>
-                                    <td><span class="badge badge-soft-secondary"><?= htmlspecialchars($p['metodo_pago']) ?></span></td>
-                                    <td><span class="badge badge-soft-secondary text-uppercase"><?= htmlspecialchars($p['tipo']) ?></span></td>
-                                    <td class="text-end pe-3 fw-bold <?= ($p['tipo'] === 'devolucion') ? 'text-danger' : 'text-success' ?>">
-                                        <?= ($p['tipo'] === 'devolucion' ? '-' : '+') . dinero($p['monto']) ?>
+                                    <td class="text-nowrap"><?= fecha_es($p['fecha_pago'], true) ?></td>
+                                    <td class="text-nowrap"><span class="fw-semibold"><?= e($p['comprobante_tipo']) ?></span> <small class="text-body-secondary font-monospace"><?= e($p['comprobante_numero']) ?></small></td>
+                                    <td class="text-nowrap font-monospace"><?= e($p['codigo_reserva']) ?></td>
+                                    <td class="text-nowrap"><?= e($p['huesped_nombre']) ?></td>
+                                    <td class="text-nowrap"><?= e($p['metodo_pago']) ?></td>
+                                    <td><span class="badge <?= $p['tipo'] === 'devolucion' ? 'badge-soft-danger' : ($p['tipo'] === 'anticipo' ? 'badge-soft-info' : 'badge-soft-success') ?> text-capitalize"><?= e($p['tipo']) ?></span></td>
+                                    <td class="text-end pe-3 text-nowrap fw-semibold <?= ($p['tipo'] === 'devolucion') ? 'text-danger' : 'text-success' ?>">
+                                        <?= ($p['tipo'] === 'devolucion' ? '−' : '+') . ' ' . dinero($p['monto']) ?>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

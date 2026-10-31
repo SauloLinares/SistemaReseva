@@ -90,35 +90,30 @@
                 <?php else: ?>
                     <div class="row g-3">
                         <?php foreach ($habitacionesDisponibles as $h): ?>
-                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-                                <div class="card h-100 border shadow-xs room-card-modern is-available">
-                                    <div class="card-header d-flex justify-content-between align-items-center py-2 border-bottom">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <span class="pulse-dot pulse-dot-disponible"></span>
-                                            <span class="fw-bold fs-5 text-body-emphasis">Hab. <?= htmlspecialchars($h['numero']) ?></span>
-                                        </div>
-                                        <span class="badge badge-soft-secondary text-2xs">
-                                            Piso <?= htmlspecialchars($h['piso']) ?>
-                                        </span>
+                            <div class="col-12 col-sm-6 col-lg-4 col-xxl-3">
+                                <?php
+                                    $capacidad = (int) $h['capacidad'];
+                                    $caracteristicas = $h['caracteristicas'] ?: 'Wi-Fi, TV, Baño Privado';
+                                ?>
+                                <!-- Mismo patrón de tarjeta que el panel y Estado de Habitaciones -->
+                                <div class="card room-card-modern room-state-disponible h-100 p-3 d-flex flex-column">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="room-card-numero text-nowrap">Hab. <?= e($h['numero']) ?></span>
+                                        <span class="room-floor-badge">Piso <?= e($h['piso']) ?></span>
                                     </div>
-                                    <div class="card-body d-flex flex-column justify-content-between">
-                                        <div>
-                                            <h6 class="card-title text-body-emphasis mb-1"><?= htmlspecialchars($h['tipo_nombre']) ?></h6>
-                                            <div class="text-muted small mb-2">
-                                                <i class="bi bi-people me-1 text-primary"></i>Hasta <?= $h['capacidad'] ?> personas
-                                            </div>
-                                            <div class="small text-muted mb-3">
-                                                <i class="bi bi-check2-circle text-success me-1"></i><?= htmlspecialchars($h['caracteristicas'] ?: 'Wi-Fi, TV, Baño Privado') ?>
-                                            </div>
+                                    <div class="fw-semibold"><?= e($h['tipo_nombre']) ?></div>
+                                    <div class="text-sm text-body-secondary mb-2">
+                                        <i class="bi bi-people me-1"></i>Hasta <?= $capacidad ?> <?= $capacidad === 1 ? 'persona' : 'personas' ?>
+                                    </div>
+                                    <p class="text-sm text-body-secondary text-clamp-2 mw-100 mb-3" title="<?= e($caracteristicas) ?>"><?= e($caracteristicas) ?></p>
+                                    <div class="mt-auto">
+                                        <div class="mb-2 text-nowrap">
+                                            <strong class="fs-5 text-body-emphasis"><?= dinero($h['precio_diario']) ?></strong>
+                                            <span class="text-body-secondary text-sm">/ noche</span>
                                         </div>
-                                        <div>
-                                            <div class="fs-4 fw-bold text-success mb-2">
-                                                <?= dinero($h['precio_diario']) ?> <small class="fs-6 text-muted fw-normal">/ noche</small>
-                                            </div>
-                                            <a href="<?= url('reservas/crear?hab_id=' . $h['id'] . '&entrada=' . $entrada . '&salida=' . $salida) ?>" class="btn btn-primary btn-sm w-100">
-                                                <i class="bi bi-calendar-plus me-1"></i> Reservar Habitación
-                                            </a>
-                                        </div>
+                                        <a href="<?= url('reservas/crear?hab_id=' . $h['id'] . '&entrada=' . $entrada . '&salida=' . $salida) ?>" class="btn btn-primary btn-sm w-100">
+                                            <i class="bi bi-calendar-plus me-1"></i>Reservar
+                                        </a>
                                     </div>
                                 </div>
                             </div>
