@@ -3,37 +3,33 @@
     'icono'     => 'bi-credit-card-2-front',
     'subtitulo' => 'Historial de pagos, ingresos de caja y comprobantes tributarios',
     'acciones'  => [
-        ['texto' => 'Registrar Pago', 'url' => 'pagos/crear', 'icono' => 'bi-cash-coin', 'variante' => 'success'],
-        ['texto' => 'Saldos Pendientes', 'url' => 'pagos/pendientes', 'icono' => 'bi-exclamation-circle', 'variante' => 'outline-danger'],
-        ['texto' => 'Anticipos', 'url' => 'pagos/anticipos', 'icono' => 'bi-wallet2', 'variante' => 'outline-primary'],
+        ['texto' => 'Saldos Pendientes', 'url' => 'pagos/pendientes', 'icono' => 'bi-exclamation-circle', 'variante' => 'outline-secondary'],
+        ['texto' => 'Anticipos', 'url' => 'pagos/anticipos', 'icono' => 'bi-wallet2', 'variante' => 'outline-secondary'],
+        ['texto' => 'Registrar Pago', 'url' => 'pagos/crear', 'icono' => 'bi-cash-coin'],
     ],
 ]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
-        <!-- Tarjetas de Caja -->
+        <!-- Resumen de ingresos -->
         <div class="row g-3 mb-4">
             <div class="col-12 col-md-6">
-                <div class="card bg-success-subtle border-success text-success-emphasis p-3 shadow-xs">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <small class="fw-semibold text-uppercase">Ingresos Cobrados Hoy</small>
-                            <h2 class="fw-bold mb-0 mt-1"><?= dinero($ingresosHoy) ?></h2>
-                        </div>
-                        <i class="bi bi-cash-stack display-4 opacity-50"></i>
+                <div class="small-box text-bg-success h-100">
+                    <div class="inner">
+                        <h3><?= dinero($ingresosHoy) ?></h3>
+                        <p class="mb-0">Ingresos cobrados hoy</p>
                     </div>
+                    <div class="small-box-icon"><i class="bi bi-cash-stack"></i></div>
                 </div>
             </div>
             <div class="col-12 col-md-6">
-                <div class="card bg-info-subtle border-info text-info-emphasis p-3 shadow-xs">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <small class="fw-semibold text-uppercase">Ingresos Totales del Mes</small>
-                            <h2 class="fw-bold mb-0 mt-1"><?= dinero($ingresosMes) ?></h2>
-                        </div>
-                        <i class="bi bi-calendar2-check display-4 opacity-50"></i>
+                <div class="small-box text-bg-info h-100">
+                    <div class="inner">
+                        <h3><?= dinero($ingresosMes) ?></h3>
+                        <p class="mb-0">Ingresos totales del mes</p>
                     </div>
+                    <div class="small-box-icon"><i class="bi bi-calendar2-check"></i></div>
                 </div>
             </div>
         </div>
@@ -48,52 +44,58 @@
                     <table class="table table-hover align-middle mb-0 datatable-init">
                         <thead class="table-light">
                             <tr>
-                                <th># Comprobante</th>
-                                <th>Tipo</th>
+                                <th>Comprobante</th>
                                 <th>Reserva</th>
                                 <th>Huésped</th>
-                                <th>Método de Pago</th>
-                                <th>Monto</th>
-                                <th>Fecha y Hora</th>
-                                <th>Concepto / Notas</th>
+                                <th>Método</th>
+                                <th class="text-end">Monto</th>
+                                <th>Fecha</th>
+                                <th>Concepto</th>
                                 <th class="text-end pe-3">Acción</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (empty($pagos)): ?>
-                                <tr><td colspan="9" class="text-center py-4 text-muted">No se registran pagos en el sistema.</td></tr>
+                                <tr><td colspan="8" class="text-center py-4 text-muted">No se registran pagos en el sistema.</td></tr>
                             <?php else: ?>
                                 <?php foreach ($pagos as $p): ?>
+                                    <?php
+                                        $esDevolucion = ($p['tipo'] === 'devolucion');
+                                        $badgeTipo = match ($p['tipo']) {
+                                            'devolucion' => 'badge-soft-danger',
+                                            'anticipo'   => 'badge-soft-info',
+                                            default      => 'badge-soft-success',
+                                        };
+                                    ?>
                                     <tr>
-                                        <td>
-                                            <span class="fw-bold text-body-emphasis"><?= htmlspecialchars($p['comprobante_tipo']) ?></span>
-                                            <small class="d-block text-primary fw-semibold"><?= htmlspecialchars($p['comprobante_numero']) ?></small>
+                                        <td class="text-nowrap">
+                                            <div class="fw-semibold">
+                                                <?= e($p['comprobante_tipo']) ?>
+                                                <span class="badge <?= $badgeTipo ?> text-capitalize ms-1"><?= e($p['tipo']) ?></span>
+                                            </div>
+                                            <small class="text-body-secondary font-monospace"><?= e($p['comprobante_numero']) ?></small>
                                         </td>
-                                        <td>
-                                            <span class="badge <?= ($p['tipo'] === 'devolucion') ? 'text-bg-danger' : (($p['tipo'] === 'anticipo') ? 'text-bg-info text-white' : 'text-bg-success') ?> text-uppercase">
-                                                <?= htmlspecialchars($p['tipo']) ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <a href="<?= url('reservas/editar/' . $p['reserva_id']) ?>" class="badge text-bg-light border text-decoration-none">
-                                                <?= htmlspecialchars($p['codigo_reserva']) ?>
+                                        <td class="text-nowrap">
+                                            <a href="<?= url('reservas/editar/' . $p['reserva_id']) ?>" class="fw-semibold font-monospace text-decoration-none">
+                                                <?= e($p['codigo_reserva']) ?>
                                             </a>
                                         </td>
                                         <td>
-                                            <div class="fw-semibold"><?= htmlspecialchars($p['huesped_nombre']) ?></div>
-                                            <small class="text-muted"><?= htmlspecialchars($p['numero_documento']) ?></small>
+                                            <div class="fw-semibold text-nowrap"><?= e($p['huesped_nombre']) ?></div>
+                                            <small class="text-body-secondary"><?= e($p['numero_documento']) ?></small>
                                         </td>
-                                        <td><span class="badge text-bg-light border"><?= htmlspecialchars($p['metodo_pago']) ?></span></td>
+                                        <td class="text-nowrap"><?= e($p['metodo_pago']) ?></td>
+                                        <td class="text-end text-nowrap fw-semibold <?= $esDevolucion ? 'text-danger' : 'text-success' ?>">
+                                            <?= ($esDevolucion ? '−' : '+') . ' ' . dinero($p['monto']) ?>
+                                        </td>
+                                        <td class="text-nowrap"><?= fecha_es($p['fecha_pago'], true) ?></td>
                                         <td>
-                                            <span class="fs-6 fw-bold <?= ($p['tipo'] === 'devolucion') ? 'text-danger' : 'text-success' ?>">
-                                                <?= ($p['tipo'] === 'devolucion' ? '-' : '+') . dinero($p['monto']) ?>
-                                            </span>
+                                            <?php $notas = $p['notas'] ?: '-'; ?>
+                                            <span class="text-body-secondary text-clamp-2" title="<?= e($notas) ?>"><?= e($notas) ?></span>
                                         </td>
-                                        <td><small class="text-muted"><?= fecha_es($p['fecha_pago'], true) ?></small></td>
-                                        <td><small class="text-muted"><?= htmlspecialchars($p['notas'] ?: '-') ?></small></td>
                                         <td class="text-end pe-3">
-                                            <a href="<?= url('pagos/comprobante/' . $p['id']) ?>" target="_blank" class="btn btn-sm btn-outline-primary" title="Ver / Imprimir Comprobante">
-                                                <i class="bi bi-printer me-1"></i> Imprimir
+                                            <a href="<?= url('pagos/comprobante/' . $p['id']) ?>" target="_blank" class="btn btn-icon btn-outline-secondary" title="Ver / imprimir comprobante">
+                                                <i class="bi bi-printer"></i>
                                             </a>
                                         </td>
                                     </tr>

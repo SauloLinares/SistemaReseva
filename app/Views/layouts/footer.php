@@ -5,14 +5,12 @@
 ?>
         <!--begin::Footer-->
         <footer class="app-footer">
-            <div class="float-end d-none d-sm-inline">
-                Plantilla Educativa MVC & POO en PHP
+            <div class="float-end d-none d-sm-inline text-body-secondary">
+                Hotel Manager · Sistema de gestión hotelera
             </div>
-            <strong>
-                Copyright &copy; <?= date('Y') ?> 
-                <a href="<?= url() ?>" class="text-decoration-none">Sistema Reserva</a>.
-            </strong>
-            Todos los derechos reservados.
+            &copy; <?= date('Y') ?>
+            <a href="<?= url() ?>" class="text-decoration-none fw-semibold"><?= e($nombreEmpresa ?? 'Hotel Manager') ?></a>.
+            <span class="text-body-secondary">Todos los derechos reservados.</span>
         </footer>
         <!--end::Footer-->
     </div>

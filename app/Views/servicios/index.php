@@ -3,9 +3,9 @@
     'icono'     => 'bi-cup-hot',
     'subtitulo' => 'Catálogo de restaurante, lavandería, bar, spa y traslados',
     'acciones'  => [
-        ['texto' => 'Nuevo Servicio', 'modal' => '#modalServicio', 'icono' => 'bi-plus-circle'],
-        ['texto' => 'Registrar Consumo', 'url' => 'servicios/consumo', 'icono' => 'bi-cart-plus', 'variante' => 'success'],
+        ['texto' => 'Registrar Consumo', 'url' => 'servicios/consumo', 'icono' => 'bi-cart-plus', 'variante' => 'outline-secondary'],
         ['texto' => 'Ver Consumos', 'url' => 'servicios/porHuesped', 'icono' => 'bi-person-lines-fill', 'variante' => 'outline-secondary'],
+        ['texto' => 'Nuevo Servicio', 'modal' => '#modalServicio', 'icono' => 'bi-plus-lg'],
     ],
 ]) ?>
 
@@ -21,12 +21,11 @@
                     <table class="table table-hover align-middle mb-0 datatable-init">
                         <thead class="table-light">
                             <tr>
-                                <th>#</th>
                                 <th>Servicio</th>
                                 <th>Categoría</th>
                                 <th>Descripción</th>
-                                <th>Precio Unitario</th>
-                                <th>Total Consumos</th>
+                                <th class="text-end">Precio</th>
+                                <th class="text-center">Consumos</th>
                                 <th>Estado</th>
                                 <th class="text-end pe-3">Acciones</th>
                             </tr>
@@ -34,18 +33,16 @@
                         <tbody>
                             <?php foreach ($servicios as $s): ?>
                                 <tr>
-                                    <td><?= $s['id'] ?></td>
-                                    <td><strong class="fs-6 text-body-emphasis"><?= htmlspecialchars($s['nombre']) ?></strong></td>
+                                    <td class="fw-semibold"><?= e($s['nombre']) ?></td>
+                                    <td class="text-nowrap text-body-secondary"><?= e($s['categoria']) ?></td>
                                     <td>
-                                        <span class="badge text-bg-light border fw-semibold">
-                                            <?= htmlspecialchars($s['categoria']) ?>
-                                        </span>
+                                        <?php $desc = $s['descripcion'] ?: '-'; ?>
+                                        <span class="text-body-secondary text-clamp-2" title="<?= e($desc) ?>"><?= e($desc) ?></span>
                                     </td>
-                                    <td><small class="text-muted"><?= htmlspecialchars($s['descripcion'] ?: '-') ?></small></td>
-                                    <td><span class="fw-bold fs-6 text-success"><?= dinero($s['precio']) ?></span></td>
-                                    <td><span class="badge text-bg-secondary"><?= $s['total_pedidos'] ?> pedidos</span></td>
+                                    <td class="text-end text-nowrap fw-semibold"><?= dinero($s['precio']) ?></td>
+                                    <td class="text-center"><?= (int) $s['total_pedidos'] ?></td>
                                     <td>
-                                        <?= $s['estado'] ? '<span class="badge text-bg-success">Disponible</span>' : '<span class="badge text-bg-secondary">Deshabilitado</span>' ?>
+                                        <?= $s['estado'] ? '<span class="badge badge-soft-success">Disponible</span>' : '<span class="badge badge-soft-secondary">Deshabilitado</span>' ?>
                                     </td>
                                     <td class="text-end pe-3">
                                         <div class="table-actions">

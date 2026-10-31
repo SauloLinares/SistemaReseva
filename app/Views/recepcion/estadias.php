@@ -3,9 +3,8 @@
     'icono'     => 'bi-journal-bookmark',
     'subtitulo' => 'Supervisión en vivo de huéspedes alojados en el hotel',
     'acciones'  => [
-        ['texto' => 'Check-in', 'url' => 'recepcion/checkin', 'icono' => 'bi-box-arrow-in-right', 'variante' => 'success'],
-        ['texto' => 'Check-out', 'url' => 'recepcion/checkout', 'icono' => 'bi-box-arrow-right', 'variante' => 'outline-danger'],
-        ['texto' => 'Cambiar Habitación', 'url' => 'recepcion/asignacion', 'icono' => 'bi-arrow-left-right', 'variante' => 'outline-primary'],
+        ['texto' => 'Check-out', 'url' => 'recepcion/checkout', 'icono' => 'bi-box-arrow-right', 'variante' => 'outline-secondary'],
+        ['texto' => 'Cambiar Habitación', 'url' => 'recepcion/asignacion', 'icono' => 'bi-arrow-left-right', 'variante' => 'outline-secondary'],
     ],
 ]) ?>
 
@@ -14,11 +13,11 @@
 
         <!-- Estadías Activas -->
         <div class="card mb-4">
-            <div class="card-header bg-success-subtle text-success-emphasis d-flex justify-content-between align-items-center">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0">
-                    <i class="bi bi-door-open-fill me-2"></i>Huéspedes Alojados Actualmente (<?= count($activas) ?>)
+                    <i class="bi bi-door-open me-2"></i>Huéspedes alojados
                 </h5>
-                <span class="badge text-bg-success px-3 py-2">En Casa / En Estadía</span>
+                <span class="badge badge-soft-success"><?= count($activas) ?> en casa</span>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -27,55 +26,56 @@
                             <tr>
                                 <th>Habitación</th>
                                 <th>Huésped</th>
-                                <th>Documento</th>
-                                <th>Fecha Check-in</th>
-                                <th>Salida Prevista</th>
-                                <th>Saldo Pendiente</th>
+                                <th>Check-in</th>
+                                <th>Salida prevista</th>
+                                <th class="text-end">Saldo</th>
                                 <th>Observaciones</th>
-                                <th class="text-end pe-3">Acciones de Recepción</th>
+                                <th class="text-end pe-3">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (empty($activas)): ?>
-                                <tr><td colspan="8" class="text-center py-4 text-muted">No hay huéspedes alojados en este momento.</td></tr>
+                                <tr><td colspan="7" class="text-center py-4 text-muted">No hay huéspedes alojados en este momento.</td></tr>
                             <?php else: ?>
                                 <?php foreach ($activas as $act): ?>
                                     <tr>
-                                        <td>
-                                            <span class="fs-5 fw-bold text-primary">Hab. <?= htmlspecialchars($act['habitacion_numero']) ?></span>
-                                            <small class="text-muted d-block"><?= htmlspecialchars($act['tipo_nombre']) ?> - Piso <?= $act['piso'] ?></small>
+                                        <td class="text-nowrap">
+                                            <div class="fw-semibold">Hab. <?= e($act['habitacion_numero']) ?></div>
+                                            <small class="text-body-secondary"><?= e($act['tipo_nombre']) ?> · Piso <?= e($act['piso']) ?></small>
                                         </td>
                                         <td>
-                                            <div class="fw-bold"><?= htmlspecialchars($act['huesped_nombre']) ?></div>
-                                            <small class="text-muted"><i class="bi bi-globe me-1"></i><?= htmlspecialchars($act['nacionalidad'] ?: 'Perú') ?></small>
+                                            <div class="fw-semibold text-nowrap"><?= e($act['huesped_nombre']) ?></div>
+                                            <small class="text-body-secondary text-nowrap"><?= e($act['numero_documento']) ?> · <?= e($act['nacionalidad'] ?: 'Perú') ?></small>
                                         </td>
-                                        <td><span class="badge text-bg-light border"><?= htmlspecialchars($act['numero_documento']) ?></span></td>
-                                        <td><span class="text-success fw-semibold"><i class="bi bi-clock me-1"></i><?= fecha_es($act['fecha_checkin'], true) ?></span></td>
-                                        <td><span class="text-danger fw-semibold"><?= fecha_es($act['fecha_salida']) ?></span></td>
-                                        <td>
+                                        <td class="text-nowrap"><?= fecha_es($act['fecha_checkin'], true) ?></td>
+                                        <td class="text-nowrap"><?= fecha_es($act['fecha_salida']) ?></td>
+                                        <td class="text-end text-nowrap">
                                             <?php if ((float)$act['reserva_saldo'] > 0): ?>
-                                                <span class="badge text-bg-danger fs-6"><?= dinero($act['reserva_saldo']) ?></span>
+                                                <span class="fw-semibold text-danger"><?= dinero($act['reserva_saldo']) ?></span>
                                             <?php else: ?>
-                                                <span class="badge text-bg-success"><i class="bi bi-check2"></i> Al día</span>
+                                                <span class="text-success"><i class="bi bi-check2-circle me-1"></i>Al día</span>
                                             <?php endif; ?>
                                         </td>
-                                        <td><small class="text-muted"><?= htmlspecialchars($act['observaciones'] ?: '-') ?></small></td>
+                                        <td>
+                                            <?php $obs = $act['observaciones'] ?: '-'; ?>
+                                            <span class="text-body-secondary text-clamp-2" title="<?= e($obs) ?>"><?= e($obs) ?></span>
+                                        </td>
                                         <td class="text-end pe-3">
                                             <div class="table-actions">
-                                                <a href="<?= url('recepcion/checkout?id=' . $act['id']) ?>" class="btn btn-outline-danger" title="Realizar Check-out">
-                                                    <i class="bi bi-box-arrow-right me-1"></i> Check-out
-                                                </a>
-                                                <button type="button" class="btn btn-outline-primary btn-abrir-consumo" 
+                                                <button type="button" class="btn btn-icon btn-outline-primary btn-abrir-consumo"
                                                         data-bs-toggle="modal" 
                                                         data-bs-target="#modalCargarConsumo"
                                                         data-reserva-id="<?= $act['reserva_id'] ?>"
                                                         data-habitacion="<?= htmlspecialchars($act['habitacion_numero']) ?>"
                                                         data-huesped="<?= htmlspecialchars($act['huesped_nombre']) ?>"
-                                                        title="Cargar Consumo / Room Service">
-                                                    <i class="bi bi-cart-plus me-1"></i> Consumo
+                                                        title="Cargar consumo / room service">
+                                                    <i class="bi bi-cart-plus"></i>
                                                 </button>
-                                                <a href="<?= url('reservas/editar/' . $act['reserva_id']) ?>" class="btn btn-icon btn-outline-secondary" title="Ver Cuenta">
+                                                <a href="<?= url('reservas/editar/' . $act['reserva_id']) ?>" class="btn btn-icon btn-outline-secondary" title="Ver cuenta">
                                                     <i class="bi bi-card-text"></i>
+                                                </a>
+                                                <a href="<?= url('recepcion/checkout?id=' . $act['id']) ?>" class="btn btn-sm btn-outline-danger text-nowrap" title="Realizar check-out">
+                                                    <i class="bi bi-box-arrow-right me-1"></i>Check-out
                                                 </a>
                                             </div>
                                         </td>
@@ -91,36 +91,39 @@
         <!-- Historial de Estadías Pasadas -->
         <div class="card">
             <div class="card-header">
-                <h6 class="card-title mb-0"><i class="bi bi-clock-history me-2"></i>Historial de Salidas / Estadías Finalizadas</h6>
+                <h5 class="card-title mb-0"><i class="bi bi-clock-history me-2"></i>Historial de estadías</h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-sm table-hover align-middle mb-0">
+                    <table class="table table-hover align-middle mb-0">
                         <thead class="table-light">
                             <tr>
                                 <th>#</th>
                                 <th>Habitación</th>
                                 <th>Huésped</th>
                                 <th>Ingreso</th>
-                                <th>Salida Efectiva</th>
+                                <th>Salida efectiva</th>
                                 <th>Estado</th>
-                                <th>Detalle</th>
+                                <th>Observaciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php foreach ($historial as $h): ?>
                                 <tr>
-                                    <td><?= $h['id'] ?></td>
-                                    <td><strong>Hab. <?= htmlspecialchars($h['habitacion_numero']) ?></strong> (<?= htmlspecialchars($h['tipo_nombre']) ?>)</td>
-                                    <td><?= htmlspecialchars($h['huesped_nombre']) ?></td>
-                                    <td><?= fecha_es($h['fecha_checkin'], true) ?></td>
-                                    <td><?= fecha_es($h['fecha_checkout'], true) ?></td>
+                                    <td class="text-body-secondary"><?= (int) $h['id'] ?></td>
+                                    <td class="text-nowrap"><span class="fw-semibold">Hab. <?= e($h['habitacion_numero']) ?></span> <small class="text-body-secondary"><?= e($h['tipo_nombre']) ?></small></td>
+                                    <td class="text-nowrap"><?= e($h['huesped_nombre']) ?></td>
+                                    <td class="text-nowrap"><?= fecha_es($h['fecha_checkin'], true) ?></td>
+                                    <td class="text-nowrap"><?= !empty($h['fecha_checkout']) ? fecha_es($h['fecha_checkout'], true) : '—' ?></td>
                                     <td>
-                                        <span class="badge <?= ($h['estado'] === 'activa') ? 'text-bg-success' : 'text-bg-secondary' ?>">
-                                            <?= htmlspecialchars(ucfirst($h['estado'])) ?>
+                                        <span class="badge <?= ($h['estado'] === 'activa') ? 'badge-soft-success' : 'badge-soft-secondary' ?>">
+                                            <?= e(ucfirst($h['estado'])) ?>
                                         </span>
                                     </td>
-                                    <td><small class="text-muted"><?= htmlspecialchars($h['observaciones'] ?: '-') ?></small></td>
+                                    <td>
+                                        <?php $obs = $h['observaciones'] ?: '-'; ?>
+                                        <span class="text-body-secondary text-clamp-2" title="<?= e($obs) ?>"><?= e($obs) ?></span>
+                                    </td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>

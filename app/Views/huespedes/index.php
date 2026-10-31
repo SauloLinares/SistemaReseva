@@ -42,13 +42,11 @@
                     <table class="table table-hover align-middle mb-0 datatable-init">
                         <thead class="table-light">
                             <tr>
-                                <th>#</th>
-                                <th>Documento</th>
                                 <th>Huésped</th>
                                 <th>Contacto</th>
                                 <th>Nacionalidad</th>
-                                <th>Total Reservas</th>
-                                <th>Última Estadía</th>
+                                <th class="text-center">Reservas</th>
+                                <th>Última estadía</th>
                                 <th>Estado</th>
                                 <th class="text-end pe-3">Acciones</th>
                             </tr>
@@ -56,39 +54,29 @@
                         <tbody>
                             <?php if (empty($huespedes)): ?>
                                 <tr>
-                                    <td colspan="9" class="text-center py-4 text-muted">
+                                    <td colspan="7" class="text-center py-4 text-muted">
                                         No se encontraron huéspedes registrados.
                                     </td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($huespedes as $h): ?>
                                     <tr>
-                                        <td><?= $h['id'] ?></td>
                                         <td>
-                                            <span class="badge text-bg-light border fw-bold">
-                                                <?= htmlspecialchars($h['tipo_documento']) ?>: <?= htmlspecialchars($h['numero_documento']) ?>
-                                            </span>
+                                            <div class="fw-semibold text-nowrap"><?= e($h['nombres'] . ' ' . $h['apellidos']) ?></div>
+                                            <small class="text-body-secondary text-nowrap"><?= e($h['tipo_documento']) ?> <?= e($h['numero_documento']) ?></small>
                                         </td>
-                                        <td>
-                                            <div class="fw-bold"><?= htmlspecialchars($h['nombres'] . ' ' . $h['apellidos']) ?></div>
-                                            <small class="text-muted"><?= htmlspecialchars($h['direccion'] ?: 'Sin dirección') ?></small>
+                                        <td class="text-nowrap">
+                                            <div><?= e($h['telefono'] ?: '-') ?></div>
+                                            <small class="text-body-secondary"><?= e($h['correo'] ?: '-') ?></small>
                                         </td>
-                                        <td>
-                                            <div><i class="bi bi-telephone me-1 text-muted"></i><?= htmlspecialchars($h['telefono'] ?: '-') ?></div>
-                                            <small class="text-muted"><i class="bi bi-envelope me-1"></i><?= htmlspecialchars($h['correo'] ?: '-') ?></small>
-                                        </td>
-                                        <td>
-                                            <span class="badge text-bg-secondary-subtle text-secondary-emphasis">
-                                                <?= htmlspecialchars($h['nacionalidad'] ?: 'Perú') ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <a href="<?= url('huespedes/historial/' . $h['id']) ?>" class="badge text-bg-primary text-decoration-none" title="Ver historial">
-                                                <?= $h['total_reservas'] ?> reservas
+                                        <td class="text-nowrap"><?= e($h['nacionalidad'] ?: 'Perú') ?></td>
+                                        <td class="text-center">
+                                            <a href="<?= url('huespedes/historial/' . $h['id']) ?>" class="fw-semibold text-decoration-none" title="Ver historial de estadías">
+                                                <?= (int) $h['total_reservas'] ?>
                                             </a>
                                         </td>
-                                        <td>
-                                            <small class="text-muted"><?= fecha_es($h['ultima_estadia']) ?></small>
+                                        <td class="text-nowrap">
+                                            <?= !empty($h['ultima_estadia']) ? fecha_es($h['ultima_estadia']) : '<span class="text-body-secondary">—</span>' ?>
                                         </td>
                                         <td>
                                             <?= $h['estado'] ? '<span class="badge badge-status-switch active">Activo</span>' : '<span class="badge badge-status-switch inactive">Inactivo</span>' ?>

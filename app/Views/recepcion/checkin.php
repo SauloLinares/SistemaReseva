@@ -4,7 +4,7 @@
     'subtitulo' => 'Registro de ingreso de huéspedes y entrega de habitaciones',
     'acciones'  => [
         ['texto' => 'Control de Estadías', 'url' => 'recepcion/estadias', 'icono' => 'bi-journal-bookmark', 'variante' => 'outline-secondary'],
-        ['texto' => 'Nueva Reserva Inmediata', 'url' => 'reservas/crear', 'icono' => 'bi-calendar-plus'],
+        ['texto' => 'Nueva Reserva', 'url' => 'reservas/crear', 'icono' => 'bi-calendar-plus', 'variante' => 'outline-secondary'],
     ],
 ]) ?>
 
@@ -14,14 +14,12 @@
         <div class="row g-4">
             <!-- Formulario de Check-in -->
             <div class="col-12 col-lg-6">
-                <div class="card border-top border-4 border-success">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0"><i class="bi bi-key-fill text-success me-2"></i>Registrar Ingreso de Huésped</h5>
-                    </div>
+                <div class="card">
+                    <?php partial('card_header', ['titulo' => 'Registrar ingreso de huésped', 'icono' => 'bi-key']) ?>
                     <div class="card-body">
                         <form method="POST" action="<?= url('recepcion/procesarCheckin') ?>">
                             <div class="mb-3">
-                                <label class="form-label">Seleccionar Reserva Programada <span class="text-danger">*</span></label>
+                                <label for="selectReserva" class="form-label">Reserva programada <span class="text-danger">*</span></label>
                                 <select name="reserva_id" id="selectReserva" class="form-select select-search" required onchange="cambiarReserva(this.value)" placeholder="Escribe el código, nombre del huésped o habitación...">
                                     <option value="">-- Elige una reserva lista para ingreso --</option>
                                     <?php foreach ($reservas as $r): ?>
@@ -34,18 +32,18 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Observaciones / Entrega de Llaves</label>
-                                <textarea name="observaciones" class="form-control" rows="3" placeholder="Ej: Se entregaron 2 tarjetas magnéticas, huésped presentó pasaporte original..."></textarea>
+                                <label for="obsCheckin" class="form-label">Observaciones / entrega de llaves</label>
+                                <textarea name="observaciones" id="obsCheckin" class="form-control" rows="3" placeholder="Ej: Se entregaron 2 tarjetas magnéticas, huésped presentó pasaporte original..."></textarea>
                             </div>
 
-                            <div class="alert alert-warning py-2 small d-flex align-items-center">
-                                <i class="bi bi-info-circle-fill me-2 fs-5"></i>
-                                <div>Al confirmar el Check-in, la habitación cambiará automáticamente a estado <strong>OCUPADA</strong> y se iniciará la estadía oficial.</div>
+                            <div class="alert alert-info py-2 small d-flex align-items-center gap-2 mb-0">
+                                <i class="bi bi-info-circle fs-5 flex-shrink-0"></i>
+                                <div>Al confirmar, la habitación pasa a <strong>Ocupada</strong> y comienza la estadía.</div>
                             </div>
 
                             <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-success btn-lg">
-                                    <i class="bi bi-check-circle-fill me-2"></i>Confirmar Ingreso y Entregar Habitación
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-check2-circle me-2"></i>Confirmar Check-in
                                 </button>
                             </div>
                         </form>
@@ -56,30 +54,26 @@
             <!-- Ficha de la Reserva Seleccionada -->
             <div class="col-12 col-lg-6">
                 <?php if ($reservaSeleccionada): ?>
-                    <div class="card border-primary">
-                        <div class="card-header bg-primary text-white">
-                            <h5 class="card-title mb-0">
-                                <i class="bi bi-card-text me-2"></i>Detalles: <?= htmlspecialchars($reservaSeleccionada['codigo_reserva']) ?>
-                            </h5>
-                        </div>
+                    <div class="card">
+                        <?php partial('card_header', ['titulo' => 'Reserva ' . $reservaSeleccionada['codigo_reserva'], 'icono' => 'bi-card-text']) ?>
                         <div class="card-body">
-                            <h5 class="fw-bold text-primary mb-1"><?= htmlspecialchars($reservaSeleccionada['huesped_nombre']) ?></h5>
-                            <div class="text-muted small mb-3">
-                                <span class="badge text-bg-light border"><?= htmlspecialchars($reservaSeleccionada['tipo_documento']) ?>: <?= htmlspecialchars($reservaSeleccionada['numero_documento']) ?></span>
-                                &nbsp;|&nbsp; Tel: <?= htmlspecialchars($reservaSeleccionada['huesped_telefono'] ?: 'N/A') ?>
+                            <h5 class="fw-bold mb-1"><?= e($reservaSeleccionada['huesped_nombre']) ?></h5>
+                            <div class="text-body-secondary small mb-3">
+                                <?= e($reservaSeleccionada['tipo_documento']) ?> <?= e($reservaSeleccionada['numero_documento']) ?>
+                                · Tel. <?= e($reservaSeleccionada['huesped_telefono'] ?: 'N/A') ?>
                             </div>
 
                             <div class="row g-2 mb-3">
                                 <div class="col-6">
                                     <div class="p-2 border rounded bg-body-secondary">
                                         <small class="text-muted d-block">Entrada Programada:</small>
-                                        <strong class="text-success"><i class="bi bi-calendar-check me-1"></i><?= fecha_es($reservaSeleccionada['fecha_entrada']) ?></strong>
+                                        <strong><i class="bi bi-box-arrow-in-right text-success me-1"></i><?= fecha_es($reservaSeleccionada['fecha_entrada']) ?></strong>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="p-2 border rounded bg-body-secondary">
                                         <small class="text-muted d-block">Salida Programada:</small>
-                                        <strong class="text-danger"><i class="bi bi-calendar-x me-1"></i><?= fecha_es($reservaSeleccionada['fecha_salida']) ?></strong>
+                                        <strong><i class="bi bi-box-arrow-right text-danger me-1"></i><?= fecha_es($reservaSeleccionada['fecha_salida']) ?></strong>
                                     </div>
                                 </div>
                             </div>
@@ -89,10 +83,10 @@
                                 <?php foreach ($reservaSeleccionada['habitaciones'] as $hab): ?>
                                     <li class="list-group-item d-flex justify-content-between align-items-center py-2">
                                         <div>
-                                            <span class="fw-bold text-primary">Hab. <?= htmlspecialchars($hab['numero']) ?></span>
-                                            <small class="text-muted d-block"><?= htmlspecialchars($hab['tipo_nombre']) ?> - Piso <?= $hab['piso'] ?></small>
+                                            <span class="fw-semibold">Hab. <?= e($hab['numero']) ?></span>
+                                            <small class="text-body-secondary d-block"><?= e($hab['tipo_nombre']) ?> · Piso <?= e($hab['piso']) ?></small>
                                         </div>
-                                        <span class="badge text-bg-success"><?= dinero($hab['precio_noche']) ?> / noche</span>
+                                        <span class="text-nowrap"><strong><?= dinero($hab['precio_noche']) ?></strong> <span class="text-body-secondary">/ noche</span></span>
                                     </li>
                                 <?php endforeach; ?>
                             </ul>
@@ -105,10 +99,10 @@
                         </div>
                     </div>
                 <?php else: ?>
-                    <div class="card border-dashed text-center p-5 text-muted">
-                        <i class="bi bi-person-check display-3 mb-3 text-secondary"></i>
-                        <h5>Selecciona una reserva para inspeccionar sus detalles</h5>
-                        <p class="small">Elige del desplegable a la izquierda para ver habitaciones, fechas y saldo del huésped.</p>
+                    <div class="empty-state">
+                        <i class="bi bi-person-check"></i>
+                        <p class="fw-semibold mb-1">Ninguna reserva seleccionada</p>
+                        <p class="mb-0">Elige una reserva para ver sus habitaciones, fechas y saldo.</p>
                     </div>
                 <?php endif; ?>
             </div>

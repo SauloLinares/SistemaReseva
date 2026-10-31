@@ -4,9 +4,9 @@
     'insignia'  => ['texto' => 'Abierto #' . $turno['id'], 'variante' => 'success'],
     'subtitulo' => 'Responsable: ' . $turno['usuario_nombre'] . ' • Apertura: ' . date('d/m/Y h:i A', strtotime($turno['fecha_apertura'])),
     'acciones'  => [
-        ['texto' => 'Registrar Egreso (Gasto)', 'modal' => '#modalEgreso', 'icono' => 'bi-dash-circle', 'variante' => 'outline-danger'],
-        ['texto' => 'Ingreso Extra', 'modal' => '#modalIngreso', 'icono' => 'bi-plus-circle', 'variante' => 'outline-primary'],
-        ['texto' => 'Realizar Arqueo y Cerrar Turno', 'modal' => '#modalCierreCaja', 'icono' => 'bi-lock-fill', 'variante' => 'danger'],
+        ['texto' => 'Registrar Gasto', 'modal' => '#modalEgreso', 'icono' => 'bi-dash-circle', 'variante' => 'outline-secondary'],
+        ['texto' => 'Ingreso Extra', 'modal' => '#modalIngreso', 'icono' => 'bi-plus-circle', 'variante' => 'outline-secondary'],
+        ['texto' => 'Cerrar Turno', 'modal' => '#modalCierreCaja', 'icono' => 'bi-lock', 'variante' => 'outline-danger'],
     ],
 ]) ?>
 
@@ -16,62 +16,47 @@
         <!-- Métricas Principales del Turno en Tiempo Real -->
         <div class="row g-3 mb-4">
             <!-- 1. Fondo Inicial -->
-            <div class="col-12 col-sm-6 col-xl-2">
-                <div class="card shadow-xs border-0 h-100">
-                    <div class="card-body p-3">
-                        <span class="text-muted small fw-semibold d-block mb-1">Fondo Inicial (Sencillo)</span>
-                        <h4 class="mb-0 fw-bold text-secondary"><?= dinero($resumen['fondo_inicial']) ?></h4>
-                        <small class="text-xs text-muted">Base para cambio</small>
-                    </div>
+            <div class="col-6 col-xl">
+                <div class="cash-stat">
+                    <span class="cash-stat-label">Fondo inicial</span>
+                    <span class="cash-stat-valor"><?= dinero($resumen['fondo_inicial']) ?></span>
+                    <span class="cash-stat-nota">Base para cambio</span>
                 </div>
             </div>
 
             <!-- 2. Ventas en Efectivo -->
-            <div class="col-12 col-sm-6 col-xl-3">
-                <div class="card shadow-xs border-0 h-100 border-start border-success border-3">
-                    <div class="card-body p-3">
-                        <span class="text-muted small fw-semibold d-block mb-1">Cobros en Efectivo</span>
-                        <h4 class="mb-0 fw-bold text-success"><?= dinero($resumen['total_efectivo']) ?></h4>
-                        <small class="text-xs text-muted">Ingresado al cajón físico</small>
-                    </div>
+            <div class="col-6 col-xl">
+                <div class="cash-stat">
+                    <span class="cash-stat-label">Cobros en efectivo</span>
+                    <span class="cash-stat-valor">+ <?= dinero($resumen['total_efectivo']) ?></span>
+                    <span class="cash-stat-nota">Ingresado al cajón</span>
                 </div>
             </div>
 
-            <!-- 3. Pagos Digitales (Bancos / Tarjetas) -->
-            <div class="col-12 col-sm-6 col-xl-3">
-                <div class="card shadow-xs border-0 h-100 border-start border-info border-3">
-                    <div class="card-body p-3">
-                        <div class="d-flex justify-content-between align-items-center mb-1">
-                            <span class="text-muted small fw-semibold">Pagos Digitales</span>
-                            <span class="text-2xs badge bg-info-subtle text-info border px-1">Cuentas de Hotel</span>
-                        </div>
-                        <h4 class="mb-0 fw-bold text-info"><?= dinero($resumen['total_digital']) ?></h4>
-                        <small class="text-xs text-muted d-block mt-1">
-                            Tarjetas: <?= dinero($resumen['total_tarjetas']) ?> • Yape/Plin: <?= dinero($resumen['total_yape_plin']) ?>
-                        </small>
-                    </div>
+            <!-- 3. Pagos Digitales (Bancos / Tarjetas): no entran al cajón -->
+            <div class="col-6 col-xl">
+                <div class="cash-stat">
+                    <span class="cash-stat-label">Pagos digitales</span>
+                    <span class="cash-stat-valor"><?= dinero($resumen['total_digital']) ?></span>
+                    <span class="cash-stat-nota">Tarjetas <?= dinero($resumen['total_tarjetas']) ?> · Yape/Plin <?= dinero($resumen['total_yape_plin']) ?></span>
                 </div>
             </div>
 
             <!-- 4. Egresos / Gastos Menores -->
-            <div class="col-12 col-sm-6 col-xl-2">
-                <div class="card shadow-xs border-0 h-100 border-start border-danger border-3">
-                    <div class="card-body p-3">
-                        <span class="text-muted small fw-semibold d-block mb-1">Salidas / Gastos</span>
-                        <h4 class="mb-0 fw-bold text-danger">-<?= dinero($resumen['total_egresos']) ?></h4>
-                        <small class="text-xs text-muted">Caja chica del turno</small>
-                    </div>
+            <div class="col-6 col-xl">
+                <div class="cash-stat">
+                    <span class="cash-stat-label">Salidas / gastos</span>
+                    <span class="cash-stat-valor<?= (float) $resumen['total_egresos'] > 0 ? ' text-danger' : '' ?>">− <?= dinero($resumen['total_egresos']) ?></span>
+                    <span class="cash-stat-nota">Caja chica del turno</span>
                 </div>
             </div>
 
-            <!-- 5. TOTAL EFECTIVO ESPERADO EN CAJÓN -->
-            <div class="col-12 col-xl-2">
-                <div class="card border-0 h-100 bg-primary text-white">
-                    <div class="card-body p-3">
-                        <span class="text-white-50 small fw-semibold d-block mb-1">Efectivo en Cajón</span>
-                        <h4 class="mb-0 fw-bold text-white"><?= dinero($resumen['monto_esperado_efectivo']) ?></h4>
-                        <small class="text-xs text-white-50">Esperado al cierre</small>
-                    </div>
+            <!-- 5. TOTAL EFECTIVO ESPERADO EN CAJÓN: el dato que se compara al cerrar -->
+            <div class="col-12 col-xl">
+                <div class="cash-stat cash-stat-total">
+                    <span class="cash-stat-label">Efectivo en cajón</span>
+                    <span class="cash-stat-valor">= <?= dinero($resumen['monto_esperado_efectivo']) ?></span>
+                    <span class="cash-stat-nota">Esperado al cierre</span>
                 </div>
             </div>
         </div>
@@ -104,38 +89,34 @@
                                 <tbody>
                                     <!-- 1. Fondo Inicial -->
                                     <tr class="table-light-subtle">
-                                        <td class="ps-3 text-muted small"><?= date('h:i A', strtotime($turno['fecha_apertura'])) ?></td>
+                                        <td class="ps-3 text-nowrap text-body-secondary"><?= date('h:i A', strtotime($turno['fecha_apertura'])) ?></td>
                                         <td>
-                                            <span class="badge bg-secondary-subtle text-secondary border me-1">Base</span>
+                                            <span class="badge badge-soft-secondary me-1">Base</span>
                                             <strong>Fondo Inicial de Caja</strong>
                                             <small class="d-block text-muted">Apertura por <?= htmlspecialchars($turno['usuario_nombre']) ?></small>
                                         </td>
-                                        <td><span class="badge bg-light text-dark border">Efectivo</span></td>
+                                        <td class="text-nowrap">Efectivo</td>
                                         <td class="text-muted small">--</td>
-                                        <td class="text-end pe-3 fw-bold text-secondary"><?= dinero($resumen['fondo_inicial']) ?></td>
+                                        <td class="text-end pe-3 text-nowrap fw-semibold"><?= dinero($resumen['fondo_inicial']) ?></td>
                                         <td class="text-center text-muted"><i class="bi bi-lock"></i></td>
                                     </tr>
 
                                     <!-- 2. Pagos de Reservas / Estancias -->
                                     <?php foreach ($resumen['pagos'] as $p): ?>
                                         <tr>
-                                            <td class="ps-3 text-muted small"><?= date('h:i A', strtotime($p['fecha_pago'])) ?></td>
+                                            <td class="ps-3 text-nowrap text-body-secondary"><?= date('h:i A', strtotime($p['fecha_pago'])) ?></td>
                                             <td>
-                                                <span class="badge bg-success-subtle text-success border me-1">Cobro</span>
+                                                <span class="badge badge-soft-success me-1">Cobro</span>
                                                 <strong>Reserva <?= htmlspecialchars($p['codigo_reserva'] ?? 'S/C') ?></strong>
                                                 <small class="d-block text-muted"><?= htmlspecialchars($p['huesped_nombre'] ?? 'Huésped') ?> (<?= ucfirst($p['tipo']) ?>)</small>
                                             </td>
-                                            <td>
-                                                <span class="badge <?= $p['metodo_pago'] === 'Efectivo' ? 'bg-success-subtle text-success border' : 'bg-info-subtle text-info border' ?>">
-                                                    <?= htmlspecialchars($p['metodo_pago']) ?>
-                                                </span>
-                                            </td>
+                                            <td class="text-nowrap"><?= e($p['metodo_pago']) ?></td>
                                             <td>
                                                 <a href="<?= url('pagos/comprobante/' . $p['id']) ?>" target="_blank" class="text-decoration-none small">
                                                     <i class="bi bi-file-earmark-text me-1"></i><?= htmlspecialchars($p['comprobante_tipo'] . ' ' . $p['comprobante_numero']) ?>
                                                 </a>
                                             </td>
-                                            <td class="text-end pe-3 fw-bold text-success">+<?= dinero($p['monto']) ?></td>
+                                            <td class="text-end pe-3 text-nowrap fw-semibold text-success">+ <?= dinero($p['monto']) ?></td>
                                             <td class="text-center">
                                                 <a href="<?= url('pagos/comprobante/' . $p['id']) ?>" target="_blank" class="btn btn-icon btn-outline-secondary" title="Ver comprobante">
                                                     <i class="bi bi-eye"></i>
@@ -147,24 +128,22 @@
                                     <!-- 3. Movimientos de Caja Chica (Egresos e Ingresos Extra) -->
                                     <?php foreach ($resumen['movimientos'] as $m): ?>
                                         <tr>
-                                            <td class="ps-3 text-muted small"><?= date('h:i A', strtotime($m['created_at'])) ?></td>
+                                            <td class="ps-3 text-nowrap text-body-secondary"><?= date('h:i A', strtotime($m['created_at'])) ?></td>
                                             <td>
                                                 <?php if ($m['tipo'] === 'egreso'): ?>
-                                                    <span class="badge bg-danger-subtle text-danger border me-1">Gasto</span>
+                                                    <span class="badge badge-soft-danger me-1">Gasto</span>
                                                 <?php else: ?>
-                                                    <span class="badge bg-primary-subtle text-primary border me-1">Extra</span>
+                                                    <span class="badge badge-soft-primary me-1">Extra</span>
                                                 <?php endif; ?>
                                                 <strong><?= htmlspecialchars($m['concepto']) ?></strong>
                                                 <small class="d-block text-muted"><?= htmlspecialchars($m['categoria'] ?: 'General') ?></small>
                                             </td>
-                                            <td>
-                                                <span class="badge bg-light text-dark border"><?= htmlspecialchars($m['metodo_pago']) ?></span>
-                                            </td>
+                                            <td class="text-nowrap"><?= e($m['metodo_pago']) ?></td>
                                             <td class="text-muted small">
                                                 <?= htmlspecialchars($m['comprobante'] ?: '--') ?>
                                             </td>
-                                            <td class="text-end pe-3 fw-bold <?= $m['tipo'] === 'egreso' ? 'text-danger' : 'text-primary' ?>">
-                                                <?= $m['tipo'] === 'egreso' ? '-' : '+' ?><?= dinero($m['monto']) ?>
+                                            <td class="text-end pe-3 text-nowrap fw-semibold <?= $m['tipo'] === 'egreso' ? 'text-danger' : 'text-success' ?>">
+                                                <?= $m['tipo'] === 'egreso' ? '−' : '+' ?> <?= dinero($m['monto']) ?>
                                             </td>
                                             <td class="text-center">
                                                 <a href="<?= url('caja/eliminarMovimiento/' . $m['id']) ?>" class="btn btn-icon btn-outline-danger" data-confirm="¿Deseas eliminar este movimiento de caja chica?" title="Eliminar">
