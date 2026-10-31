@@ -282,6 +282,23 @@ class HabitacionController extends Controller
     }
 
     /**
+     * Interruptor de estado de la tabla (fetch): {success, mensaje}
+     */
+    public function cambiarEstadoTipo(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->json(['success' => false, 'mensaje' => 'Método no permitido.'], 405);
+        }
+        $id = (int)($_POST['id'] ?? 0);
+        $activo = ($_POST['estado'] ?? '') === '1';
+        $ok = $id > 0 && $this->tipoModel->cambiarEstado($id, $activo);
+        $this->json([
+            'success' => $ok,
+            'mensaje' => $ok ? ('Tipo de habitación' . ($activo ? ' activo.' : ' inactivo: no se ofrece al crear habitaciones ni reservas.')) : 'No se pudo cambiar el estado.',
+        ]);
+    }
+
+    /**
      * Eliminar tipo de habitación
      */
     public function eliminarTipo(?string $id = null): void

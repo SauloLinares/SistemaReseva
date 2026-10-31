@@ -1,12 +1,20 @@
 {
   "name": "sistema-reserva",
   "private": true,
-  "description": "Herramientas de desarrollo del frontend (pruebas end-to-end). La aplicación es PHP y no necesita Node para funcionar.",
+  "description": "Herramientas de desarrollo del frontend: pruebas end-to-end, revisión del JavaScript y copia minificada. La aplicación es PHP y funciona sin Node.",
   "scripts": {
+    "lint": "eslint public/assets/js tests tools playwright.config.js eslint.config.js",
+    "lint:fix": "eslint public/assets/js tests tools playwright.config.js eslint.config.js --fix",
+    "build": "node tools/minificar.mjs",
+    "check": "npm run lint && npm run build",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui"
   },
   "devDependencies": {
-    "@playwright/test": "^1.64.1"
+    "@eslint/js": "^9.39.5",
+    "@playwright/test": "^1.64.1",
+    "esbuild": "^0.25.12",
+    "eslint": "^9.39.5",
+    "globals": "^15.15.0"
   }
 }

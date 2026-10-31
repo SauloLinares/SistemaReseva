@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let filtroTipoActivo = '';
     let filtroPisoActivo = '';
     let globalTotalCalculado = 0;
-    let habitacionesOcupadasSet = new Set();
+    const habitacionesOcupadasSet = new Set();
 
     function formatearFecha(isoDate) {
         if (!isoDate) return '--/--/----';

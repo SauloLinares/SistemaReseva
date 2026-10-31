@@ -125,21 +125,21 @@ document.addEventListener('DOMContentLoaded', function () {
             const rawText = opt.text || '';
             let nombres = meta.nombres || opt.dataset.nombres || '';
             let doc = meta.doc || opt.dataset.doc || '';
-            let tipoDoc = meta.tipoDoc || opt.dataset.tipoDoc || 'DNI';
+            const tipoDoc = meta.tipoDoc || opt.dataset.tipoDoc || 'DNI';
             let telefono = meta.telefono || opt.dataset.telefono || '';
-            let correo = meta.correo || opt.dataset.correo || '';
-            let nacionalidad = meta.nacionalidad || opt.dataset.nacionalidad || '';
-            let totalReservas = parseInt(meta.totalReservas !== undefined ? meta.totalReservas : (opt.dataset.totalReservas || 0), 10);
+            const correo = meta.correo || opt.dataset.correo || '';
+            const nacionalidad = meta.nacionalidad || opt.dataset.nacionalidad || '';
+            const totalReservas = parseInt(meta.totalReservas !== undefined ? meta.totalReservas : (opt.dataset.totalReservas || 0), 10);
 
             // Si no se pasaron data attributes específicos, inferir desde el texto "Nombre (Doc: XXXXX - Tel: YYYY)"
             if (!nombres && rawText) {
-                const matchDoc = rawText.match(/^(.*?)\s*\((?:Doc:\s*)?([^\–\-]+)(?:[\–\-]\s*Tel:\s*([^\)]+))?\)/i);
+                const matchDoc = rawText.match(/^(.*?)\s*\((?:Doc:\s*)?([^–-]+)(?:[–-]\s*Tel:\s*([^)]+))?\)/i);
                 if (matchDoc) {
                     nombres = matchDoc[1].trim();
                     doc = matchDoc[2].trim();
                     if (matchDoc[3]) telefono = matchDoc[3].trim();
                 } else {
-                    const matchSimple = rawText.match(/^(.*?)\s*\(([^\)]+)\)/);
+                    const matchSimple = rawText.match(/^(.*?)\s*\(([^)]+)\)/);
                     if (matchSimple) {
                         nombres = matchSimple[1].trim();
                         doc = matchSimple[2].trim();
@@ -393,7 +393,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 submitBtn.dataset.submitting = 'true';
-                const originalHtml = submitBtn.innerHTML;
 
                 // Esperar un ciclo para permitir el submit normal y luego deshabilitar visualmente
                 setTimeout(function () {
@@ -714,6 +713,39 @@ document.addEventListener('DOMContentLoaded', function () {
         if (!tabla) return;
         const cantidad = window.exportarTabla(tabla, boton.dataset.exportarNombre);
         window.showToast?.(cantidad === 1 ? 'Se exportó 1 fila.' : 'Se exportaron ' + cantidad + ' filas.', 'success');
+    });
+
+    // ---------------------------------------------------------------
+    // 6.4 INTERRUPTOR DE ESTADO (partials/interruptor_estado.php)
+    // Envía el cambio al momento; si el servidor no lo acepta, vuelve a como estaba.
+    // Delegado porque DataTables vuelve a crear las filas.
+    // ---------------------------------------------------------------
+    document.addEventListener('change', function (e) {
+        const casilla = e.target.closest('[data-interruptor]');
+        if (!casilla) return;
+        const activo = casilla.checked;
+        const texto = casilla.closest('.interruptor-estado').querySelector('[data-texto-estado]');
+        const poner = function (valor) {
+            casilla.checked = valor;
+            texto.textContent = valor ? casilla.dataset.textoActivo : casilla.dataset.textoInactivo;
+        };
+        poner(activo);
+        casilla.disabled = true;
+
+        const datos = new FormData();
+        datos.append('id', casilla.dataset.id);
+        datos.append('estado', activo ? '1' : '0');
+        fetch(window.appUrl(casilla.dataset.interruptor), { method: 'POST', body: datos })
+            .then(r => r.json())
+            .then(function (respuesta) {
+                if (!respuesta.success) throw new Error(respuesta.mensaje || 'No se pudo cambiar el estado.');
+                window.showToast?.(respuesta.mensaje || 'Estado actualizado.', 'success');
+            })
+            .catch(function (error) {
+                poner(!activo);
+                window.avisar?.('No se cambió el estado', error.message.includes('fetch') ? 'No hay conexión con el servidor.' : error.message, 'error');
+            })
+            .finally(() => { casilla.disabled = false; });
     });
 
     // ---------------------------------------------------------------

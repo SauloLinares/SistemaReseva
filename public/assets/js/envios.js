@@ -138,6 +138,70 @@
     window.conexion = conexion;
 
     // -----------------------------------------------------------------
+    // 2.1 BARRA FINA DE PROGRESO (arriba de la pantalla)
+    // Mientras hay peticiones fetch en curso o la página está cargando otra. Aparece solo
+    // si la espera pasa de 150 ms: en lo instantáneo no parpadea.
+    // -----------------------------------------------------------------
+    const progreso = (function () {
+        let barra = null;
+        let activas = 0;
+        let espera = null;
+        let avance = null;
+
+        const crear = function () {
+            if (barra) return barra;
+            barra = document.createElement('div');
+            barra.className = 'barra-progreso';
+            barra.setAttribute('role', 'progressbar');
+            barra.setAttribute('aria-label', 'Cargando');
+            barra.hidden = true;
+            document.body.appendChild(barra);
+            return barra;
+        };
+        const mostrar = function () {
+            const b = crear();
+            b.classList.remove('terminando');
+            b.style.transform = 'scaleX(0.08)';
+            b.hidden = false;
+            let ancho = 0.08;
+            clearInterval(avance);
+            // Avanza cada vez más lento sin llegar al final: no sabemos cuánto falta
+            avance = setInterval(function () {
+                ancho += (0.9 - ancho) * 0.08;
+                b.style.transform = 'scaleX(' + ancho.toFixed(3) + ')';
+            }, 200);
+        };
+        return {
+            iniciar: function () {
+                activas++;
+                if (activas === 1) espera = setTimeout(mostrar, 150);
+            },
+            terminar: function () {
+                activas = Math.max(0, activas - 1);
+                if (activas > 0) return;
+                clearTimeout(espera);
+                clearInterval(avance);
+                if (!barra || barra.hidden) return;
+                barra.classList.add('terminando');
+                barra.style.transform = 'scaleX(1)';
+                setTimeout(function () { barra.hidden = true; barra.classList.remove('terminando'); }, 350);
+            },
+        };
+    })();
+    window.progreso = progreso;
+
+    // Al ir a otra página (enlace o formulario): la barra avanza hasta que llega la nueva.
+    // Si la navegación no ocurre (ej. una descarga), se apaga sola.
+    window.addEventListener('beforeunload', function () {
+        progreso.iniciar();
+        setTimeout(progreso.terminar, 10000);
+    });
+    // Al volver con "Atrás" la página sale de la caché con la barra a medias
+    window.addEventListener('pageshow', function (e) {
+        if (e.persisted) progreso.terminar();
+    });
+
+    // -----------------------------------------------------------------
     // 3. fetch(): clave de operación, conexión y sesión vencida en un solo lugar
     // -----------------------------------------------------------------
     const fetchOriginal = window.fetch.bind(window);
@@ -163,7 +227,8 @@
             opciones = Object.assign({}, opciones, { headers: cabeceras });
         }
 
-        return fetchOriginal(recurso, opciones).then(function (respuesta) {
+        progreso.iniciar();
+        return fetchOriginal(recurso, opciones).finally(progreso.terminar).then(function (respuesta) {
             conexion.ocultar();
 
             // La sesión venció: el servidor redirigió al login en lugar de responder

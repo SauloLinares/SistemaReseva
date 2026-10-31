@@ -7,7 +7,7 @@
   let stored = null;
   try { stored = localStorage.getItem(STORAGE_KEY); } catch {}
   const authored = root.getAttribute('data-bs-theme');
-  let resolved = stored || authored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const resolved = stored || authored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   root.setAttribute('data-bs-theme', resolved);
 
   // Prevenir parpadeo del sidebar si fue colapsado por el usuario

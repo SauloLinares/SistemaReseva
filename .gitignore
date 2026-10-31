@@ -13,3 +13,6 @@ tests/e2e/*-snapshots/
 
 # Fotos de los usuarios (datos personales, no van al repositorio)
 public/uploads/usuarios/
+
+# Copia minificada (npm run build): se genera al publicar
+public/assets/dist/

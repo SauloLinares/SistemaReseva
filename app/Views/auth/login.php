@@ -32,7 +32,7 @@ $rutaLogo = ($logoArchivo !== '' && file_exists(__DIR__ . '/../../../public/uplo
     <link rel="stylesheet" href="<?= asset('adminlte/css/adminlte.min.css') ?>" />
 
     <!-- Estilos personalizados -->
-    <link rel="stylesheet" href="<?= asset('css/custom.css') ?>" />
+    <link rel="stylesheet" href="<?= e(asset_version('css/custom.css')) ?>" />
 
     <style>
         .login-page {

@@ -149,6 +149,23 @@ class ServicioController extends Controller
     }
 
     /**
+     * Interruptor de estado de la tabla (fetch): {success, mensaje}
+     */
+    public function cambiarEstado(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->json(['success' => false, 'mensaje' => 'Método no permitido.'], 405);
+        }
+        $id = (int)($_POST['id'] ?? 0);
+        $activo = ($_POST['estado'] ?? '') === '1';
+        $ok = $id > 0 && $this->servicioModel->cambiarEstado($id, $activo);
+        $this->json([
+            'success' => $ok,
+            'mensaje' => $ok ? ('Servicio' . ($activo ? ' disponible.' : ' deshabilitado: ya no se ofrece en reservas ni consumos.')) : 'No se pudo cambiar el estado.',
+        ]);
+    }
+
+    /**
      * Servicios por huésped (Listado de consumos)
      */
     public function porHuesped(): void

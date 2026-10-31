@@ -4115,3 +4115,50 @@ label .kbd-atajo {
 @media print {
     .aviso-inicio { display: none; }
 }
+
+/* ====================================================================
+   30. PULIDO: barra fina de progreso e interruptor de estado
+   ==================================================================== */
+.barra-progreso {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2100;
+    height: 3px;
+    background: var(--hm-primary);
+    box-shadow: 0 0 6px color-mix(in srgb, var(--hm-primary) 60%, transparent);
+    transform-origin: left center;
+    transform: scaleX(0);
+    transition: transform 0.2s ease-out, opacity 0.3s ease 0.1s;
+    pointer-events: none;
+}
+.barra-progreso[hidden] {
+    display: none;
+}
+.barra-progreso.terminando {
+    opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+    .barra-progreso { transition: none; }
+}
+@media print {
+    .barra-progreso { display: none; }
+}
+
+.interruptor-estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 0;
+    white-space: nowrap;
+}
+.interruptor-estado .form-check-input {
+    cursor: pointer;
+}
+.interruptor-estado .form-check-input:disabled {
+    cursor: not-allowed;
+}
+.interruptor-estado .form-check-input:not(:checked) + label {
+    color: var(--bs-secondary-color);
+}

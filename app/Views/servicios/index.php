@@ -42,7 +42,7 @@
                                     <td class="text-end text-nowrap fw-semibold"><?= dinero($s['precio']) ?></td>
                                     <td class="text-center"><?= (int) $s['total_pedidos'] ?></td>
                                     <td>
-                                        <?= $s['estado'] ? '<span class="badge badge-soft-success">Disponible</span>' : '<span class="badge badge-soft-secondary">Deshabilitado</span>' ?>
+                                        <?php partial('interruptor_estado', ['ruta' => 'servicios/cambiarEstado', 'id' => $s['id'], 'activo' => (bool)$s['estado'], 'nombre' => $s['nombre'], 'textos' => ['Disponible', 'Deshabilitado']]) ?>
                                     </td>
                                     <td class="text-end pe-3">
                                         <div class="table-actions">

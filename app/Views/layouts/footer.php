@@ -56,7 +56,7 @@
     <?= script_js('cobro.js') ?>
 
     <!-- Scripts personalizados con control de caché dinámico -->
-    <script src="<?= asset('js/custom.js') ?>?v=<?= file_exists(__DIR__ . '/../../../public/assets/js/custom.js') ? filemtime(__DIR__ . '/../../../public/assets/js/custom.js') : time() ?>"></script>
+    <?= script_js('custom.js') ?>
     <!--end::Scripts-->
 </body>
 </html>

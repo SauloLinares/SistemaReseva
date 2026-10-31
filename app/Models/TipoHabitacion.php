@@ -54,7 +54,7 @@ class TipoHabitacion extends Model
                     capacidad = :capacidad, 
                     precio_base = :precio_base, 
                     caracteristicas = :caracteristicas, 
-                    estado = :estado 
+                    estado = COALESCE(:estado, estado) 
                 WHERE id = :id";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
@@ -64,7 +64,7 @@ class TipoHabitacion extends Model
             ':capacidad'       => (int)($datos['capacidad'] ?? 1),
             ':precio_base'     => (float)($datos['precio_base'] ?? 0),
             ':caracteristicas' => trim($datos['caracteristicas'] ?? ''),
-            ':estado'          => isset($datos['estado']) ? (int)$datos['estado'] : 1
+            ':estado'          => isset($datos['estado']) ? (int)$datos['estado'] : null // sin campo: se conserva
         ]);
     }
 
@@ -78,5 +78,15 @@ class TipoHabitacion extends Model
         }
         $stmt = $this->db->prepare("DELETE FROM tipos_habitacion WHERE id = :id");
         return $stmt->execute([':id' => $id]);
+    }
+
+    /**
+     * Activa o desactiva el registro (interruptor de la tabla)
+     */
+    public function cambiarEstado(int $id, bool $activo): bool
+    {
+        $stmt = $this->db->prepare("UPDATE tipos_habitacion SET estado = :estado WHERE id = :id");
+        $stmt->execute([':estado' => $activo ? 1 : 0, ':id' => $id]);
+        return $stmt->rowCount() > 0 || $this->db->query("SELECT COUNT(*) FROM tipos_habitacion WHERE id = " . (int)$id)->fetchColumn() > 0;
     }
 }

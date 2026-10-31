@@ -254,4 +254,14 @@ class Usuario extends Model
         $stmt = $this->db->prepare("DELETE FROM usuarios WHERE id = :id");
         return $stmt->execute([':id' => $id]);
     }
+
+    /**
+     * Activa o desactiva el registro (interruptor de la tabla)
+     */
+    public function cambiarEstado(int $id, bool $activo): bool
+    {
+        $stmt = $this->db->prepare("UPDATE usuarios SET estado = :estado WHERE id = :id");
+        $stmt->execute([':estado' => $activo ? 1 : 0, ':id' => $id]);
+        return $stmt->rowCount() > 0 || $this->db->query("SELECT COUNT(*) FROM usuarios WHERE id = " . (int)$id)->fetchColumn() > 0;
+    }
 }

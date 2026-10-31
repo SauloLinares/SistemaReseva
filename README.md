@@ -119,8 +119,9 @@ Pruebas end-to-end con [Playwright](https://playwright.dev) que recorren las pan
 la seguridad (CSRF, cabeceras, XSS) y los flujos principales. Usan el Chrome instalado en el equipo.
 
 ```bash
-npm install                 # solo la primera vez (instala @playwright/test)
+npm install                 # solo la primera vez (Playwright, ESLint y esbuild)
 npm run test:e2e            # con Laragon encendido
+npm run lint                # revisa el JavaScript (errores comunes antes de probar)
 ```
 
 - Credenciales: variables `E2E_EMAIL` y `E2E_PASSWORD` (por defecto, las de prueba de arriba).
@@ -129,3 +130,14 @@ npm run test:e2e            # con Laragon encendido
 - Comparación visual para cambios de CSS (claro y oscuro):
   `VISUAL=1 npx playwright test visual --update-snapshots` antes del cambio y
   `VISUAL=1 npx playwright test visual` después (`VISUAL_MOVIL=1` para ancho de teléfono).
+
+### Publicar: JavaScript y CSS minificados
+
+```bash
+npm run check               # revisa el JavaScript y genera public/assets/dist (unos 44 % más livianos)
+```
+
+Fuera de desarrollo (`APP_ENV=produccion` o cualquier visita que no sea local), el sistema sirve las
+copias de `public/assets/dist` si existen y están al día con el original; si falta una o el original es
+más nuevo, sirve el original. Por eso funciona igual sin construir nada, y una copia vieja nunca
+reemplaza a un cambio. `public/assets/dist` no se sube al repositorio: se genera al publicar.

@@ -1,6 +1,7 @@
 // Borradores: lo que se está llenando en un formulario <form data-borrador> se guarda en el
 // navegador y se recupera al volver (otra pantalla, recarga, pestaña cerrada por error).
 // Es por usuario: en un equipo compartido de recepción nadie ve el borrador de otro.
+/* global reponerCampos -- definida en custom.js, que se carga después; se usa al terminar de cargar la página */
 (function () {
     'use strict';
 

@@ -113,6 +113,25 @@ if (!function_exists('csrf_inyectar')) {
     }
 }
 
+if (!function_exists('asset_version')) {
+    /**
+     * URL de un archivo propio de public/assets con su versión (fecha de modificación), para que
+     * el navegador no use una copia vieja. Fuera de desarrollo sirve la copia minificada de
+     * public/assets/dist (npm run build) si existe y está al día con el original; si no, el original.
+     */
+    function asset_version(string $ruta): string
+    {
+        $ruta = ltrim($ruta, '/');
+        $publico = dirname(__DIR__, 2) . '/public/assets/';
+        $original = $publico . $ruta;
+        $minificado = $publico . 'dist/' . $ruta;
+        $usarMinificado = !\App\Config\App::esDesarrollo() && is_file($minificado)
+            && (!is_file($original) || filemtime($minificado) >= filemtime($original));
+        $archivo = $usarMinificado ? $minificado : $original;
+        return asset(($usarMinificado ? 'dist/' : '') . $ruta) . '?v=' . (is_file($archivo) ? filemtime($archivo) : 0);
+    }
+}
+
 if (!function_exists('script_js')) {
     /**
      * Etiqueta <script src> de un archivo de public/assets/js con su versión (fecha de
@@ -121,9 +140,7 @@ if (!function_exists('script_js')) {
      */
     function script_js(string $ruta): string
     {
-        $archivo = dirname(__DIR__, 2) . '/public/assets/js/' . $ruta;
-        $version = is_file($archivo) ? filemtime($archivo) : 0;
-        return '<script src="' . e(asset('js/' . $ruta)) . '?v=' . $version . '"></script>';
+        return '<script src="' . e(asset_version('js/' . $ruta)) . '"></script>';
     }
 }
 

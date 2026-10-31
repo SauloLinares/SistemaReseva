@@ -82,6 +82,29 @@ class SeguridadController extends Controller
     }
 
     /**
+     * Interruptor de estado de la tabla (fetch): {success, mensaje}
+     */
+    public function cambiarEstadoUsuario(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            $this->json(['success' => false, 'mensaje' => 'Método no permitido.'], 405);
+        }
+        $id = (int)($_POST['id'] ?? 0);
+        $activo = ($_POST['estado'] ?? '') === '1';
+        if ($id === 1 || $id === (int)auth_user('id')) {
+            $this->json(['success' => false, 'mensaje' => 'No puedes desactivar al administrador principal ni a tu propio usuario.']);
+        }
+        $ok = $id > 0 && $this->usuarioModel->cambiarEstado($id, $activo);
+        if ($ok) {
+            $this->auditoriaModel->registrar('Seguridad', 'Usuarios', ($activo ? 'Activar' : 'Desactivar') . ' usuario ID ' . $id);
+        }
+        $this->json([
+            'success' => $ok,
+            'mensaje' => $ok ? ('Usuario' . ($activo ? ' activo.' : ' inactivo: ya no puede ingresar.')) : 'No se pudo cambiar el estado.',
+        ]);
+    }
+
+    /**
      * Eliminar usuario
      */
     public function eliminarUsuario(?string $id = null): void

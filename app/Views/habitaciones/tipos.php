@@ -19,6 +19,9 @@
                                 <h5 class="fw-bold mb-0 text-primary"><?= htmlspecialchars($t['nombre']) ?></h5>
                                 <span class="badge badge-soft-secondary"><?= $t['total_habitaciones'] ?> habs.</span>
                             </div>
+                            <div class="mb-2">
+                                <?php partial('interruptor_estado', ['ruta' => 'habitaciones/cambiarEstadoTipo', 'id' => $t['id'], 'activo' => (bool)$t['estado'], 'nombre' => $t['nombre']]) ?>
+                            </div>
                             <div class="text-muted small mb-3">
                                 <?= htmlspecialchars($t['descripcion'] ?: 'Sin descripción') ?>
                             </div>

@@ -133,6 +133,17 @@ Todos los colores, radios y sombras salen de los tokens de `public/assets/css/cu
 - **Rankings:** `<div class="barra-ranking"><span style="width: N%"></span></div>` debajo de la cifra
   (100 % = el primero). Las filas sin actividad llevan `.fila-sin-actividad`.
 
+## 5.6 Estado y progreso
+
+- **Estado activo/inactivo en tablas o tarjetas:** `partial('interruptor_estado', ['ruta' => 'modulo/cambiarEstado',
+  'id' => ..., 'activo' => ..., 'nombre' => ...])`. Es una casilla real (teclado y lector de pantalla);
+  el cambio se guarda al momento y, si el servidor lo rechaza, vuelve a como estaba. La acción del
+  controlador recibe `id` y `estado` (1/0) y responde `{success, mensaje}`.
+- **Barra fina de progreso:** aparece sola arriba de la pantalla con cualquier `fetch` que tarde más de
+  150 ms y al cambiar de página. Para un proceso propio: `progreso.iniciar()` / `progreso.terminar()`.
+- **Revisión y minificación:** `npm run lint` antes de subir cambios de JavaScript; `npm run check`
+  al publicar (ver README).
+
 ## 6. Mensajes flash
 
 Los muestra `layouts/header.php` como toast. **No** agregues bloques `$_SESSION['flash']` en las vistas.

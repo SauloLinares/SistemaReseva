@@ -174,4 +174,14 @@ class Servicio extends Model
         $stmt->execute($params);
         return $stmt->fetchAll();
     }
+
+    /**
+     * Activa o desactiva el registro (interruptor de la tabla)
+     */
+    public function cambiarEstado(int $id, bool $activo): bool
+    {
+        $stmt = $this->db->prepare("UPDATE servicios SET estado = :estado WHERE id = :id");
+        $stmt->execute([':estado' => $activo ? 1 : 0, ':id' => $id]);
+        return $stmt->rowCount() > 0 || $this->db->query("SELECT COUNT(*) FROM servicios WHERE id = " . (int)$id)->fetchColumn() > 0;
+    }
 }

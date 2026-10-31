@@ -29,7 +29,7 @@ $pageTitle = preg_replace('/\s*[-|·]\s*Hotel Manager\s*$/u', '', $pageTitle ?? 
     <?php endif; ?>
 
     <!-- Tema claro/oscuro y estado del menú: antes de pintar para evitar parpadeo -->
-    <script src="<?= asset('js/tema.js') ?>?v=<?= filemtime(__DIR__ . '/../../../public/assets/js/tema.js') ?>"></script>
+    <?= script_js('tema.js') ?>
 
     <!-- Datos para el JavaScript (no se ejecuta: la CSP no permite scripts inline) -->
     <script type="application/json" id="app-config"><?= json_encode([
@@ -37,7 +37,7 @@ $pageTitle = preg_replace('/\s*[-|·]\s*Hotel Manager\s*$/u', '', $pageTitle ?? 
         'urlRutas' => base_url('index.php?url='),
         'usuario'  => (int) (auth_user('id') ?? 0),
     ], JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
-    <script src="<?= asset('js/nucleo.js') ?>?v=<?= filemtime(__DIR__ . '/../../../public/assets/js/nucleo.js') ?>"></script>
+    <?= script_js('nucleo.js') ?>
 
     <!-- Fuente del sistema: Plus Jakarta Sans (Source Sans 3 de AdminLTE se quitó: ningún elemento la usaba) -->
     <!-- Precarga de los pesos más usados: así el texto y las tablas se miden con la fuente final
@@ -62,7 +62,7 @@ $pageTitle = preg_replace('/\s*[-|·]\s*Hotel Manager\s*$/u', '', $pageTitle ?? 
     <link rel="stylesheet" data-lib="datatables" href="<?= asset('vendor/simple-datatables/style.css') ?>" />
 
     <!-- Estilos personalizados con control de caché dinámico -->
-    <link rel="stylesheet" href="<?= asset('css/custom.css') ?>?v=<?= file_exists(__DIR__ . '/../../../public/assets/css/custom.css') ? filemtime(__DIR__ . '/../../../public/assets/css/custom.css') : time() ?>" />
+    <link rel="stylesheet" href="<?= e(asset_version('css/custom.css')) ?>" />
 </head>
 <body class="layout-fixed fixed-header sidebar-expand-lg bg-body-tertiary">
     <!-- Toast Container Flotante para notificaciones no invasivas -->

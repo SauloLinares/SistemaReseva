@@ -36,7 +36,7 @@
                                     <td><?= htmlspecialchars($u['email']) ?></td>
                                     <td><span class="badge badge-soft-primary"><?= htmlspecialchars($u['rol'] ?: 'Administrador') ?></span></td>
                                     <td>
-                                        <?= $u['estado'] ? '<span class="badge badge-status-switch active">Activo</span>' : '<span class="badge badge-status-switch inactive">Inactivo</span>' ?>
+                                        <?php partial('interruptor_estado', ['ruta' => 'seguridad/cambiarEstadoUsuario', 'id' => $u['id'], 'activo' => (bool)$u['estado'], 'nombre' => $u['nombre'], 'bloqueado' => (int)$u['id'] === 1 || (int)$u['id'] === (int)auth_user('id')]) ?>
                                     </td>
                                     <td><small class="text-muted"><?= fecha_es($u['ultimo_login'], true) ?></small></td>
                                     <td class="text-end pe-3">
