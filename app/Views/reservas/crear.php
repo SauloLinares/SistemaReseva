@@ -274,6 +274,9 @@
                                 </div>
                             </div>
                             
+                            <!-- Aquí aparece el error "elige una habitación" (las casillas están ocultas) -->
+                            <div data-error-para="habitaciones"></div>
+
                             <!-- Grilla de Habitaciones -->
                             <div class="row g-3" id="contenedorHabitaciones">
                                 <?php foreach ($habitaciones as $hab): ?>

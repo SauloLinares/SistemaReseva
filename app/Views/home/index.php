@@ -461,10 +461,11 @@ if (!empty($estadiasActivas)) {
                             <i class="bi bi-box-arrow-right me-1"></i> Procesar Check-out & Cobro
                         </a>
                         <div class="d-flex gap-2">
-                            <a href="<?= url('recepcion/estadias') ?>" class="btn btn-outline-primary w-100">
+                            <!-- Los href se completan con la reserva de la habitación al abrir el modal -->
+                            <a href="<?= url('servicios/consumo') ?>" id="mBtnCargarConsumo" class="btn btn-outline-primary w-100">
                                 <i class="bi bi-cart-plus me-1"></i> Cargar Consumo
                             </a>
-                            <a href="<?= url('recepcion/estadias') ?>" class="btn btn-outline-secondary w-100">
+                            <a href="<?= url('recepcion/estadias') ?>" id="mBtnFichaEstadia" class="btn btn-outline-secondary w-100">
                                 <i class="bi bi-eye me-1"></i> Ficha de Estadía
                             </a>
                         </div>
@@ -558,6 +559,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const codigo = this.dataset.codigo;
             const saldo = this.dataset.saldo;
             const estanciaId = this.dataset.estanciaId;
+            const reservaId = this.dataset.reservaId;
 
             document.getElementById('mHabNumeroTitulo').textContent = 'Habitación ' + num;
             document.getElementById('mHabTipo').textContent = tipo;
@@ -592,6 +594,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('mCodigoReserva').textContent = codigo || 'N/A';
                 document.getElementById('mSaldoPendiente').textContent = saldo || '$0.00';
                 document.getElementById('mBtnProcesarCheckout').href = '<?= url("recepcion/checkout") ?>' + (estanciaId ? '&id=' + estanciaId : '');
+                // Consumo y ficha de la reserva de esta habitación (sin reserva, a la pantalla general)
+                document.getElementById('mBtnCargarConsumo').href = '<?= url("servicios/consumo") ?>' + (reservaId ? '&reserva_id=' + reservaId : '');
+                document.getElementById('mBtnFichaEstadia').href = reservaId ? '<?= url("reservas/editar") ?>/' + reservaId : '<?= url("recepcion/estadias") ?>';
             } else if (estado === 'limpieza') {
                 document.getElementById('mSeccionLimpieza').classList.remove('d-none');
             } else if (estado === 'mantenimiento') {

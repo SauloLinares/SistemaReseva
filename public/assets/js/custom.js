@@ -589,8 +589,18 @@ function restaurarFormularioPrevio(previo) {
         return [...form.elements].filter(el => el.name === nombre || el.name === nombre + '[]');
     };
 
-    // 1. Volver a poner lo que se había escrito
+    // Campos con índice (ej. servicios[3]) llegan como objeto: se aplanan a "servicios[3]"
+    const datos = {};
     Object.entries(previo.datos || {}).forEach(function ([nombre, valor]) {
+        if (valor && typeof valor === 'object' && !Array.isArray(valor)) {
+            Object.entries(valor).forEach(([clave, v]) => { datos[nombre + '[' + clave + ']'] = v; });
+        } else {
+            datos[nombre] = valor;
+        }
+    });
+
+    // 1. Volver a poner lo que se había escrito
+    Object.entries(datos).forEach(function ([nombre, valor]) {
         campos(nombre).forEach(function (el) {
             // Los archivos no se pueden reponer y el id oculto ya viene correcto del servidor
             if (el.type === 'file' || (el.type === 'hidden' && nombre === 'id')) return;
@@ -613,6 +623,21 @@ function restaurarFormularioPrevio(previo) {
     // 2. Marcar los campos con error y mostrar el mensaje debajo
     let primero = null;
     Object.entries(previo.errores || {}).forEach(function ([nombre, mensaje]) {
+        // Campos sin control visible (ej. casillas ocultas de habitaciones): la vista marca
+        // dónde mostrar el mensaje con data-error-para="nombre"
+        const destino = form.querySelector('[data-error-para="' + nombre + '"]');
+        if (destino) {
+            const aviso = document.createElement('div');
+            aviso.className = 'alert alert-danger py-2 small mb-3';
+            aviso.setAttribute('role', 'alert');
+            aviso.innerHTML = '<i class="bi bi-exclamation-triangle me-2"></i>';
+            aviso.append(mensaje);
+            destino.replaceChildren(aviso);
+            campos(nombre).forEach(el => el.addEventListener('change', () => aviso.remove(), { once: true }));
+            primero = primero || destino;
+            return;
+        }
+
         const el = campos(nombre)[0];
         if (!el) return;
         const visible = el.tomselect ? el.tomselect.wrapper : el;

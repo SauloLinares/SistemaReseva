@@ -102,19 +102,11 @@ class ReservaController extends Controller
             redirect('reservas');
         }
 
-        $huespedId = (int)($_POST['huesped_id'] ?? 0);
-        $fechaEntrada = $_POST['fecha_entrada'] ?? '';
-        $fechaSalida = $_POST['fecha_salida'] ?? '';
         $habitacionesIds = $_POST['habitaciones'] ?? [];
 
-        if (!$huespedId || empty($fechaEntrada) || empty($fechaSalida) || empty($habitacionesIds)) {
-            $this->setFlash('danger', 'Debe seleccionar un huésped, rango de fechas y al menos una habitación.');
-            redirect('reservas/crear');
-        }
-
-        if (strtotime($fechaSalida) <= strtotime($fechaEntrada)) {
-            $this->setFlash('danger', 'La fecha de salida debe ser posterior a la fecha de entrada.');
-            redirect('reservas/crear');
+        $errores = $this->validarReserva($_POST, true);
+        if ($errores) {
+            $this->volverConErrores('reservas/crear', $errores);
         }
 
         $id = $this->reservaModel->crear($_POST, $habitacionesIds);
@@ -122,10 +114,51 @@ class ReservaController extends Controller
         if ($id) {
             $this->setFlash('success', '¡Reserva confirmada exitosamente! Aquí tienes el voucher oficial de confirmación.');
             redirect('reservas/voucher/' . $id . '?nuevo=1');
-        } else {
-            $this->setFlash('danger', 'Error al registrar: Una o más habitaciones seleccionadas ya están ocupadas o reservadas en ese rango de fechas.');
-            redirect('reservas/crear');
         }
+        // El modelo rechaza la reserva si alguna habitación ya está ocupada en esas fechas
+        $this->volverConErrores('reservas/crear', [
+            'habitaciones' => 'Una o más habitaciones elegidas ya están ocupadas o reservadas en esas fechas. Elige otras o cambia las fechas.',
+        ], 'No se pudo registrar la reserva.');
+    }
+
+    /**
+     * Reglas del formulario de reserva. Devuelve ['campo' => 'mensaje'] (vacío si todo está bien).
+     *
+     * @param bool $exigirHabitaciones En el POS de creación se eligen habitaciones; al editar no
+     */
+    private function validarReserva(array $datos, bool $exigirHabitaciones): array
+    {
+        $errores = [];
+        $entrada = $datos['fecha_entrada'] ?? '';
+        $salida = $datos['fecha_salida'] ?? '';
+        $esFecha = fn($f) => (bool) \DateTime::createFromFormat('Y-m-d', $f);
+
+        $huespedId = (int)($datos['huesped_id'] ?? 0);
+        if (!$huespedId || !$this->huespedModel->obtenerPorId($huespedId)) {
+            $errores['huesped_id'] = 'Busca y elige al huésped titular (o regístralo con "+ Nuevo Huésped").';
+        }
+        if (!$esFecha($entrada)) {
+            $errores['fecha_entrada'] = 'Elige la fecha de check-in.';
+        }
+        if (!$esFecha($salida)) {
+            $errores['fecha_salida'] = 'Elige la fecha de check-out.';
+        } elseif ($esFecha($entrada) && $salida <= $entrada) {
+            $errores['fecha_salida'] = 'El check-out debe ser posterior al check-in.';
+        }
+        if ((int)($datos['adultos'] ?? 0) < 1) {
+            $errores['adultos'] = 'Debe haber al menos 1 adulto.';
+        }
+        if ((int)($datos['ninos'] ?? 0) < 0) {
+            $errores['ninos'] = 'La cantidad de niños no puede ser negativa.';
+        }
+        if (isset($datos['anticipo']) && $datos['anticipo'] !== '' && (!is_numeric($datos['anticipo']) || (float)$datos['anticipo'] < 0)) {
+            $errores['anticipo'] = 'El adelanto debe ser un monto de 0 o más.';
+        }
+        if ($exigirHabitaciones && empty($datos['habitaciones'])) {
+            $errores['habitaciones'] = 'Elige al menos una habitación haciendo clic sobre su tarjeta.';
+        }
+
+        return $errores;
     }
 
     /**
@@ -187,15 +220,18 @@ class ReservaController extends Controller
         $id = (int)($_POST['id'] ?? 0);
         $habitacionesIds = $_POST['habitaciones'] ?? [];
 
-        $ok = $this->reservaModel->actualizar($id, $_POST, $habitacionesIds);
-
-        if ($ok) {
-            $this->setFlash('success', 'Reserva actualizada correctamente.');
-        } else {
-            $this->setFlash('danger', 'No se pudo actualizar: Conflicto de disponibilidad de habitaciones en las nuevas fechas.');
+        $errores = $this->validarReserva($_POST, false);
+        if ($errores) {
+            $this->volverConErrores('reservas/editar/' . $id, $errores);
         }
 
-        redirect('reservas/editar/' . $id);
+        if ($this->reservaModel->actualizar($id, $_POST, $habitacionesIds)) {
+            $this->setFlash('success', 'Reserva actualizada correctamente.');
+            redirect('reservas/editar/' . $id);
+        }
+        $this->volverConErrores('reservas/editar/' . $id, [
+            'fecha_entrada' => 'Las habitaciones de esta reserva no están libres en las nuevas fechas.',
+        ], 'No se pudo actualizar la reserva.');
     }
 
     /**

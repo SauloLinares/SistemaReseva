@@ -87,9 +87,7 @@
                                     RESERVA #<?= htmlspecialchars($reserva['codigo_reserva']) ?>
                                 </span>
                                 <div class="text-muted small">Fecha emisión: <?= date('d/m/Y h:i A') ?></div>
-                                <span class="badge bg-success-subtle text-success border px-2 py-1 mt-1 text-uppercase">
-                                    <?= htmlspecialchars($reserva['estado']) ?>
-                                </span>
+                                <div class="mt-1"><?= badge_estado_reserva($reserva['estado']) ?></div>
                             </div>
                         </div>
 
