@@ -65,7 +65,7 @@ class ConfiguracionController extends Controller
             $ext = strtolower(pathinfo($_FILES['hotel_logo']['name'], PATHINFO_EXTENSION));
             $permitidas = ['png', 'jpg', 'jpeg', 'webp', 'svg'];
             if (in_array($ext, $permitidas)) {
-                $dirUploads = __DIR__ . '/../../../public/uploads/hotel/';
+                $dirUploads = dirname(__DIR__, 2) . '/public/uploads/hotel/';
                 if (!is_dir($dirUploads)) {
                     mkdir($dirUploads, 0777, true);
                 }

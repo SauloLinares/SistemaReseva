@@ -59,6 +59,12 @@
     <!-- Simple-DataTables JS (Búsqueda, paginación y ordenación en tablas) -->
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@9.2.1/dist/umd/simple-datatables.js"></script>
 
+    <?php if (!empty($_SESSION['form_previo'])): ?>
+        <!-- Datos y errores del último envío fallido (Controller::volverConErrores); se usan una sola vez -->
+        <script>window.formPrevio = <?= json_encode($_SESSION['form_previo'], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;</script>
+        <?php unset($_SESSION['form_previo']); ?>
+    <?php endif; ?>
+
     <!-- Scripts personalizados con control de caché dinámico -->
     <script src="<?= asset('js/custom.js') ?>?v=<?= file_exists(__DIR__ . '/../../../public/assets/js/custom.js') ? filemtime(__DIR__ . '/../../../public/assets/js/custom.js') : time() ?>"></script>
     <!--end::Scripts-->

@@ -563,4 +563,87 @@ document.addEventListener('DOMContentLoaded', function () {
             window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
         });
     }
+
+    // ---------------------------------------------------------------
+    // 9. FORMULARIO CON ERRORES: RESTAURAR LO ESCRITO Y MARCAR CAMPOS
+    // El servidor (Controller::volverConErrores) deja en window.formPrevio la
+    // ruta del envío, lo que el usuario escribió y el error de cada campo.
+    // ---------------------------------------------------------------
+    restaurarFormularioPrevio(window.formPrevio);
 });
+
+function restaurarFormularioPrevio(previo) {
+    if (!previo || !previo.accion) return;
+
+    // El formulario cuyo action apunta a la misma ruta que falló
+    const form = [...document.querySelectorAll('form')].find(function (f) {
+        try {
+            return new URL(f.action, window.location.href).searchParams.get('url') === previo.accion;
+        } catch (e) {
+            return false;
+        }
+    });
+    if (!form) return;
+
+    const campos = function (nombre) {
+        return [...form.elements].filter(el => el.name === nombre || el.name === nombre + '[]');
+    };
+
+    // 1. Volver a poner lo que se había escrito
+    Object.entries(previo.datos || {}).forEach(function ([nombre, valor]) {
+        campos(nombre).forEach(function (el) {
+            // Los archivos no se pueden reponer y el id oculto ya viene correcto del servidor
+            if (el.type === 'file' || (el.type === 'hidden' && nombre === 'id')) return;
+            const valores = Array.isArray(valor) ? valor.map(String) : [String(valor)];
+            if (el.type === 'checkbox' || el.type === 'radio') {
+                el.checked = valores.includes(el.value);
+            } else if (el.tomselect) {
+                el.tomselect.setValue(valores); // sin modo silencioso: dispara change en el select
+                return;
+            } else if (el.multiple) {
+                [...el.options].forEach(o => { o.selected = valores.includes(o.value); });
+            } else {
+                el.value = valores[0];
+            }
+            // Avisar a los scripts de la vista (ej. recálculo de saldo o totales) como si lo hubiera hecho el usuario
+            el.dispatchEvent(new Event(el.tagName === 'SELECT' || el.type === 'checkbox' || el.type === 'radio' ? 'change' : 'input', { bubbles: true }));
+        });
+    });
+
+    // 2. Marcar los campos con error y mostrar el mensaje debajo
+    let primero = null;
+    Object.entries(previo.errores || {}).forEach(function ([nombre, mensaje]) {
+        const el = campos(nombre)[0];
+        if (!el) return;
+        const visible = el.tomselect ? el.tomselect.wrapper : el;
+        el.classList.add('is-invalid');
+        visible.classList.add('is-invalid');
+
+        const aviso = document.createElement('div');
+        aviso.className = 'invalid-feedback d-block';
+        aviso.id = 'error-' + (el.id || nombre);
+        aviso.textContent = mensaje;
+        // Debajo del grupo completo si el campo está dentro de un input-group
+        const ancla = visible.closest('.input-group') || visible;
+        ancla.insertAdjacentElement('afterend', aviso);
+        el.setAttribute('aria-invalid', 'true');
+        el.setAttribute('aria-describedby', aviso.id);
+
+        // Al corregir el campo se quita la marca
+        const limpiar = function () {
+            el.classList.remove('is-invalid');
+            visible.classList.remove('is-invalid');
+            el.removeAttribute('aria-invalid');
+            aviso.remove();
+        };
+        el.addEventListener('input', limpiar, { once: true });
+        el.addEventListener('change', limpiar, { once: true });
+
+        primero = primero || el;
+    });
+
+    if (primero) {
+        (primero.tomselect ? primero.tomselect : primero).focus();
+        primero.closest('.card, form')?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
+}

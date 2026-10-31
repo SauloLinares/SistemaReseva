@@ -73,17 +73,20 @@ class PagoController extends Controller
         }
 
         $reservaId = (int)($_POST['reserva_id'] ?? 0);
-        $monto = (float)($_POST['monto'] ?? 0);
+        $reserva = $reservaId ? $this->reservaModel->obtenerPorId($reservaId) : null;
 
-        if (!$reservaId || $monto <= 0) {
-            $this->setFlash('danger', 'Debe seleccionar una reserva válida e ingresar un monto mayor a cero.');
-            redirect('pagos/crear');
-        }
-
-        $reserva = $this->reservaModel->obtenerPorId($reservaId);
+        $errores = [];
         if (!$reserva) {
-            $this->setFlash('danger', 'Reserva no encontrada.');
-            redirect('pagos/crear');
+            $errores['reserva_id'] = $reservaId ? 'La reserva elegida ya no existe.' : 'Elige la reserva a la que corresponde el pago.';
+        }
+        if (!is_numeric($_POST['monto'] ?? '') || (float)$_POST['monto'] <= 0) {
+            $errores['monto'] = 'Ingresa un monto mayor a cero.';
+        }
+        if (trim($_POST['metodo_pago'] ?? '') === '') {
+            $errores['metodo_pago'] = 'Elige el método de pago.';
+        }
+        if ($errores) {
+            $this->volverConErrores('pagos/crear', $errores);
         }
 
         $_POST['huesped_id'] = $reserva['huesped_id'];
@@ -92,10 +95,8 @@ class PagoController extends Controller
         if ($pagoId) {
             $this->setFlash('success', '¡Pago registrado exitosamente!');
             redirect('pagos/comprobante/' . $pagoId);
-        } else {
-            $this->setFlash('danger', 'Error al procesar el pago.');
-            redirect('pagos/crear');
         }
+        $this->volverConErrores('pagos/crear', [], 'Error al procesar el pago. Inténtalo de nuevo.');
     }
 
     /**

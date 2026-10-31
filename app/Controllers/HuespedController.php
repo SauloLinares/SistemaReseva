@@ -46,20 +46,9 @@ class HuespedController extends Controller
             redirect('huespedes');
         }
 
-        $numDoc = trim($_POST['numero_documento'] ?? '');
-        $nombres = trim($_POST['nombres'] ?? '');
-        $apellidos = trim($_POST['apellidos'] ?? '');
-
-        if (empty($numDoc) || empty($nombres) || empty($apellidos)) {
-            $this->setFlash('danger', 'El documento, nombres y apellidos son obligatorios.');
-            redirect('huespedes/crear');
-        }
-
-        // Verificar si ya existe documento
-        $existe = $this->huespedModel->buscarPorDocumento($numDoc);
-        if ($existe) {
-            $this->setFlash('danger', 'Ya existe un huésped registrado con el documento ' . htmlspecialchars($numDoc));
-            redirect('huespedes/crear');
+        $errores = $this->validarHuesped($_POST);
+        if ($errores) {
+            $this->volverConErrores('huespedes/crear', $errores);
         }
 
         $id = $this->huespedModel->crear($_POST);
@@ -68,9 +57,40 @@ class HuespedController extends Controller
             $this->setFlash('success', '¡Huésped registrado correctamente!');
             redirect('huespedes');
         } else {
-            $this->setFlash('danger', 'No se pudo guardar el huésped en la base de datos.');
-            redirect('huespedes/crear');
+            $this->volverConErrores('huespedes/crear', [], 'No se pudo guardar el huésped en la base de datos. Inténtalo de nuevo.');
         }
+    }
+
+    /**
+     * Reglas del formulario de huésped. Devuelve ['campo' => 'mensaje'] (vacío si todo está bien).
+     *
+     * @param int $idActual Al editar, el propio huésped no cuenta como documento duplicado
+     */
+    private function validarHuesped(array $datos, int $idActual = 0): array
+    {
+        $errores = [];
+        $numDoc = trim($datos['numero_documento'] ?? '');
+
+        if ($numDoc === '') {
+            $errores['numero_documento'] = 'Ingresa el número de documento.';
+        } else {
+            $existe = $this->huespedModel->buscarPorDocumento($numDoc);
+            if ($existe && (int)$existe['id'] !== $idActual) {
+                $errores['numero_documento'] = 'Este documento ya pertenece a ' . $existe['nombres'] . ' ' . $existe['apellidos'] . '.';
+            }
+        }
+        if (trim($datos['nombres'] ?? '') === '') {
+            $errores['nombres'] = 'Ingresa los nombres.';
+        }
+        if (trim($datos['apellidos'] ?? '') === '') {
+            $errores['apellidos'] = 'Ingresa los apellidos.';
+        }
+        $correo = trim($datos['correo'] ?? '');
+        if ($correo !== '' && !filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+            $errores['correo'] = 'El correo no tiene un formato válido (ej. nombre@correo.com).';
+        }
+
+        return $errores;
     }
 
     /**
@@ -151,15 +171,18 @@ class HuespedController extends Controller
         }
 
         $id = (int)($_POST['id'] ?? 0);
+        $errores = $this->validarHuesped($_POST, $id);
+        if ($errores) {
+            $this->volverConErrores('huespedes/editar/' . $id, $errores);
+        }
+
         $ok = $this->huespedModel->actualizar($id, $_POST);
 
         if ($ok) {
             $this->setFlash('success', 'Datos del huésped actualizados con éxito.');
-        } else {
-            $this->setFlash('danger', 'Error al actualizar datos del huésped.');
+            redirect('huespedes');
         }
-
-        redirect('huespedes');
+        $this->volverConErrores('huespedes/editar/' . $id, [], 'Error al actualizar los datos del huésped. Inténtalo de nuevo.');
     }
 
     /**

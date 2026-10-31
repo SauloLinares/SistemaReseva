@@ -34,6 +34,17 @@ class Cliente extends Model
     }
 
     /**
+     * Obtiene un cliente por su DNI (para avisar de duplicados antes de guardar)
+     */
+    public function buscarPorDni(string $dni): ?array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM clientes WHERE dni = :dni LIMIT 1");
+        $stmt->execute([':dni' => trim($dni)]);
+        $cliente = $stmt->fetch();
+        return $cliente ?: null;
+    }
+
+    /**
      * Registra un nuevo cliente con sentencias preparadas para prevenir inyección SQL
      */
     public function crear(array $datos): bool

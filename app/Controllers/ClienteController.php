@@ -47,25 +47,48 @@ class ClienteController extends Controller
             redirect('clientes');
         }
 
-        // Validación básica
-        $nombres = trim($_POST['nombres'] ?? '');
-        $apellidos = trim($_POST['apellidos'] ?? '');
-        $dni = trim($_POST['dni'] ?? '');
-
-        if (empty($nombres) || empty($apellidos) || empty($dni)) {
-            $this->setFlash('danger', 'Los campos Nombres, Apellidos y DNI son obligatorios.');
-            redirect('clientes/crear');
+        $errores = $this->validarCliente($_POST);
+        if ($errores) {
+            $this->volverConErrores('clientes/crear', $errores);
         }
 
-        $exito = $this->clienteModel->crear($_POST);
-
-        if ($exito) {
+        if ($this->clienteModel->crear($_POST)) {
             $this->setFlash('success', '¡Cliente registrado exitosamente!');
+            redirect('clientes');
+        }
+        $this->volverConErrores('clientes/crear', [], 'Ocurrió un error al registrar el cliente. Inténtalo de nuevo.');
+    }
+
+    /**
+     * Reglas del formulario de cliente. Devuelve ['campo' => 'mensaje'] (vacío si todo está bien).
+     *
+     * @param int $idActual Al editar, el propio cliente no cuenta como DNI duplicado
+     */
+    private function validarCliente(array $datos, int $idActual = 0): array
+    {
+        $errores = [];
+        $dni = trim($datos['dni'] ?? '');
+
+        if (trim($datos['nombres'] ?? '') === '') {
+            $errores['nombres'] = 'Ingresa los nombres.';
+        }
+        if (trim($datos['apellidos'] ?? '') === '') {
+            $errores['apellidos'] = 'Ingresa los apellidos.';
+        }
+        if ($dni === '') {
+            $errores['dni'] = 'Ingresa el DNI.';
         } else {
-            $this->setFlash('danger', 'Ocurrió un error al registrar el cliente. Es posible que el DNI ya exista.');
+            $existe = $this->clienteModel->buscarPorDni($dni);
+            if ($existe && (int)$existe['id'] !== $idActual) {
+                $errores['dni'] = 'Este DNI ya pertenece a ' . $existe['nombres'] . ' ' . $existe['apellidos'] . '.';
+            }
+        }
+        $correo = trim($datos['correo'] ?? '');
+        if ($correo !== '' && !filter_var($correo, FILTER_VALIDATE_EMAIL)) {
+            $errores['correo'] = 'El correo no tiene un formato válido (ej. nombre@correo.com).';
         }
 
-        redirect('clientes');
+        return $errores;
     }
 
     /**
@@ -106,15 +129,16 @@ class ClienteController extends Controller
             redirect('clientes');
         }
 
-        $exito = $this->clienteModel->actualizar($id, $_POST);
-
-        if ($exito) {
-            $this->setFlash('success', '¡Cliente actualizado exitosamente!');
-        } else {
-            $this->setFlash('danger', 'No se pudo actualizar la información del cliente.');
+        $errores = $this->validarCliente($_POST, $id);
+        if ($errores) {
+            $this->volverConErrores('clientes/editar/' . $id, $errores);
         }
 
-        redirect('clientes');
+        if ($this->clienteModel->actualizar($id, $_POST)) {
+            $this->setFlash('success', '¡Cliente actualizado exitosamente!');
+            redirect('clientes');
+        }
+        $this->volverConErrores('clientes/editar/' . $id, [], 'No se pudo actualizar la información del cliente. Inténtalo de nuevo.');
     }
 
     /**

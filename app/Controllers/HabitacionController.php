@@ -63,43 +63,86 @@ class HabitacionController extends Controller
         }
 
         $numero = trim($_POST['numero'] ?? '');
-        if (empty($numero)) {
-            $this->setFlash('danger', 'El número de habitación es obligatorio.');
-            redirect('habitaciones/crear');
+        $errores = $this->validarHabitacion($_POST);
+        if ($errores) {
+            $this->volverConErrores('habitaciones/crear', $errores);
         }
 
-        // Verificar duplicados
-        $existe = $this->habModel->obtenerPorNumero($numero);
-        if ($existe) {
-            $this->setFlash('danger', "La habitación {$numero} ya se encuentra registrada.");
-            redirect('habitaciones/crear');
+        $foto = $this->subirFoto($numero);
+        if ($foto !== null) {
+            $_POST['foto'] = $foto;
         }
 
-        // Procesar subida de fotografía de habitación
-        if (!empty($_FILES['foto']['name']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        if ($this->habModel->crear($_POST)) {
+            $this->setFlash('success', "Habitación {$numero} registrada con éxito.");
+            redirect('habitaciones');
+        }
+        $this->volverConErrores('habitaciones/crear', [], 'Error al guardar la habitación. Inténtalo de nuevo.');
+    }
+
+    /**
+     * Reglas del formulario de habitación. Devuelve ['campo' => 'mensaje'] (vacío si todo está bien).
+     *
+     * @param int $idActual Al editar, la propia habitación no cuenta como número duplicado
+     */
+    private function validarHabitacion(array $datos, int $idActual = 0): array
+    {
+        $errores = [];
+        $numero = trim($datos['numero'] ?? '');
+
+        if ($numero === '') {
+            $errores['numero'] = 'Ingresa el número de habitación.';
+        } else {
+            $existe = $this->habModel->obtenerPorNumero($numero);
+            if ($existe && (int)$existe['id'] !== $idActual) {
+                $errores['numero'] = "La habitación {$numero} ya está registrada.";
+            }
+        }
+        if (empty($datos['tipo_id'])) {
+            $errores['tipo_id'] = 'Elige el tipo de habitación.';
+        }
+        if (!is_numeric($datos['piso'] ?? '') || (int)$datos['piso'] < 0) {
+            $errores['piso'] = 'Ingresa un piso válido (0 o más).';
+        }
+        if (!is_numeric($datos['precio_diario'] ?? '') || (float)$datos['precio_diario'] <= 0) {
+            $errores['precio_diario'] = 'Ingresa un precio por noche mayor a cero.';
+        }
+        if (!empty($_FILES['foto']['name'])) {
             $ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
-            $permitidas = ['jpg', 'jpeg', 'png', 'webp'];
-            if (in_array($ext, $permitidas)) {
-                $dirUploads = __DIR__ . '/../../../public/uploads/habitaciones/';
-                if (!is_dir($dirUploads)) {
-                    mkdir($dirUploads, 0777, true);
-                }
-                $nombreArchivo = 'hab_' . $numero . '_' . time() . '.' . $ext;
-                if (move_uploaded_file($_FILES['foto']['tmp_name'], $dirUploads . $nombreArchivo)) {
-                    $_POST['foto'] = $nombreArchivo;
-                }
+            if (!in_array($ext, self::EXTENSIONES_FOTO, true)) {
+                $errores['foto'] = 'La foto debe ser JPG, PNG o WEBP.';
+            } elseif ($_FILES['foto']['error'] !== UPLOAD_ERR_OK) {
+                $errores['foto'] = 'No se pudo subir la foto (¿pesa demasiado?). Inténtalo con otra imagen.';
             }
         }
 
-        $ok = $this->habModel->crear($_POST);
+        return $errores;
+    }
 
-        if ($ok) {
-            $this->setFlash('success', "Habitación {$numero} registrada con éxito.");
-            redirect('habitaciones');
-        } else {
-            $this->setFlash('danger', 'Error al guardar la habitación.');
-            redirect('habitaciones/crear');
+    private const EXTENSIONES_FOTO = ['jpg', 'jpeg', 'png', 'webp'];
+
+    /**
+     * Guarda la foto subida en public/uploads/habitaciones y devuelve el nombre del archivo,
+     * o null si no se subió ninguna.
+     */
+    private function subirFoto(string $prefijo): ?string
+    {
+        if (empty($_FILES['foto']['name']) || $_FILES['foto']['error'] !== UPLOAD_ERR_OK) {
+            return null;
         }
+        $ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, self::EXTENSIONES_FOTO, true)) {
+            return null;
+        }
+
+        // Raíz del proyecto: app/Controllers -> dos niveles arriba
+        $dirUploads = dirname(__DIR__, 2) . '/public/uploads/habitaciones/';
+        if (!is_dir($dirUploads)) {
+            mkdir($dirUploads, 0775, true);
+        }
+        $nombreArchivo = 'hab_' . preg_replace('/[^A-Za-z0-9_-]/', '', $prefijo) . '_' . time() . '.' . $ext;
+
+        return move_uploaded_file($_FILES['foto']['tmp_name'], $dirUploads . $nombreArchivo) ? $nombreArchivo : null;
     }
 
     /**
@@ -134,33 +177,23 @@ class HabitacionController extends Controller
         $id = (int)($_POST['id'] ?? 0);
         $numero = trim($_POST['numero'] ?? '');
 
-        // Procesar subida de fotografía de habitación
-        if (!empty($_FILES['foto']['name']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
-            $ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
-            $permitidas = ['jpg', 'jpeg', 'png', 'webp'];
-            if (in_array($ext, $permitidas)) {
-                $dirUploads = __DIR__ . '/../../../public/uploads/habitaciones/';
-                if (!is_dir($dirUploads)) {
-                    mkdir($dirUploads, 0777, true);
-                }
-                $nombreArchivo = 'hab_' . ($numero ?: $id) . '_' . time() . '.' . $ext;
-                if (move_uploaded_file($_FILES['foto']['tmp_name'], $dirUploads . $nombreArchivo)) {
-                    $_POST['foto'] = $nombreArchivo;
-                }
-            }
+        $errores = $this->validarHabitacion($_POST, $id);
+        if ($errores) {
+            $this->volverConErrores('habitaciones/editar/' . $id, $errores);
+        }
+
+        $foto = $this->subirFoto($numero ?: (string)$id);
+        if ($foto !== null) {
+            $_POST['foto'] = $foto;
         } elseif (!empty($_POST['foto_actual'])) {
             $_POST['foto'] = $_POST['foto_actual'];
         }
 
-        $ok = $this->habModel->actualizar($id, $_POST);
-
-        if ($ok) {
+        if ($this->habModel->actualizar($id, $_POST)) {
             $this->setFlash('success', 'Habitación actualizada correctamente.');
-        } else {
-            $this->setFlash('danger', 'No se pudo actualizar la habitación.');
+            redirect('habitaciones');
         }
-
-        redirect('habitaciones');
+        $this->volverConErrores('habitaciones/editar/' . $id, [], 'No se pudo actualizar la habitación. Inténtalo de nuevo.');
     }
 
     /**

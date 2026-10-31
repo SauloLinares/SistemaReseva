@@ -107,6 +107,34 @@ abstract class Controller
     }
 
     /**
+     * Regresa al formulario conservando lo que el usuario escribió y marcando los campos con error.
+     * La vista no necesita cambios: footer.php entrega los datos y custom.js rellena el formulario
+     * cuyo action coincide con la ruta que se está procesando.
+     *
+     * @param string $ruta     Ruta del formulario a la que se vuelve (ej. 'huespedes/crear')
+     * @param array  $errores  ['nombre_del_campo' => 'Mensaje para ese campo']
+     * @param string $mensaje  Aviso general (toast); si se omite se usa uno genérico
+     */
+    protected function volverConErrores(string $ruta, array $errores, string $mensaje = ''): never
+    {
+        // Nunca se devuelven contraseñas ni el token al navegador
+        $datos = array_filter(
+            $_POST,
+            fn($clave) => $clave !== '_csrf' && stripos((string)$clave, 'password') === false && stripos((string)$clave, 'clave') === false,
+            ARRAY_FILTER_USE_KEY
+        );
+
+        $_SESSION['form_previo'] = [
+            'accion'  => trim($_GET['url'] ?? '', '/'),
+            'datos'   => $datos,
+            'errores' => $errores,
+        ];
+
+        $this->setFlash('danger', $mensaje !== '' ? $mensaje : 'Revisa los campos marcados en rojo.');
+        redirect($ruta);
+    }
+
+    /**
      * Guarda un mensaje de alerta temporal en sesión (success, danger, warning, info)
      */
     protected function setFlash(string $tipo, string $mensaje): void

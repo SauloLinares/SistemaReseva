@@ -54,6 +54,7 @@ Todos los colores, radios y sombras salen de los tokens de `public/assets/css/cu
 - Prefijos con `input-group-text` sin `bg-white` ni `bg-light`.
 - Ancho del formulario: `<div class="row"><div class="col-12 col-lg-8">` alineado a la izquierda, en el mismo eje que el título de la página. Solo los documentos imprimibles (voucher, comprobante) van centrados.
 - Botones del pie: partial `form_actions` (ver abajo).
+- **Errores de validación:** en el controlador, junta los errores por campo y llama a `$this->volverConErrores('ruta/del/formulario', ['nombre_campo' => 'Mensaje'])`. Al volver, el formulario se rellena con lo que el usuario escribió y cada campo con error se marca en rojo con su mensaje debajo; no hay que tocar la vista. Ejemplos: `validarHuesped()`, `validarCliente()`, `validarHabitacion()`.
 - **Seguridad (CSRF):** todo POST se valida con un token de sesión. Los `<form method="POST">` lo reciben solos al renderizar y `fetch()` lo envía en la cabecera `X-CSRF-Token`; no hay que escribir nada. Las acciones que borran o cambian datos van por POST: usa un formulario o un enlace con `data-confirm` (se envía por POST). Las rutas `eliminar*` rechazan GET.
 
 ## 4. Color
