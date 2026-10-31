@@ -108,6 +108,10 @@ El sistema está organizado en **10 módulos funcionales** accesibles desde la b
 - **Correo Electrónico:** `admin@admin.com`
 - **Contraseña:** `admin123`
 
+> Cambia esta contraseña al publicar el sistema. La caja "Credenciales de prueba" del login solo aparece
+> en desarrollo: una visita desde el propio equipo a `localhost`, `*.test` o `*.localhost`. Para fijar el
+> entorno a mano, define la variable `APP_ENV` (`desarrollo` o `produccion`) en el servidor.
+
 ## 🧪 Pruebas automáticas del frontend
 
 Pruebas end-to-end con [Playwright](https://playwright.dev) que recorren las pantallas, los formularios,

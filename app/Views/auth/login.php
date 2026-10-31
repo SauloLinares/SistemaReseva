@@ -192,11 +192,13 @@ $rutaLogo = ($logoArchivo !== '' && file_exists(__DIR__ . '/../../../public/uplo
                     </div>
                 </form>
 
-                <!-- Caja de Credenciales Didácticas / Demo -->
+                <?php if (\App\Config\App::esDesarrollo()): ?>
+                <!-- Credenciales de prueba: solo en desarrollo, nunca en producción -->
                 <div class="demo-credentials-box p-3 rounded mb-2">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <span class="fw-bold text-primary"><i class="bi bi-key-fill me-1"></i> Credenciales de prueba:</span>
-                        <button type="button" class="btn btn-sm btn-outline-primary py-0 px-2 text-xs" id="btnAutocompletar">
+                        <button type="button" class="btn btn-sm btn-outline-primary py-0 px-2 text-xs" id="btnAutocompletar"
+                            data-email="admin@admin.com" data-clave="admin123">
                             Autocompletar
                         </button>
                     </div>
@@ -205,6 +207,7 @@ $rutaLogo = ($logoArchivo !== '' && file_exists(__DIR__ . '/../../../public/uplo
                         <div><strong>Clave:</strong> <code>admin123</code></div>
                     </div>
                 </div>
+                <?php endif; ?>
 
             </div>
         </div>

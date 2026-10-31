@@ -14,12 +14,12 @@ if (toggleBtn && passInput && toggleIcon) {
     });
 }
 
-// Funcionalidad para autocompletar credenciales de prueba
+// Autocompletar credenciales de prueba (el botón y sus datos solo existen en desarrollo)
 const btnAuto = document.getElementById('btnAutocompletar');
 if (btnAuto) {
     btnAuto.addEventListener('click', function() {
-        document.getElementById('email').value = 'admin@admin.com';
-        document.getElementById('password').value = 'admin123';
+        document.getElementById('email').value = btnAuto.dataset.email;
+        document.getElementById('password').value = btnAuto.dataset.clave;
         document.getElementById('password').focus();
     });
 }

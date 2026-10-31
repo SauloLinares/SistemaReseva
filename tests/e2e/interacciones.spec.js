@@ -110,3 +110,14 @@ test('Login: el botón del ojo muestra la contraseña', async ({ browser }) => {
     await expect(pagina.locator('#password')).toHaveAttribute('type', 'text');
     await contexto.close();
 });
+
+test('Login: en desarrollo, Autocompletar rellena las credenciales de prueba', async ({ browser }) => {
+    // Las pruebas corren desde el propio equipo contra un host .test, que cuenta como desarrollo
+    const contexto = await browser.newContext({ storageState: { cookies: [], origins: [] } });
+    const pagina = await contexto.newPage();
+    await pagina.goto(ruta('login'));
+    await pagina.click('#btnAutocompletar');
+    await expect(pagina.locator('#email')).not.toHaveValue('');
+    await expect(pagina.locator('#password')).not.toHaveValue('');
+    await contexto.close();
+});
