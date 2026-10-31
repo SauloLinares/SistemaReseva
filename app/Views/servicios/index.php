@@ -46,7 +46,7 @@
                                     </td>
                                     <td class="text-end pe-3">
                                         <div class="table-actions">
-                                            <button type="button" class="btn btn-icon btn-outline-primary" title="Editar" onclick='editarServicio(<?= json_encode($s, JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>
+                                            <button type="button" class="btn btn-icon btn-outline-primary" title="Editar" data-editar="<?= e(json_encode($s, JSON_UNESCAPED_UNICODE)) ?>">
                                                 <i class="bi bi-pencil-square"></i>
                                             </button>
                                             <a href="<?= url('servicios/eliminar/' . $s['id']) ?>" class="btn btn-icon btn-outline-danger" title="Eliminar" data-confirm="¿Eliminar servicio?">
@@ -117,23 +117,4 @@
     </div>
 </div>
 
-<script>
-function editarServicio(s) {
-    document.getElementById('modalServTitle').textContent = 'Editar Servicio: ' + s.nombre;
-    document.getElementById('servId').value = s.id;
-    document.getElementById('servNombre').value = s.nombre;
-    document.getElementById('servCategoria').value = s.categoria;
-    document.getElementById('servPrecio').value = s.precio;
-    document.getElementById('servEstado').value = s.estado;
-    document.getElementById('servDescripcion').value = s.descripcion || '';
-    new bootstrap.Modal(document.getElementById('modalServicio')).show();
-}
-
-document.getElementById('modalServicio').addEventListener('hidden.bs.modal', function() {
-    document.getElementById('modalServTitle').textContent = 'Nuevo Servicio';
-    document.getElementById('servId').value = '';
-    document.getElementById('servNombre').value = '';
-    document.getElementById('servPrecio').value = '0.00';
-    document.getElementById('servDescripcion').value = '';
-});
-</script>
+<?= script_js('vistas/servicios-index.js') ?>

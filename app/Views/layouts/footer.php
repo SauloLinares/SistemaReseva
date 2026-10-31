@@ -28,27 +28,6 @@
     <script src="<?= asset('adminlte/js/adminlte.min.js') ?>"></script>
 
     <!-- Configuración inicial de Scrollbars -->
-    <script>
-      const SELECTOR_SIDEBAR_WRAPPER = ".sidebar-wrapper";
-      const Default = {
-        scrollbarTheme: 'os-theme-light',
-        scrollbarAutoHide: 'leave',
-        scrollbarClickScroll: true,
-      };
-      document.addEventListener('DOMContentLoaded', function () {
-        const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
-        const isMobile = window.innerWidth <= 992;
-        if (sidebarWrapper && typeof OverlayScrollbarsGlobal !== 'undefined' && !isMobile) {
-          OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-            scrollbars: {
-              theme: Default.scrollbarTheme,
-              autoHide: Default.scrollbarAutoHide,
-              clickScroll: Default.scrollbarClickScroll,
-            },
-          });
-        }
-      });
-    </script>
 
     <!-- TomSelect JS (Búsqueda en selects) -->
     <script data-lib="tomselect" src="<?= asset('vendor/tom-select/tom-select.complete.min.js') ?>"></script>
@@ -61,7 +40,7 @@
 
     <?php if (!empty($_SESSION['form_previo'])): ?>
         <!-- Datos y errores del último envío fallido (Controller::volverConErrores); se usan una sola vez -->
-        <script>window.formPrevio = <?= json_encode($_SESSION['form_previo'], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?>;</script>
+        <script type="application/json" id="form-previo"><?= json_encode($_SESSION['form_previo'], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?></script>
         <?php unset($_SESSION['form_previo']); ?>
     <?php endif; ?>
 

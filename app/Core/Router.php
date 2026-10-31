@@ -75,7 +75,8 @@ class Router
 
         // 5. Verificar existencia del controlador
         if (!class_exists($controladorCompleto)) {
-            $this->mostrarError404("El controlador <code>{$nombreClase}</code> no existe en <strong>app/Controllers/</strong>.");
+            // Los nombres salen de la URL: se escapan para que no se pueda inyectar HTML (XSS)
+            $this->mostrarError404('El controlador <code>' . e($nombreClase) . '</code> no existe en <strong>app/Controllers/</strong>.');
             return;
         }
 
@@ -92,7 +93,7 @@ class Router
                 }
             }
             if (!$metodoEncontrado) {
-                $this->mostrarError404("El método <code>{$metodo}()</code> no existe en el controlador <strong>{$nombreClase}</strong>.");
+                $this->mostrarError404('El método <code>' . e($metodo) . '()</code> no existe en el controlador <strong>' . e($nombreClase) . '</strong>.');
                 return;
             }
         }
@@ -197,7 +198,7 @@ class Router
         <head>
             <meta charset='UTF-8'>
             <title>Error 404 - Ruta no encontrada</title>
-            <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css'>
+            <link rel='stylesheet' href='" . asset('adminlte/css/adminlte.min.css') . "'>
         </head>
         <body class='bg-light d-flex align-items-center' style='min-height: 100vh;'>
             <div class='container text-center py-5'>

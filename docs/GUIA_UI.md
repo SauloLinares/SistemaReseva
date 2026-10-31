@@ -78,6 +78,16 @@ Todos los colores, radios y sombras salen de los tokens de `public/assets/css/cu
 - Pie: `btn btn-outline-secondary` "Cancelar" + la acción principal, ambos de tamaño normal. Si la acción es "Confirmar cancelación", el botón que cierra dice "Volver".
 - Avisos de validación en JavaScript: `avisar(titulo, texto)`, no `alert()`.
 
+## 5.2 JavaScript
+
+- **Nada de JavaScript inline**: ni `<script>` con código ni `onclick`/`onchange` en el HTML. La CSP (`script-src 'self'`) los bloquea.
+- El código de una vista va en `public/assets/js/vistas/<carpeta>-<archivo>.js` y se incluye con `<?= script_js('vistas/archivo.js') ?>` al final de la vista.
+- Datos de PHP para el JS: atributos `data-*` o un bloque `<script type="application/json" id="...">` que se lee con `leerJson('id')`.
+- Direcciones: `appUrl('reservas/editar/3')` (equivalente de `url()` de PHP), definida en `js/nucleo.js`.
+- Acciones comunes sin escribir JS: `data-accion="imprimir"`, `data-autoenvio` (select que envía su formulario), `data-navegar="url-base"`, `data-abrir-modal="#id"`, `data-confirm="mensaje"`.
+- En tablas con DataTables usa delegación (`document.addEventListener('click', ...)` + `closest()`): DataTables reconstruye las filas.
+- `!important` solo cuando hay que ganarle a AdminLTE/Bootstrap y no alcanza con la especificidad.
+
 ## 6. Mensajes flash
 
 Los muestra `layouts/header.php` como toast. **No** agregues bloques `$_SESSION['flash']` en las vistas.

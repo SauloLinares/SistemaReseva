@@ -6,9 +6,11 @@
  */
 
 // 0. Cabeceras de seguridad. Todas las librerías se sirven desde el proyecto
-//    (public/assets/vendor), así que solo se permite el mismo origen. 'unsafe-inline'
-//    sigue siendo necesario mientras haya <script> y onclick dentro de las vistas.
-header("Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; "
+//    (public/assets/vendor) y el JavaScript vive en archivos (public/assets/js), así que
+//    los scripts solo pueden venir del mismo origen: un HTML inyectado no se ejecuta.
+//    Los estilos inline siguen permitidos (style="" y los <style> que inyectan FullCalendar
+//    y SweetAlert2).
+header("Content-Security-Policy: default-src 'self'; script-src 'self'; "
      . "style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; "
      . "connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'");
 header('X-Content-Type-Options: nosniff');

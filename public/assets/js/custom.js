@@ -15,6 +15,30 @@
 (function () {
     'use strict';
 
+    // Acciones declaradas con data-* (reemplazan onclick/onchange en el HTML: la CSP no los permite)
+    document.addEventListener('click', function (e) {
+        const imprimir = e.target.closest('[data-accion="imprimir"]');
+        if (imprimir) {
+            e.preventDefault();
+            window.print();
+        }
+        // Abre un modal pulsando su botón disparador (ej. "+ Registrar huésped" desde el buscador)
+        const abrir = e.target.closest('[data-abrir-modal]');
+        if (abrir) {
+            document.querySelector('[data-bs-target="' + abrir.dataset.abrirModal + '"]')?.click();
+        }
+    });
+    document.addEventListener('change', function (e) {
+        // <select data-autoenvio>: envía su formulario al cambiar
+        if (e.target.matches('[data-autoenvio]') && e.target.form) {
+            e.target.form.submit();
+        }
+        // <select data-navegar="url-base">: va a url-base + valor elegido
+        if (e.target.matches('[data-navegar]') && e.target.value) {
+            window.location.href = e.target.dataset.navegar + encodeURIComponent(e.target.value);
+        }
+    });
+
     window.csrfToken = function () {
         const meta = document.querySelector('meta[name="csrf-token"]');
         return meta ? meta.getAttribute('content') : '';
@@ -254,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         '<div class="mb-2 text-muted"><i class="bi bi-person-x fs-2"></i></div>' +
                         '<div class="fw-semibold text-body mb-1">No se encontró al huésped "' + escape(data.input) + '"</div>' +
                         '<p class="text-muted small mb-2">Puedes registrarlo en el sistema con un solo clic.</p>' +
-                        '<button type="button" class="btn btn-sm btn-primary shadow-xs" onclick="const modalBtn = document.querySelector(\'[data-bs-target=\\\'#modalNuevoHuesped\\\']\'); if(modalBtn) modalBtn.click();">' +
+                        '<button type="button" class="btn btn-sm btn-primary shadow-xs" data-abrir-modal="#modalNuevoHuesped">' +
                             '<i class="bi bi-person-plus me-1"></i> + Registrar Nuevo Huésped' +
                         '</button>' +
                     '</div>';
@@ -569,7 +593,17 @@ document.addEventListener('DOMContentLoaded', function () {
     // El servidor (Controller::volverConErrores) deja en window.formPrevio la
     // ruta del envío, lo que el usuario escribió y el error de cada campo.
     // ---------------------------------------------------------------
-    restaurarFormularioPrevio(window.formPrevio);
+    restaurarFormularioPrevio(window.leerJson('form-previo'));
+
+    // ---------------------------------------------------------------
+    // 10. BARRA DE DESPLAZAMIENTO DEL MENÚ LATERAL (OverlayScrollbars, solo escritorio)
+    // ---------------------------------------------------------------
+    const menuLateral = document.querySelector('.sidebar-wrapper');
+    if (menuLateral && typeof OverlayScrollbarsGlobal !== 'undefined' && window.innerWidth > 992) {
+        OverlayScrollbarsGlobal.OverlayScrollbars(menuLateral, {
+            scrollbars: { theme: 'os-theme-light', autoHide: 'leave', clickScroll: true }
+        });
+    }
 });
 
 function restaurarFormularioPrevio(previo) {

@@ -360,7 +360,7 @@
                         <label for="monto_real_efectivo" class="form-label">Ingresa el Efectivo Físico Contado en tu Cajón (S/.) <span class="text-danger">*</span></label>
                         <div class="input-group input-group-lg">
                             <span class="input-group-text bg-success text-white fw-bold">S/.</span>
-                            <input type="number" step="0.10" min="0" name="monto_real_efectivo" id="monto_real_efectivo" class="form-control fw-bold fs-3 text-success" value="<?= number_format($resumen['monto_esperado_efectivo'], 2, '.', '') ?>" required autofocus>
+                            <input type="number" step="0.10" min="0" name="monto_real_efectivo" id="monto_real_efectivo" data-esperado="<?= (float)$resumen['monto_esperado_efectivo'] ?>" class="form-control fw-bold fs-3 text-success" value="<?= number_format($resumen['monto_esperado_efectivo'], 2, '.', '') ?>" required autofocus>
                             <button type="button" class="btn btn-outline-secondary" id="btnCopiarEsperado" title="Usar monto exacto esperado">
                                 <i class="bi bi-magic me-1"></i> Monto Exacto
                             </button>
@@ -390,43 +390,4 @@
     </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const esperado = <?= (float)$resumen['monto_esperado_efectivo'] ?>;
-    const inputReal = document.getElementById('monto_real_efectivo');
-    const alertaDif = document.getElementById('alertaDiferencia');
-    const iconoDif = document.getElementById('iconoDif');
-    const textoDif = document.getElementById('textoDif');
-    const btnCopiar = document.getElementById('btnCopiarEsperado');
-
-    function calcularDiferencia() {
-        const real = parseFloat(inputReal.value || 0);
-        const dif = real - esperado;
-
-        if (Math.abs(dif) < 0.01) {
-            alertaDif.className = 'alert alert-success py-2 px-3 small rounded-3 mb-3 d-flex align-items-center gap-2';
-            iconoDif.className = 'bi bi-check-circle-fill fs-5 text-success';
-            textoDif.innerHTML = '<strong>¡Caja Cuadrada!</strong> El conteo coincide exactamente con los registros del sistema (Diferencia: S/. 0.00).';
-        } else if (dif > 0) {
-            alertaDif.className = 'alert alert-warning py-2 px-3 small rounded-3 mb-3 d-flex align-items-center gap-2';
-            iconoDif.className = 'bi bi-plus-circle-fill fs-5 text-warning';
-            textoDif.innerHTML = `<strong>Sobrante de caja: +S/. ${dif.toFixed(2)}</strong>. Hay más dinero físico en gaveta del registrado.`;
-        } else {
-            alertaDif.className = 'alert alert-danger py-2 px-3 small rounded-3 mb-3 d-flex align-items-center gap-2';
-            iconoDif.className = 'bi bi-exclamation-triangle-fill fs-5 text-danger';
-            textoDif.innerHTML = `<strong>Faltante de caja: -S/. ${Math.abs(dif).toFixed(2)}</strong>. Falta dinero físico respecto a lo esperado.`;
-        }
-    }
-
-    if (inputReal) {
-        inputReal.addEventListener('input', calcularDiferencia);
-    }
-
-    if (btnCopiar) {
-        btnCopiar.addEventListener('click', function() {
-            inputReal.value = esperado.toFixed(2);
-            calcularDiferencia();
-        });
-    }
-});
-</script>
+<?= script_js('vistas/caja-index.js') ?>

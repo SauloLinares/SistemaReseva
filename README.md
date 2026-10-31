@@ -107,3 +107,20 @@ El sistema está organizado en **10 módulos funcionales** accesibles desde la b
 - **URL de Acceso:** `http://localhost/SistemaReserva/login` o `http://localhost/SistemaReserva/public/index.php?url=login`
 - **Correo Electrónico:** `admin@admin.com`
 - **Contraseña:** `admin123`
+
+## 🧪 Pruebas automáticas del frontend
+
+Pruebas end-to-end con [Playwright](https://playwright.dev) que recorren las pantallas, los formularios,
+la seguridad (CSRF, cabeceras, XSS) y los flujos principales. Usan el Chrome instalado en el equipo.
+
+```bash
+npm install                 # solo la primera vez (instala @playwright/test)
+npm run test:e2e            # con Laragon encendido
+```
+
+- Credenciales: variables `E2E_EMAIL` y `E2E_PASSWORD` (por defecto, las de prueba de arriba).
+- Dirección: `E2E_BASE_URL` (por defecto `http://sistemareserva.test/public/`).
+- Las pruebas no dejan datos: las que crean algo (un servicio) lo eliminan al terminar.
+- Comparación visual para cambios de CSS (claro y oscuro):
+  `VISUAL=1 npx playwright test visual --update-snapshots` antes del cambio y
+  `VISUAL=1 npx playwright test visual` después (`VISUAL_MOVIL=1` para ancho de teléfono).

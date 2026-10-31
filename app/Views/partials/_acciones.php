@@ -16,7 +16,7 @@ foreach ($acciones as $accion):
             <?= $icono ?><?= e($accion['texto']) ?>
         </button>
     <?php elseif (!empty($accion['imprimir'])): ?>
-        <button type="button" class="<?= e($clase) ?>" onclick="window.print()">
+        <button type="button" class="<?= e($clase) ?>" data-accion="imprimir">
             <?= $icono ?><?= e($accion['texto']) ?>
         </button>
     <?php else: ?>

@@ -20,7 +20,7 @@
                         <div class="row g-3">
                             <div class="col-12">
                                 <label for="selectReserva" class="form-label">Seleccionar Reserva con Saldo Pendiente <span class="text-danger">*</span></label>
-                                <select name="reserva_id" id="selectReserva" class="form-select form-select-lg" required onchange="actualizarSaldo(this)">
+                                <select name="reserva_id" id="selectReserva" class="form-select form-select-lg" required>
                                     <option value="">-- Elige una reserva para cobrar --</option>
                                     <?php foreach ($saldosPendientes as $sp): ?>
                                         <option value="<?= $sp['id'] ?>" data-saldo="<?= $sp['saldo'] ?>" data-total="<?= $sp['total'] ?>" data-huesped="<?= htmlspecialchars($sp['huesped_nombre']) ?>" <?= ($reservaSeleccionada && $reservaSeleccionada['id'] == $sp['id']) ? 'selected' : '' ?>>
@@ -32,7 +32,7 @@
 
                             <div class="col-12 col-md-6">
                                 <label for="comprobante_tipo" class="form-label">Tipo de Comprobante <span class="text-danger">*</span></label>
-                                <select name="comprobante_tipo" id="comprobante_tipo" class="form-select" onchange="actualizarNumeroComprobante(this.value)">
+                                <select name="comprobante_tipo" id="comprobante_tipo" class="form-select" data-correlativos="<?= e(json_encode(['Boleta' => $numBoleta, 'Factura' => $numFactura, 'Recibo de Caja' => $numRecibo], JSON_UNESCAPED_UNICODE)) ?>">
                                     <option value="Boleta" selected>Boleta de Venta</option>
                                     <option value="Factura">Factura</option>
                                     <option value="Recibo de Caja">Recibo de Caja</option>
@@ -89,22 +89,4 @@
     </div>
 </div>
 
-<script>
-const correlativos = {
-    'Boleta': '<?= htmlspecialchars($numBoleta) ?>',
-    'Factura': '<?= htmlspecialchars($numFactura) ?>',
-    'Recibo de Caja': '<?= htmlspecialchars($numRecibo) ?>'
-};
-
-function actualizarNumeroComprobante(tipo) {
-    document.getElementById('comprobante_numero').value = correlativos[tipo] || '001-000001';
-}
-
-function actualizarSaldo(sel) {
-    const opt = sel.options[sel.selectedIndex];
-    if (opt && opt.dataset.saldo) {
-        document.getElementById('inputMonto').value = opt.dataset.saldo;
-        document.getElementById('textoSaldoAyuda').textContent = 'Saldo total adeudado: S/. ' + opt.dataset.saldo;
-    }
-}
-</script>
+<?= script_js('vistas/pagos-crear.js') ?>

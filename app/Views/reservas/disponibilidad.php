@@ -17,13 +17,13 @@
                 <h5 class="card-title mb-0"><i class="bi bi-search me-2"></i>Parámetros de Búsqueda</h5>
                 <div class="d-flex flex-wrap gap-1 align-items-center">
                     <span class="text-muted small me-1"><i class="bi bi-lightning-charge text-warning"></i> Atajos:</span>
-                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill small" onclick="aplicarRangoFecha(1)">
+                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill small" data-rango="1">
                         Hoy a Mañana (1 n.)
                     </button>
-                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill small" onclick="aplicarRangoFecha('finde')">
+                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill small" data-rango="finde">
                         Fin de Semana
                     </button>
-                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill small" onclick="aplicarRangoFecha(7)">
+                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill small" data-rango="7">
                         Semana (7 d.)
                     </button>
                 </div>
@@ -83,7 +83,7 @@
                         <i class="bi bi-calendar-x text-danger display-4 mb-3 d-block opacity-75"></i>
                         <h5 class="fw-bold">No hay habitaciones disponibles para las fechas seleccionadas</h5>
                         <p class="text-muted small">Intenta buscar en otro rango de fechas o seleccionar otra categoría de habitación.</p>
-                        <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="aplicarRangoFecha(1)">
+                        <button type="button" class="btn btn-outline-primary btn-sm mt-2" data-rango="1">
                             <i class="bi bi-arrow-repeat me-1"></i> Consultar Hoy a Mañana
                         </button>
                     </div>
@@ -111,7 +111,7 @@
                                             <strong class="fs-5 text-body-emphasis"><?= dinero($h['precio_diario']) ?></strong>
                                             <span class="text-body-secondary text-sm">/ noche</span>
                                         </div>
-                                        <a href="<?= url('reservas/crear?hab_id=' . $h['id'] . '&entrada=' . $entrada . '&salida=' . $salida) ?>" class="btn btn-primary btn-sm w-100">
+                                        <a href="<?= e(url('reservas/crear?hab_id=' . $h['id'] . '&entrada=' . urlencode($entrada) . '&salida=' . urlencode($salida))) ?>" class="btn btn-primary btn-sm w-100">
                                             <i class="bi bi-calendar-plus me-1"></i>Reservar
                                         </a>
                                     </div>
@@ -126,30 +126,4 @@
     </div>
 </div>
 
-<script>
-function aplicarRangoFecha(tipo) {
-    const hoy = new Date();
-    const formatear = d => d.toISOString().split('T')[0];
-    const entradaInput = document.querySelector('input[name="entrada"]');
-    const salidaInput = document.querySelector('input[name="salida"]');
-    
-    if (tipo === 'finde') {
-        const dia = hoy.getDay();
-        const diasHastaViernes = (5 - dia + 7) % 7 || 7;
-        const viernes = new Date(hoy);
-        viernes.setDate(hoy.getDate() + (dia === 5 ? 0 : diasHastaViernes));
-        const domingo = new Date(viernes);
-        domingo.setDate(viernes.getDate() + 2);
-        entradaInput.value = formatear(viernes);
-        salidaInput.value = formatear(domingo);
-    } else {
-        const dias = parseInt(tipo, 10) || 1;
-        const salida = new Date(hoy);
-        salida.setDate(hoy.getDate() + dias);
-        entradaInput.value = formatear(hoy);
-        salidaInput.value = formatear(salida);
-    }
-    
-    document.getElementById('formDisponibilidad').submit();
-}
-</script>
+<?= script_js('vistas/reservas-disponibilidad.js') ?>

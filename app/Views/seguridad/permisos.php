@@ -18,7 +18,7 @@
                         <label for="rolConfigurar" class="form-label mb-0">Seleccionar Rol a Configurar:</label>
                     </div>
                     <div class="col-12 col-md-5">
-                        <select id="rolConfigurar" class="form-select" onchange="window.location.href='<?= url("seguridad/permisos?rol_id=") ?>' + this.value">
+                        <select id="rolConfigurar" class="form-select" data-navegar="<?= e(url('seguridad/permisos?rol_id=')) ?>">
                             <?php foreach ($roles as $r): ?>
                                 <option value="<?= $r['id'] ?>" <?= ($r['id'] == $rolSeleccionadoId) ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($r['nombre']) ?>

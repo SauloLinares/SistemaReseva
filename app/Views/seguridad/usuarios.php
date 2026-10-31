@@ -41,7 +41,7 @@
                                     <td><small class="text-muted"><?= fecha_es($u['ultimo_login'], true) ?></small></td>
                                     <td class="text-end pe-3">
                                         <div class="table-actions">
-                                            <button type="button" class="btn btn-icon btn-outline-primary" title="Editar" onclick='editarUsuario(<?= json_encode($u, JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>
+                                            <button type="button" class="btn btn-icon btn-outline-primary" title="Editar" data-editar="<?= e(json_encode($u, JSON_UNESCAPED_UNICODE)) ?>">
                                                 <i class="bi bi-pencil-square"></i>
                                             </button>
                                             <?php if ($u['id'] !== 1 && $u['id'] !== (int)auth_user('id')): ?>
@@ -111,23 +111,4 @@
     </div>
 </div>
 
-<script>
-function editarUsuario(u) {
-    document.getElementById('modalUserTitle').textContent = 'Editar Usuario: ' + u.nombre;
-    document.getElementById('userId').value = u.id;
-    document.getElementById('userNombre').value = u.nombre;
-    document.getElementById('userEmail').value = u.email;
-    document.getElementById('userRol').value = u.rol || 'Administrador';
-    document.getElementById('userEstado').value = u.estado;
-    document.getElementById('userPassword').value = '';
-    new bootstrap.Modal(document.getElementById('modalUsuario')).show();
-}
-
-document.getElementById('modalUsuario').addEventListener('hidden.bs.modal', function() {
-    document.getElementById('modalUserTitle').textContent = 'Nuevo Usuario';
-    document.getElementById('userId').value = '';
-    document.getElementById('userNombre').value = '';
-    document.getElementById('userEmail').value = '';
-    document.getElementById('userPassword').value = '';
-});
-</script>
+<?= script_js('vistas/seguridad-usuarios.js') ?>

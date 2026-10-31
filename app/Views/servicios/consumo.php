@@ -33,7 +33,7 @@
 
                             <div class="col-12 col-md-8">
                                 <label for="servicio_id" class="form-label">Servicio Contratado / Consumido <span class="text-danger">*</span></label>
-                                <select name="servicio_id" id="servicio_id" class="form-select form-select-lg" required onchange="calcularTotal()">
+                                <select name="servicio_id" id="servicio_id" class="form-select form-select-lg" required>
                                     <option value="">-- Seleccionar del catálogo --</option>
                                     <?php foreach ($servicios as $s): ?>
                                         <option value="<?= $s['id'] ?>" data-precio="<?= $s['precio'] ?>">
@@ -45,7 +45,7 @@
 
                             <div class="col-12 col-md-4">
                                 <label for="inputCantidad" class="form-label">Cantidad <span class="text-danger">*</span></label>
-                                <input type="number" name="cantidad" id="inputCantidad" class="form-control form-control-lg text-center" value="1" min="1" max="50" required onchange="calcularTotal()" onkeyup="calcularTotal()">
+                                <input type="number" name="cantidad" id="inputCantidad" class="form-control form-control-lg text-center" value="1" min="1" max="50" required>
                             </div>
 
                             <div class="col-12">
@@ -87,14 +87,4 @@
     </div>
 </div>
 
-<script>
-function calcularTotal() {
-    const sel = document.getElementById('servicio_id');
-    const cantInput = document.getElementById('inputCantidad');
-    const opt = sel.options[sel.selectedIndex];
-    const precio = opt ? parseFloat(opt.dataset.precio || 0) : 0;
-    const cant = parseInt(cantInput.value || 1);
-    const total = precio * cant;
-    document.getElementById('displayTotalConsumo').textContent = 'S/. ' + total.toFixed(2);
-}
-</script>
+<?= script_js('vistas/servicios-consumo.js') ?>

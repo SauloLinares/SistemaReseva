@@ -88,18 +88,4 @@
     </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const inputMonto = document.getElementById('monto_inicial');
-    const btnsSugeridos = document.querySelectorAll('.btn-sugerido');
-
-    btnsSugeridos.forEach(btn => {
-        btn.addEventListener('click', function() {
-            btnsSugeridos.forEach(b => b.classList.remove('active', 'btn-success', 'text-white'));
-            this.classList.add('active', 'btn-success', 'text-white');
-            inputMonto.value = parseFloat(this.dataset.monto).toFixed(2);
-            inputMonto.focus();
-        });
-    });
-});
-</script>
+<?= script_js('vistas/caja-apertura.js') ?>

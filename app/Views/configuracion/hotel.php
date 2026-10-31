@@ -91,27 +91,7 @@
     </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const inputLogo = document.getElementById('inputLogoHotel');
-    const previewLogo = document.getElementById('previewLogoHotel');
-
-    if (inputLogo && previewLogo) {
-        inputLogo.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    previewLogo.src = evt.target.result;
-                    previewLogo.hidden = false;
-                    document.getElementById('previewLogoVacio')?.setAttribute('hidden', '');
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-});
-</script>
+<?= script_js('vistas/configuracion-hotel.js') ?>
 
     </div>
 </div>

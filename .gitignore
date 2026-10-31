@@ -1,0 +1,12 @@
+# Dependencias y resultados de herramientas de desarrollo
+node_modules/
+test-results/
+playwright-report/
+playwright/.cache/
+tests/e2e/.auth/
+
+# Configuración local
+.env
+
+# Capturas de la comparación visual (dependen de los datos y la fecha)
+tests/e2e/*-snapshots/

@@ -113,6 +113,20 @@ if (!function_exists('csrf_inyectar')) {
     }
 }
 
+if (!function_exists('script_js')) {
+    /**
+     * Etiqueta <script src> de un archivo de public/assets/js con su versión (fecha de
+     * modificación) para que el navegador no use una copia vieja de la caché.
+     * El JavaScript vive en archivos: la CSP no permite <script> inline.
+     */
+    function script_js(string $ruta): string
+    {
+        $archivo = dirname(__DIR__, 2) . '/public/assets/js/' . $ruta;
+        $version = is_file($archivo) ? filemtime($archivo) : 0;
+        return '<script src="' . e(asset('js/' . $ruta)) . '?v=' . $version . '"></script>';
+    }
+}
+
 if (!function_exists('foto_habitacion')) {
     /**
      * URL de la foto de una habitación. Con $miniatura usa la versión reducida de
@@ -130,6 +144,39 @@ if (!function_exists('foto_habitacion')) {
             return base_url('uploads/habitaciones/miniaturas/' . $foto);
         }
         return base_url('uploads/habitaciones/' . $foto);
+    }
+}
+
+if (!function_exists('rutas_en_formularios_get')) {
+    /**
+     * Un <form method="GET"> descarta la consulta de su action al enviarse: con
+     * action="index.php?url=huespedes" el navegador va a index.php?q=... y se pierde la
+     * ruta (se llegaba al Panel en vez del listado filtrado). Se agrega la ruta y los demás
+     * parámetros del action como campos ocultos.
+     */
+    function rutas_en_formularios_get(string $html): string
+    {
+        return preg_replace_callback(
+            '/<form\b[^>]*\bmethod\s*=\s*["\']?get["\']?[^>]*>/i',
+            function (array $m) use ($html) {
+                if (!preg_match('/\baction\s*=\s*"([^"]*)"/i', $m[0], $accion)) {
+                    return $m[0];
+                }
+                $consulta = parse_url(html_entity_decode($accion[1]), PHP_URL_QUERY);
+                if (!$consulta) {
+                    return $m[0];
+                }
+                parse_str($consulta, $parametros);
+                $ocultos = '';
+                foreach ($parametros as $nombre => $valor) {
+                    if (is_string($valor)) {
+                        $ocultos .= '<input type="hidden" name="' . e($nombre) . '" value="' . e($valor) . '">';
+                    }
+                }
+                return $m[0] . $ocultos;
+            },
+            $html
+        ) ?? $html;
     }
 }
 
@@ -231,7 +278,8 @@ if (!function_exists('fecha_es')) {
     {
         if (empty($fecha)) return '-';
         $timestamp = strtotime($fecha);
-        if (!$timestamp) return $fecha;
+        // Si no es una fecha se devuelve escapada: el resultado se imprime en HTML sin e()
+        if (!$timestamp) return e($fecha);
         return $conHora ? date('d/m/Y H:i', $timestamp) : date('d/m/Y', $timestamp);
     }
 }

@@ -45,7 +45,7 @@ abstract class Controller
 
         require_once $layoutsPath . 'footer.php';
 
-        echo quitar_librerias_sin_uso(csrf_inyectar(ob_get_clean()));
+        echo quitar_librerias_sin_uso(rutas_en_formularios_get(csrf_inyectar(ob_get_clean())));
     }
 
     /**

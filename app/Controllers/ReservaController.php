@@ -297,8 +297,12 @@ class ReservaController extends Controller
      */
     public function disponibilidad(): void
     {
-        $entrada = $_GET['entrada'] ?? date('Y-m-d');
-        $salida = $_GET['salida'] ?? date('Y-m-d', strtotime('+1 day'));
+        // Solo fechas AAAA-MM-DD válidas: estos valores se vuelven a imprimir en la página
+        $esFecha = fn($f) => is_string($f) && (bool) \DateTime::createFromFormat('Y-m-d', $f);
+        $entrada = $esFecha($_GET['entrada'] ?? null) ? $_GET['entrada'] : date('Y-m-d');
+        $salida = $esFecha($_GET['salida'] ?? null) && $_GET['salida'] > $entrada
+            ? $_GET['salida']
+            : date('Y-m-d', strtotime($entrada . ' +1 day'));
         $tipoId = !empty($_GET['tipo_id']) ? (int)$_GET['tipo_id'] : null;
 
         $habitacionesDisponibles = [];

@@ -3,7 +3,7 @@
     'icono'     => 'bi-pie-chart',
     'subtitulo' => 'Porcentajes de ocupación por período y habitaciones más demandadas',
     'extra'     => '<form method="GET" action="' . e(url('reportes/ocupacion')) . '" class="d-inline-flex gap-2">'
-                 . '<input type="month" name="mes" class="form-control form-control-sm" aria-label="Mes del reporte" value="' . e($mes) . '" onchange="this.form.submit()">'
+                 . '<input type="month" name="mes" class="form-control form-control-sm" aria-label="Mes del reporte" value="' . e($mes) . '" data-autoenvio>'
                  . '</form>',
 ]) ?>
 

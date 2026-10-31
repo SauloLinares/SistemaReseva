@@ -20,20 +20,7 @@ $rutaLogo = ($logoArchivo !== '' && file_exists(__DIR__ . '/../../../public/uplo
     <?php endif; ?>
 
     <!-- Script de inicialización de tema claro/oscuro (AdminLTE v4) -->
-    <script>
-        (() => {
-            'use strict';
-            const root = document.documentElement;
-            const STORAGE_KEY = 'lte-theme';
-            let stored = null;
-            try {
-                stored = localStorage.getItem(STORAGE_KEY);
-            } catch {}
-            const authored = root.getAttribute('data-bs-theme');
-            let resolved = stored || authored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            root.setAttribute('data-bs-theme', resolved);
-        })();
-    </script>
+    <?= script_js('tema.js') ?>
 
     <!-- Fuentes de Google -->
     <link rel="stylesheet" href="<?= asset('vendor/fonts/plus-jakarta-sans/fuente.css') ?>" />
@@ -226,42 +213,7 @@ $rutaLogo = ($logoArchivo !== '' && file_exists(__DIR__ . '/../../../public/uplo
     <!-- Bootstrap 5 JS -->
     <script src="<?= asset('vendor/bootstrap/bootstrap.bundle.min.js') ?>"></script>
 
-    <script>
-        // Funcionalidad para alternar ver/ocultar contraseña
-        const toggleBtn = document.getElementById('togglePasswordBtn');
-        const passInput = document.getElementById('password');
-        const toggleIcon = document.getElementById('togglePasswordIcon');
-
-        if (toggleBtn && passInput && toggleIcon) {
-            toggleBtn.addEventListener('click', function() {
-                const isPassword = passInput.type === 'password';
-                passInput.type = isPassword ? 'text' : 'password';
-                toggleIcon.classList.toggle('bi-eye', !isPassword);
-                toggleIcon.classList.toggle('bi-eye-slash', isPassword);
-            });
-        }
-
-        // Funcionalidad para autocompletar credenciales de prueba
-        const btnAuto = document.getElementById('btnAutocompletar');
-        if (btnAuto) {
-            btnAuto.addEventListener('click', function() {
-                document.getElementById('email').value = 'admin@admin.com';
-                document.getElementById('password').value = 'admin123';
-                document.getElementById('password').focus();
-            });
-        }
-
-        // Manejador del tema claro/oscuro
-        document.querySelectorAll('[data-bs-theme-value]').forEach(button => {
-            button.addEventListener('click', () => {
-                const theme = button.getAttribute('data-bs-theme-value');
-                document.documentElement.setAttribute('data-bs-theme', theme);
-                try {
-                    localStorage.setItem('lte-theme', theme);
-                } catch {}
-            });
-        });
-    </script>
+    <?= script_js('login.js') ?>
 </body>
 
 </html>

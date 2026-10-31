@@ -28,30 +28,22 @@ $pageTitle = preg_replace('/\s*[-|·]\s*Hotel Manager\s*$/u', '', $pageTitle ?? 
         <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%232563eb'/%3E%3Cpath fill='white' d='M4 3h5v10H4zM10 6h2v7h-2z'/%3E%3C/svg%3E" />
     <?php endif; ?>
 
-    <!-- Script de inicialización de tema claro/oscuro & estado del sidebar (AdminLTE v4) -->
-    <script>
-      (() => {
-        'use strict';
-        const root = document.documentElement;
-        const STORAGE_KEY = 'lte-theme';
-        let stored = null;
-        try { stored = localStorage.getItem(STORAGE_KEY); } catch {}
-        const authored = root.getAttribute('data-bs-theme');
-        let resolved = stored || authored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        root.setAttribute('data-bs-theme', resolved);
+    <!-- Tema claro/oscuro y estado del menú: antes de pintar para evitar parpadeo -->
+    <script src="<?= asset('js/tema.js') ?>?v=<?= filemtime(__DIR__ . '/../../../public/assets/js/tema.js') ?>"></script>
 
-        // Prevenir parpadeo del sidebar si fue colapsado por el usuario
-        try {
-          if (localStorage.getItem('lte.sidebar.state') === 'collapsed' && window.innerWidth >= 992) {
-            document.addEventListener('DOMContentLoaded', () => {
-              document.body.classList.add('sidebar-collapse');
-            });
-          }
-        } catch {}
-      })();
-    </script>
+    <!-- Datos para el JavaScript (no se ejecuta: la CSP no permite scripts inline) -->
+    <script type="application/json" id="app-config"><?= json_encode([
+        'baseUrl'  => base_url(),
+        'urlRutas' => base_url('index.php?url='),
+    ], JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
+    <script src="<?= asset('js/nucleo.js') ?>?v=<?= filemtime(__DIR__ . '/../../../public/assets/js/nucleo.js') ?>"></script>
 
     <!-- Fuente del sistema: Plus Jakarta Sans (Source Sans 3 de AdminLTE se quitó: ningún elemento la usaba) -->
+    <!-- Precarga de los pesos más usados: así el texto y las tablas se miden con la fuente final
+         (DataTables calcula el ancho de columnas al cargar; con la fuente de respaldo "saltaban") -->
+    <?php foreach ([400, 600, 700] as $peso): ?>
+        <link rel="preload" href="<?= asset("vendor/fonts/plus-jakarta-sans/plus-jakarta-sans-latin-{$peso}-normal.woff2") ?>" as="font" type="font/woff2" crossorigin />
+    <?php endforeach; ?>
     <link rel="stylesheet" href="<?= asset('vendor/fonts/plus-jakarta-sans/fuente.css') ?>" />
 
     <!-- OverlayScrollbars -->

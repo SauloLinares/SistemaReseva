@@ -20,7 +20,7 @@
                         <form method="POST" action="<?= url('recepcion/procesarCheckin') ?>">
                             <div class="mb-3">
                                 <label for="selectReserva" class="form-label">Reserva programada <span class="text-danger">*</span></label>
-                                <select name="reserva_id" id="selectReserva" class="form-select select-search" required onchange="cambiarReserva(this.value)" placeholder="Escribe el código, nombre del huésped o habitación...">
+                                <select name="reserva_id" id="selectReserva" class="form-select select-search" required placeholder="Escribe el código, nombre del huésped o habitación...">
                                     <option value="">-- Elige una reserva lista para ingreso --</option>
                                     <?php foreach ($reservas as $r): ?>
                                         <option value="<?= $r['id'] ?>" <?= ($reservaSeleccionada && $reservaSeleccionada['id'] == $r['id']) ? 'selected' : '' ?>>
@@ -111,10 +111,4 @@
     </div>
 </div>
 
-<script>
-function cambiarReserva(id) {
-    if (id) {
-        window.location.href = '<?= url("recepcion/checkin?reserva_id=") ?>' + id;
-    }
-}
-</script>
+<?= script_js('vistas/recepcion-checkin.js') ?>
