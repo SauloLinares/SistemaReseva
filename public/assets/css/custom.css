@@ -3932,3 +3932,133 @@ input[type="time"]:focus::-webkit-calendar-picker-indicator {
 .menu-cuenta .min-w-0 {
     min-width: 0;
 }
+
+/* ====================================================================
+   28. RECEPCIÓN RÁPIDA: atajos, búsqueda con ×, cobro dividido, accesos del Inicio
+   ==================================================================== */
+.kbd-atajo {
+    margin-left: 0.35rem;
+    padding: 0.05rem 0.35rem;
+    border-radius: 0.3rem;
+    background: rgb(0 0 0 / 0.12);
+    color: inherit;
+    font-size: 0.7em;
+    font-weight: 600;
+    vertical-align: middle;
+    box-shadow: none;
+}
+label .kbd-atajo {
+    background: var(--bs-secondary-bg);
+    color: var(--bs-secondary-color);
+}
+.btn-primary .kbd-atajo,
+.btn-success .kbd-atajo,
+.btn-danger .kbd-atajo {
+    background: rgb(255 255 255 / 0.22);
+}
+.tabla-atajos td:first-child {
+    width: 4.5rem;
+    text-align: center;
+}
+.tabla-atajos td {
+    text-align: left;
+}
+
+.campo-limpiable {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+.input-group > .campo-limpiable {
+    flex: 1 1 auto;
+    width: 1%;
+    min-width: 0;
+}
+.campo-limpiable > input {
+    width: 100%;
+    padding-right: 2rem;
+}
+.input-group > .campo-limpiable:not(:first-child) > input {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.input-group > .campo-limpiable:not(:last-child) > input {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.btn-limpiar {
+    position: absolute;
+    right: 0.35rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--bs-secondary-color);
+    font-size: 0.8rem;
+    z-index: 5;
+}
+.btn-limpiar:hover,
+.btn-limpiar:focus-visible {
+    background: var(--bs-secondary-bg);
+    color: var(--bs-body-color);
+}
+
+.cobro-linea {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+    gap: 0.5rem;
+}
+.cobro-linea:has(> [data-quitar-linea][hidden]) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+.cobro-linea > [data-quitar-linea][hidden] {
+    display: none;
+}
+
+.accesos-rapidos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+.acceso-rapido {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--bs-border-color);
+    border-radius: 999px;
+    background: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+.acceso-rapido > .bi {
+    color: var(--hm-primary);
+}
+.acceso-rapido:hover,
+.acceso-rapido:focus-visible {
+    border-color: var(--hm-primary);
+    background: color-mix(in srgb, var(--hm-primary) 8%, var(--bs-body-bg));
+    color: var(--bs-body-color);
+}
+.acceso-rapido .kbd-atajo {
+    margin-left: 0;
+    background: var(--bs-secondary-bg);
+    color: var(--bs-secondary-color);
+}
+@media (max-width: 575.98px) {
+    .acceso-rapido {
+        flex: 1 1 calc(50% - 0.5rem);
+        justify-content: center;
+    }
+    .acceso-rapido .kbd-atajo {
+        display: none;
+    }
+}

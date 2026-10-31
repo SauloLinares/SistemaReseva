@@ -57,6 +57,7 @@ class PagoController extends Controller
         $this->render('pagos/crear', [
             'saldosPendientes'    => $saldosPendientes,
             'reservaSeleccionada' => $reservaSeleccionada,
+            'cajaAbierta'         => (new \App\Models\Caja())->obtenerTurnoActivo() !== null,
             'numBoleta'           => $this->pagoModel->generarNumeroComprobante('Boleta'),
             'numFactura'          => $this->pagoModel->generarNumeroComprobante('Factura'),
             'numRecibo'           => $this->pagoModel->generarNumeroComprobante('Recibo de Caja')
@@ -79,18 +80,15 @@ class PagoController extends Controller
         if (!$reserva) {
             $errores['reserva_id'] = $reservaId ? 'La reserva elegida ya no existe.' : 'Elige la reserva a la que corresponde el pago.';
         }
-        if (!is_numeric($_POST['monto'] ?? '') || (float)$_POST['monto'] <= 0) {
-            $errores['monto'] = 'Ingresa un monto mayor a cero.';
-        }
-        if (trim($_POST['metodo_pago'] ?? '') === '') {
-            $errores['metodo_pago'] = 'Elige el método de pago.';
-        }
+        [$lineas, $erroresCobro, $notaEfectivo] = $this->leerCobro($reserva);
+        $errores += $erroresCobro;
         if ($errores) {
             $this->volverConErrores('pagos/crear', $errores);
         }
 
         $_POST['huesped_id'] = $reserva['huesped_id'];
-        $pagoId = $this->pagoModel->registrarPago($_POST);
+        $_POST['notas'] = trim(trim($_POST['notas'] ?? '') . ' ' . $notaEfectivo);
+        $pagoId = $this->pagoModel->registrarCobro($_POST, $lineas);
 
         if ($pagoId) {
             $this->setFlash('success', '¡Pago registrado exitosamente!');
@@ -110,20 +108,20 @@ class PagoController extends Controller
         }
 
         $reservaId = (int)($_POST['reserva_id'] ?? 0);
-        $monto = (float)($_POST['monto'] ?? 0);
-
-        if (!$reservaId || $monto <= 0) {
-            $this->json(['success' => false, 'mensaje' => 'Debe ingresar un monto válido mayor a cero.']);
-            return;
-        }
-
-        $reserva = $this->reservaModel->obtenerPorId($reservaId);
+        $reserva = $reservaId ? $this->reservaModel->obtenerPorId($reservaId) : null;
         if (!$reserva) {
             $this->json(['success' => false, 'mensaje' => 'Reserva no encontrada.']);
             return;
         }
 
+        [$lineas, $errores, $notaEfectivo] = $this->leerCobro($reserva);
+        if ($errores) {
+            $this->json(['success' => false, 'mensaje' => reset($errores), 'errores' => $errores]);
+            return;
+        }
+
         $_POST['huesped_id'] = $reserva['huesped_id'];
+        $_POST['notas'] = trim(trim($_POST['notas'] ?? '') . ' ' . $notaEfectivo);
         if (empty($_POST['comprobante_tipo'])) {
             $_POST['comprobante_tipo'] = 'Boleta';
         }
@@ -131,7 +129,7 @@ class PagoController extends Controller
             $_POST['comprobante_numero'] = $this->pagoModel->generarNumeroComprobante($_POST['comprobante_tipo']);
         }
 
-        $pagoId = $this->pagoModel->registrarPago($_POST);
+        $pagoId = $this->pagoModel->registrarCobro($_POST, $lineas);
 
         if ($pagoId) {
             $reservaActualizada = $this->reservaModel->obtenerPorId($reservaId);
@@ -146,6 +144,58 @@ class PagoController extends Controller
         } else {
             $this->json(['success' => false, 'mensaje' => 'Error al procesar el pago en la base de datos.']);
         }
+    }
+
+    /**
+     * Lee el cobro del formulario: una o varias líneas [método, monto] (partials/cobro_lineas)
+     * o, en formularios antiguos, metodo_pago + monto. Valida cada línea y que el total no
+     * supere el saldo. Devuelve [lineas, errores por campo, nota con el efectivo recibido].
+     */
+    private function leerCobro(?array $reserva): array
+    {
+        $entrada = $_POST['lineas'] ?? [['metodo' => $_POST['metodo_pago'] ?? '', 'monto' => $_POST['monto'] ?? '']];
+        $lineas = [];
+        $errores = [];
+
+        foreach (is_array($entrada) ? array_slice($entrada, 0, 4) : [] as $linea) {
+            $metodo = trim((string)($linea['metodo'] ?? ''));
+            $monto = $linea['monto'] ?? '';
+            if (!in_array($metodo, Pago::METODOS, true)) {
+                $errores['lineas'] = 'Elige un método de pago válido en cada línea.';
+            } elseif (!is_numeric($monto) || round((float)$monto, 2) <= 0) {
+                $errores['lineas'] = 'Cada método debe llevar un monto mayor a cero.';
+            } elseif (isset($lineas[$metodo])) {
+                $errores['lineas'] = 'No repitas un método: suma ese monto en una sola línea.';
+            } else {
+                $lineas[$metodo] = ['metodo' => $metodo, 'monto' => round((float)$monto, 2)];
+            }
+        }
+        if (!$lineas && !$errores) {
+            $errores['lineas'] = 'Ingresa el monto a cobrar.';
+        }
+        // Formularios con un solo campo: el error va en ese campo
+        if (isset($errores['lineas']) && !isset($_POST['lineas'])) {
+            $errores = ['monto' => $errores['lineas']];
+        }
+
+        $total = round(array_sum(array_column($lineas, 'monto')), 2);
+        if (!$errores && $reserva && $total > round((float)$reserva['saldo'], 2) + 0.009) {
+            $errores[isset($_POST['lineas']) ? 'lineas' : 'monto'] = 'El cobro (' . dinero($total) . ') supera el saldo pendiente (' . dinero($reserva['saldo']) . ').';
+        }
+
+        // Efectivo recibido: el vuelto se calcula y queda en las notas del pago
+        $nota = '';
+        $efectivo = $lineas['Efectivo']['monto'] ?? 0;
+        $recibido = $_POST['recibido'] ?? '';
+        if (!$errores && $efectivo > 0 && $recibido !== '') {
+            if (!is_numeric($recibido) || (float)$recibido < $efectivo) {
+                $errores['recibido'] = 'El efectivo recibido no alcanza para la parte en efectivo (' . dinero($efectivo) . ').';
+            } elseif ((float)$recibido > $efectivo) {
+                $nota = 'Efectivo recibido ' . dinero((float)$recibido) . ', vuelto ' . dinero((float)$recibido - $efectivo) . '.';
+            }
+        }
+
+        return [array_values($lineas), $errores, $nota];
     }
 
     /**
@@ -198,6 +248,7 @@ class PagoController extends Controller
 
         $this->render('pagos/comprobante_detalle', [
             'pago'   => $pago,
+            'lineas' => $this->pagoModel->lineasDeComprobante((int)$pago['reserva_id'], $pago['comprobante_tipo'], $pago['comprobante_numero']),
             'config' => $hotelConfig
         ], 'Comprobante ' . $pago['comprobante_tipo'] . ' ' . $pago['comprobante_numero']);
     }

@@ -108,7 +108,8 @@ class RecepcionController extends Controller
 
         $this->render('recepcion/checkout', [
             'activas'              => $activas,
-            'estanciaSeleccionada' => $estanciaSeleccionada
+            'estanciaSeleccionada' => $estanciaSeleccionada,
+            'cajaAbierta'          => (new \App\Models\Caja())->obtenerTurnoActivo() !== null,
         ], 'Procesar Check-out de Huéspedes');
     }
 

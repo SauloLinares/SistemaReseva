@@ -53,6 +53,7 @@
     <!-- Envíos seguros (sin duplicar cobros, aviso de conexión) y borradores de formularios -->
     <?= script_js('envios.js') ?>
     <?= script_js('borrador.js') ?>
+    <?= script_js('cobro.js') ?>
 
     <!-- Scripts personalizados con control de caché dinámico -->
     <script src="<?= asset('js/custom.js') ?>?v=<?= file_exists(__DIR__ . '/../../../public/assets/js/custom.js') ? filemtime(__DIR__ . '/../../../public/assets/js/custom.js') : time() ?>"></script>

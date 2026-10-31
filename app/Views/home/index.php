@@ -29,9 +29,41 @@ if (!empty($estadiasActivas)) {
     ],
 ]) ?>
 
+<?php
+// Accesos rápidos de recepción, con lo que hay pendiente hoy en cada uno
+$hoy = date('Y-m-d');
+$llegadasPendientes = count(array_filter($reservasHoy ?? [], fn($r) => $r['fecha_entrada'] === $hoy && in_array($r['estado'], ['pendiente', 'confirmada'], true)));
+$salidasPendientes = count(array_filter($estadiasActivas ?? [], fn($e) => !empty($e['fecha_salida']) && $e['fecha_salida'] <= $hoy));
+$cuentasPorCobrar = count(array_filter($estadiasActivas ?? [], fn($e) => (float)$e['reserva_saldo'] > 0));
+$accesos = [
+    ['Nueva reserva', 'reservas/crear', 'bi-plus-circle', 'F2', 0, ''],
+    ['Check-in', 'recepcion/checkin', 'bi-box-arrow-in-right', 'F4', $llegadasPendientes, 'llegadas pendientes hoy'],
+    ['Check-out', 'recepcion/checkout', 'bi-box-arrow-right', '', $salidasPendientes, 'salidas pendientes hoy'],
+    ['Cobrar', 'pagos/crear', 'bi-cash-coin', '', $cuentasPorCobrar, 'huéspedes alojados con saldo'],
+    ['Consumo', 'servicios/consumo', 'bi-cup-hot', '', 0, ''],
+    ['Planificación', 'reservas/planificacion', 'bi-grid-3x3-gap', '', 0, ''],
+];
+?>
+
 <!--begin::App Content-->
 <div class="app-content">
     <div class="container-fluid">
+
+        <!-- Accesos rápidos de recepción -->
+        <nav class="accesos-rapidos mb-4" aria-label="Accesos rápidos">
+            <?php foreach ($accesos as [$texto, $ruta, $icono, $tecla, $pendientes, $detalle]): ?>
+                <a href="<?= url($ruta) ?>" class="acceso-rapido">
+                    <i class="bi <?= $icono ?>" aria-hidden="true"></i>
+                    <span><?= e($texto) ?></span>
+                    <?php if ($pendientes > 0): ?>
+                        <span class="badge rounded-pill text-bg-warning" title="<?= (int)$pendientes . ' ' . e($detalle) ?>">
+                            <?= (int)$pendientes ?><span class="visually-hidden"> <?= e($detalle) ?></span>
+                        </span>
+                    <?php endif; ?>
+                    <?php if ($tecla): ?><kbd class="kbd-atajo" aria-hidden="true"><?= $tecla ?></kbd><?php endif; ?>
+                </a>
+            <?php endforeach; ?>
+        </nav>
 
         <!-- Tarjetas de Estadísticas Principales (KPIs) -->
         <div class="row g-3 mb-4">

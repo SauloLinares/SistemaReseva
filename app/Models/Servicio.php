@@ -111,6 +111,11 @@ class Servicio extends Model
                     ':id'          => $reservaId
                 ]);
             } else {
+                // Pagado al momento: el consumo también suma al total (si no, el pago bajaría
+                // el saldo de la estadía como si fuera un abono a ella)
+                $this->db->prepare("UPDATE reservas SET total = total + :monto WHERE id = :id")
+                         ->execute([':monto' => $subtotal, ':id' => $reservaId]);
+
                 // Registrar pago automático de consumo
                 $reservaModel = new Reserva();
                 $res = $reservaModel->obtenerPorId($reservaId);

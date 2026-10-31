@@ -10,9 +10,10 @@ function actualizarNumeroComprobante(tipo) {
 }
 
 function actualizarSaldo(sel) {
+    if (sel.form && sel.form.dataset.restaurando) return; // se repone un envío con errores: respetar lo escrito
     const opt = sel.options[sel.selectedIndex];
     if (opt && opt.dataset.saldo) {
-        document.getElementById('inputMonto').value = opt.dataset.saldo;
+        document.querySelector('[data-cobro]').fijarMonto(opt.dataset.saldo);
         document.getElementById('textoSaldoAyuda').textContent = 'Saldo total adeudado: S/. ' + opt.dataset.saldo;
     }
 }

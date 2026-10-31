@@ -103,6 +103,22 @@ Todos los colores, radios y sombras salen de los tokens de `public/assets/css/cu
   Si la sesión venció, cualquier `fetch` lleva al login con un aviso. Un error inesperado del
   servidor muestra una página o un JSON con un código de referencia, que queda en el log de PHP.
 
+## 5.4 Recepción rápida
+
+- **Atajos de teclado:** `data-atajo="F9"` (y `data-atajo-desc="Confirmar"`) en un botón o campo. El
+  botón se pulsa y el campo recibe el foco; la tecla se muestra sola (`<kbd>`) y F1 lista los atajos
+  de la pantalla. Globales: F2 nueva reserva, F3 buscar huésped, F4 check-in. Convención por pantalla:
+  F6 buscar, F7 elegir huésped/reserva, F8 cobrar, F9 confirmar. Con un modal abierto, solo valen
+  los atajos del modal. En `form_actions` se pasa `'atajo' => 'F9'`.
+- **Cobros:** usa `partial('cobro_lineas', ['monto' => $saldo, 'idMonto' => '...', 'cajaAbierta' => ...])`.
+  Permite dividir el pago en varios métodos, calcula el vuelto y avisa si no hay caja abierta. En
+  el servidor, `PagoController::leerCobro()` lo valida y `Pago::registrarCobro()` lo guarda con un
+  solo comprobante.
+- **Métodos de pago:** siempre `opciones_metodo_pago()` (lista de `Pago::METODOS`). Un método escrito
+  a mano que no esté en la base de datos hace fallar el cobro.
+- **Búsquedas:** `data-limpiable` agrega el botón × para vaciar el campo (los buscadores de las tablas
+  ya lo traen). Los `input type="number"` reciben `inputmode` para mostrar el teclado numérico.
+
 ## 6. Mensajes flash
 
 Los muestra `layouts/header.php` como toast. **No** agregues bloques `$_SESSION['flash']` en las vistas.

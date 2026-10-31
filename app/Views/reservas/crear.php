@@ -30,7 +30,7 @@
                             <div class="row g-3">
                                 <div class="col-12">
                                     <label for="huesped_id" class="form-label">Huésped Titular <span class="text-danger">*</span></label>
-                                    <select name="huesped_id" id="huesped_id" class="form-select select-search select-huesped" required>
+                                    <select name="huesped_id" id="huesped_id" class="form-select select-search select-huesped" data-atajo="F7" data-atajo-desc="Elegir el huésped" required>
                                         <option value="" data-nombres="" data-doc="" data-tipo-doc="" data-telefono="" data-correo="" data-nacionalidad="" data-total-reservas="0">-- Escribe para buscar por nombre, documento o teléfono --</option>
                                         <?php foreach ($huespedes as $h): ?>
                                             <option value="<?= $h['id'] ?>"
@@ -205,7 +205,7 @@
                                     <div class="col-12 col-md-7">
                                         <div class="input-group input-group-sm">
                                             <span class="input-group-text border-end-0"><i class="bi bi-search text-muted"></i></span>
-                                            <input type="text" id="filtroHabitacionTexto" class="form-control form-control-sm border-start-0" placeholder="Buscar por número (ej: 101), tipo o piso...">
+                                            <input type="text" id="filtroHabitacionTexto" data-atajo="F6" data-atajo-desc="Buscar habitación" class="form-control form-control-sm border-start-0" placeholder="Buscar por número (ej: 101), tipo o piso...">
                                             <button type="button" class="btn btn-outline-secondary border border-start-0" id="btnLimpiarBuscar" title="Limpiar búsqueda" style="display: none;">
                                                 <i class="bi bi-x-lg"></i>
                                             </button>
@@ -529,7 +529,7 @@
                             </div>
 
                             <div class="d-grid gap-2">
-                                <button type="submit" class="btn btn-primary btn-lg" id="btnSubmitReserva">
+                                <button type="submit" class="btn btn-primary btn-lg" id="btnSubmitReserva" data-atajo="F9" data-atajo-desc="Confirmar la reserva">
                                     <i class="bi bi-check-circle-fill me-2"></i>Confirmar Reserva
                                 </button>
                                 <div class="text-center">

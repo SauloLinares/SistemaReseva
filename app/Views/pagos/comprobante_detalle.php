@@ -51,11 +51,19 @@
                                 Reserva Código: <strong class="text-primary"><?= htmlspecialchars($pago['codigo_reserva']) ?></strong><br>
                                 Check-in: <?= fecha_es($pago['fecha_entrada']) ?><br>
                                 Check-out: <?= fecha_es($pago['fecha_salida']) ?><br>
-                                Método de Pago: <span class="badge text-bg-light border"><?= htmlspecialchars($pago['metodo_pago']) ?></span>
+                                Método de Pago:
+                                <?php foreach ($lineas as $l): ?>
+                                    <span class="badge text-bg-light border"><?= e($l['metodo_pago']) ?><?= count($lineas) > 1 ? ' ' . dinero($l['monto']) : '' ?></span>
+                                <?php endforeach; ?>
                             </div>
                         </div>
                     </div>
 
+                    <?php
+                        // Un cobro dividido en varios métodos es un solo comprobante: se suman sus líneas
+                        $lineas = $lineas ?: [['metodo_pago' => $pago['metodo_pago'], 'monto' => $pago['monto']]];
+                        $totalComprobante = array_sum(array_map(fn($l) => (float)$l['monto'], $lineas));
+                    ?>
                     <!-- Tabla de Detalle -->
                     <div class="table-responsive mb-4">
                         <table class="table table-bordered align-middle">
@@ -76,7 +84,7 @@
                                         <span class="badge text-bg-secondary text-uppercase"><?= htmlspecialchars($pago['tipo']) ?></span>
                                     </td>
                                     <td class="text-end fw-bold fs-6">
-                                        <?= dinero($pago['monto']) ?>
+                                        <?= dinero($totalComprobante) ?>
                                     </td>
                                 </tr>
                             </tbody>
@@ -89,7 +97,7 @@
                             <div class="p-3 bg-light rounded border">
                                 <?php
                                     $igvPorcentaje = 18;
-                                    $totalMonto = (float)$pago['monto'];
+                                    $totalMonto = $totalComprobante;
                                     $subtotal = round($totalMonto / (1 + ($igvPorcentaje / 100)), 2);
                                     $igv = round($totalMonto - $subtotal, 2);
                                 ?>

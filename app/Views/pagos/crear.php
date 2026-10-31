@@ -20,7 +20,7 @@
                         <div class="row g-3">
                             <div class="col-12">
                                 <label for="selectReserva" class="form-label">Seleccionar Reserva con Saldo Pendiente <span class="text-danger">*</span></label>
-                                <select name="reserva_id" id="selectReserva" class="form-select form-select-lg" required>
+                                <select name="reserva_id" id="selectReserva" class="form-select form-select-lg" required data-atajo="F7" data-atajo-desc="Elegir la reserva">
                                     <option value="">-- Elige una reserva para cobrar --</option>
                                     <?php foreach ($saldosPendientes as $sp): ?>
                                         <option value="<?= $sp['id'] ?>" data-saldo="<?= $sp['saldo'] ?>" data-total="<?= $sp['total'] ?>" data-huesped="<?= htmlspecialchars($sp['huesped_nombre']) ?>" <?= ($reservaSeleccionada && $reservaSeleccionada['id'] == $sp['id']) ? 'selected' : '' ?>>
@@ -43,24 +43,14 @@
                                 <input type="text" name="comprobante_numero" id="comprobante_numero" class="form-control" value="<?= htmlspecialchars($numBoleta) ?>" required>
                             </div>
 
-                            <div class="col-12 col-md-6">
-                                <label for="inputMonto" class="form-label">Monto a Cobrar (S/.) <span class="text-danger">*</span></label>
-                                <div class="input-group input-group-lg">
-                                    <span class="input-group-text">S/.</span>
-                                    <input type="number" step="0.01" name="monto" id="inputMonto" class="form-control fw-bold" placeholder="0.00" value="<?= $reservaSeleccionada ? $reservaSeleccionada['saldo'] : '' ?>" required>
-                                </div>
+                            <div class="col-12">
+                                <?php partial('cobro_lineas', [
+                                    'monto'       => $reservaSeleccionada['saldo'] ?? 0,
+                                    'idMonto'     => 'inputMonto',
+                                    'cajaAbierta' => $cajaAbierta,
+                                    'atajo'       => 'F8',
+                                ]) ?>
                                 <div class="form-text text-muted" id="textoSaldoAyuda">Ingresa el valor total o parcial a abonar.</div>
-                            </div>
-
-                            <div class="col-12 col-md-6">
-                                <label for="metodo_pago" class="form-label">Método de Pago <span class="text-danger">*</span></label>
-                                <select id="metodo_pago" name="metodo_pago" class="form-select form-select-lg">
-                                    <option value="Efectivo" selected>Efectivo</option>
-                                    <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
-                                    <option value="Tarjeta de Débito">Tarjeta de Débito</option>
-                                    <option value="Transferencia Bancaria">Transferencia Bancaria</option>
-                                    <option value="Yape/Plin">Yape / Plin</option>
-                                </select>
                             </div>
 
                             <div class="col-12 col-md-6">
@@ -81,7 +71,7 @@
                             </div>
                         </div>
                     </div>
-                    <?php partial('form_actions', ['cancelar' => 'pagos', 'texto' => 'Registrar Cobro y Emitir', 'icono' => 'bi-printer', 'variante' => 'success']) ?>
+                    <?php partial('form_actions', ['cancelar' => 'pagos', 'texto' => 'Registrar Cobro y Emitir', 'icono' => 'bi-printer', 'variante' => 'success', 'atajo' => 'F9']) ?>
                 </form>
             </div>
         </div>

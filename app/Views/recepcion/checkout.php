@@ -19,7 +19,7 @@
                         <form method="POST" action="<?= url('recepcion/procesarCheckout') ?>">
                             <div class="mb-3">
                                 <label for="estancia_id" class="form-label">Huésped alojado <span class="text-danger">*</span></label>
-                                <select id="estancia_id" name="estancia_id" class="form-select select-search" required placeholder="Escribe el número de habitación, nombre de huésped o código...">
+                                <select id="estancia_id" name="estancia_id" class="form-select select-search" data-atajo="F7" data-atajo-desc="Elegir el huésped alojado" required placeholder="Escribe el número de habitación, nombre de huésped o código...">
                                     <option value="">-- Seleccionar huésped alojado --</option>
                                     <?php foreach ($activas as $act): ?>
                                         <option value="<?= $act['id'] ?>" <?= ($estanciaSeleccionada && $estanciaSeleccionada['id'] == $act['id']) ? 'selected' : '' ?>>
@@ -38,7 +38,7 @@
                                             <span class="fs-5 fw-bold text-nowrap"><?= dinero($estanciaSeleccionada['reserva_saldo']) ?></span>
                                         </div>
                                         <div class="d-flex flex-wrap align-items-center gap-3">
-                                            <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modalCobroRapido">
+                                            <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modalCobroRapido" data-atajo="F8" data-atajo-desc="Cobrar el saldo">
                                                 <i class="bi bi-cash-coin me-1"></i>Cobrar ahora
                                             </button>
                                             <div class="form-check mb-0">
@@ -65,7 +65,7 @@
                             </div>
 
                             <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary" data-atajo="F9" data-atajo-desc="Confirmar el check-out">
                                     <i class="bi bi-box-arrow-right me-2"></i>Confirmar Check-out
                                 </button>
                             </div>
@@ -172,33 +172,21 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="inputMontoCobro" class="form-label">Monto a Cobrar (S/.) <span class="text-danger">*</span></label>
-                        <div class="input-group input-group-lg">
-                            <span class="input-group-text fw-bold text-success">S/.</span>
-                            <input type="number" step="0.01" name="monto" id="inputMontoCobro" class="form-control fw-bold fs-4 text-success" value="<?= $estanciaSeleccionada['reserva_saldo'] ?>" required>
-                        </div>
+                        <?php partial('cobro_lineas', [
+                            'monto'       => $estanciaSeleccionada['reserva_saldo'],
+                            'idMonto'     => 'inputMontoCobro',
+                            'cajaAbierta' => $cajaAbierta,
+                        ]) ?>
                         <div class="form-text">Saldo pendiente actual: <strong><?= dinero($estanciaSeleccionada['reserva_saldo']) ?></strong></div>
                     </div>
 
-                    <div class="row g-2 mb-3">
-                        <div class="col-6">
-                            <label for="metodo_pago" class="form-label">Método de Pago <span class="text-danger">*</span></label>
-                            <select id="metodo_pago" name="metodo_pago" class="form-select" required>
-                                <option value="Efectivo" selected>Efectivo</option>
-                                <option value="Yape">Yape</option>
-                                <option value="Plin">Plin</option>
-                                <option value="Tarjeta">Tarjeta Débito/Crédito</option>
-                                <option value="Transferencia">Transferencia Bancaria</option>
-                            </select>
-                        </div>
-                        <div class="col-6">
-                            <label for="comprobante_tipo" class="form-label">Comprobante <span class="text-danger">*</span></label>
-                            <select id="comprobante_tipo" name="comprobante_tipo" class="form-select" required>
-                                <option value="Boleta" selected>Boleta de Venta</option>
-                                <option value="Factura">Factura</option>
-                                <option value="Recibo de Caja">Recibo de Caja</option>
-                            </select>
-                        </div>
+                    <div class="mb-3">
+                        <label for="comprobante_tipo" class="form-label">Comprobante <span class="text-danger">*</span></label>
+                        <select id="comprobante_tipo" name="comprobante_tipo" class="form-select" required>
+                            <option value="Boleta" selected>Boleta de Venta</option>
+                            <option value="Factura">Factura</option>
+                            <option value="Recibo de Caja">Recibo de Caja</option>
+                        </select>
                     </div>
 
                     <div class="mb-2">
@@ -210,7 +198,7 @@
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         Cancelar
                     </button>
-                    <button type="submit" class="btn btn-success" id="btnGuardarCobroModal">
+                    <button type="submit" class="btn btn-success" id="btnGuardarCobroModal" data-atajo="F9" data-atajo-desc="Cobrar">
                         <i class="bi bi-check-circle-fill me-1"></i> Cobrar e Imprimir
                     </button>
                 </div>

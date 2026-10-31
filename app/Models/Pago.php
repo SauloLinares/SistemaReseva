@@ -34,83 +34,130 @@ class Pago extends Model
         return $row ?: null;
     }
 
+    /** Métodos de pago que acepta la base de datos (columna ENUM de pagos y caja_movimientos) */
+    public const METODOS = ['Efectivo', 'Tarjeta de Crédito', 'Tarjeta de Débito', 'Transferencia Bancaria', 'Yape/Plin'];
+
+    /**
+     * Registra un pago con un solo método (anticipos, consumos, devoluciones...)
+     */
     public function registrarPago(array $datos): int|false
     {
-        $this->db->beginTransaction();
+        return $this->registrarCobro($datos, [[
+            'metodo' => $datos['metodo_pago'] ?? 'Efectivo',
+            'monto'  => (float)($datos['monto'] ?? 0),
+        ]]);
+    }
+
+    /**
+     * Registra un cobro, que puede dividirse en varios métodos (ej. parte en efectivo y parte
+     * con tarjeta): una fila de pagos por método, todas con el mismo comprobante.
+     * Devuelve el id del primer pago (el del comprobante) o false si falló.
+     *
+     * Si ya hay una transacción abierta (ej. al crear una reserva con anticipo), el cobro forma
+     * parte de ella; abrir otra con la misma conexión lanzaría una excepción y desharía todo.
+     *
+     * @param array $lineas [['metodo' => 'Efectivo', 'monto' => 100.0], ...]
+     */
+    public function registrarCobro(array $datos, array $lineas): int|false
+    {
+        $propia = !$this->db->inTransaction();
+        if ($propia) {
+            $this->db->beginTransaction();
+        }
 
         try {
-            $monto = (float)($datos['monto'] ?? 0);
             $tipo = $datos['tipo'] ?? 'pago';
             $reservaId = (int)$datos['reserva_id'];
             $huespedId = (int)$datos['huesped_id'];
 
             $comprobanteTipo = $datos['comprobante_tipo'] ?? 'Boleta';
             $comprobanteNumero = !empty($datos['comprobante_numero']) ? trim($datos['comprobante_numero']) : $this->generarNumeroComprobante($comprobanteTipo);
+            $fechaPago = !empty($datos['fecha_pago']) ? $datos['fecha_pago'] : date('Y-m-d H:i:s');
 
             // Asociar automáticamente al turno de caja abierto actual si existe
             $turnoCajaId = !empty($datos['turno_caja_id']) ? (int)$datos['turno_caja_id'] : null;
             if (!$turnoCajaId) {
-                $cajaModel = new Caja();
-                $turnoActivo = $cajaModel->obtenerTurnoActivo();
+                $turnoActivo = (new Caja())->obtenerTurnoActivo();
                 if ($turnoActivo) {
                     $turnoCajaId = (int)$turnoActivo['id'];
                 }
             }
 
-            $sql = "INSERT INTO pagos (reserva_id, huesped_id, tipo, metodo_pago, monto, comprobante_tipo, comprobante_numero, fecha_pago, notas, usuario_id, turno_caja_id)
-                    VALUES (:reserva_id, :huesped_id, :tipo, :metodo_pago, :monto, :comprobante_tipo, :comprobante_numero, :fecha_pago, :notas, :usuario_id, :turno_caja_id)";
-            $stmt = $this->db->prepare($sql);
-            $stmt->execute([
-                ':reserva_id'          => $reservaId,
-                ':huesped_id'          => $huespedId,
-                ':tipo'                => $tipo,
-                ':metodo_pago'         => $datos['metodo_pago'] ?? 'Efectivo',
-                ':monto'               => $monto,
-                ':comprobante_tipo'    => $comprobanteTipo,
-                ':comprobante_numero'  => $comprobanteNumero,
-                ':fecha_pago'          => !empty($datos['fecha_pago']) ? $datos['fecha_pago'] : date('Y-m-d H:i:s'),
-                ':notas'               => trim($datos['notas'] ?? ''),
-                ':usuario_id'          => auth_user('id') ?: 1,
-                ':turno_caja_id'       => $turnoCajaId
-            ]);
+            $stmt = $this->db->prepare("INSERT INTO pagos (reserva_id, huesped_id, tipo, metodo_pago, monto, comprobante_tipo, comprobante_numero, fecha_pago, notas, usuario_id, turno_caja_id)
+                    VALUES (:reserva_id, :huesped_id, :tipo, :metodo_pago, :monto, :comprobante_tipo, :comprobante_numero, :fecha_pago, :notas, :usuario_id, :turno_caja_id)");
 
-            $pagoId = (int)$this->db->lastInsertId();
+            $primerId = null;
+            $total = 0.0;
+            foreach ($lineas as $linea) {
+                $monto = round((float)$linea['monto'], 2);
+                $stmt->execute([
+                    ':reserva_id'          => $reservaId,
+                    ':huesped_id'          => $huespedId,
+                    ':tipo'                => $tipo,
+                    ':metodo_pago'         => $linea['metodo'],
+                    ':monto'               => $monto,
+                    ':comprobante_tipo'    => $comprobanteTipo,
+                    ':comprobante_numero'  => $comprobanteNumero,
+                    ':fecha_pago'          => $fechaPago,
+                    ':notas'               => trim($datos['notas'] ?? ''),
+                    ':usuario_id'          => auth_user('id') ?: 1,
+                    ':turno_caja_id'       => $turnoCajaId
+                ]);
+                $primerId = $primerId ?? (int)$this->db->lastInsertId();
+                $total += $monto;
+            }
 
-            // Actualizar anticipo y saldo en la reserva
-            // Sumar todos los pagos (menos devoluciones) de esta reserva
-            $sqlSuma = "SELECT 
-                        SUM(CASE WHEN tipo != 'devolucion' THEN monto ELSE 0 END) as pagado,
-                        SUM(CASE WHEN tipo = 'devolucion' THEN monto ELSE 0 END) as devuelto
-                        FROM pagos WHERE reserva_id = :id";
-            $stmtSuma = $this->db->prepare($sqlSuma);
-            $stmtSuma->execute([':id' => $reservaId]);
-            $totales = $stmtSuma->fetch();
+            $this->recalcularSaldo($reservaId);
 
-            $totalAbonado = ((float)$totales['pagado']) - ((float)$totales['devuelto']);
+            $metodos = implode(' + ', array_map(fn($l) => $l['metodo'], $lineas));
+            (new Auditoria())->registrar('Pagos', 'Registrar', "Pago {$comprobanteNumero} por S/. {$total} ({$metodos}) registrado para la reserva ID: {$reservaId}");
 
-            $reservaStmt = $this->db->prepare("SELECT total FROM reservas WHERE id = :id");
-            $reservaStmt->execute([':id' => $reservaId]);
-            $reservaTotal = (float)$reservaStmt->fetchColumn();
-
-            $nuevoSaldo = max(0, $reservaTotal - $totalAbonado);
-
-            $stmtUpdate = $this->db->prepare("UPDATE reservas SET anticipo = :abonado, saldo = :saldo WHERE id = :id");
-            $stmtUpdate->execute([
-                ':abonado' => $totalAbonado,
-                ':saldo'   => $nuevoSaldo,
-                ':id'      => $reservaId
-            ]);
-
-            // Registrar auditoría
-            $auditoriaModel = new Auditoria();
-            $auditoriaModel->registrar('Pagos', 'Registrar', "Pago {$comprobanteNumero} por S/. {$monto} registrado para la reserva ID: {$reservaId}");
-
-            $this->db->commit();
-            return $pagoId;
+            if ($propia) {
+                $this->db->commit();
+            }
+            return $primerId ?? false;
         } catch (\Exception $e) {
-            $this->db->rollBack();
-            return false;
+            if ($propia) {
+                $this->db->rollBack();
+                return false;
+            }
+            throw $e; // la transacción de quien llamó decide (y se deshace completa)
         }
+    }
+
+    /**
+     * Anticipo y saldo de la reserva a partir de todos sus pagos (menos devoluciones)
+     */
+    private function recalcularSaldo(int $reservaId): void
+    {
+        $stmtSuma = $this->db->prepare("SELECT
+                    SUM(CASE WHEN tipo != 'devolucion' THEN monto ELSE 0 END) as pagado,
+                    SUM(CASE WHEN tipo = 'devolucion' THEN monto ELSE 0 END) as devuelto
+                    FROM pagos WHERE reserva_id = :id");
+        $stmtSuma->execute([':id' => $reservaId]);
+        $totales = $stmtSuma->fetch();
+        $totalAbonado = ((float)$totales['pagado']) - ((float)$totales['devuelto']);
+
+        $reservaStmt = $this->db->prepare("SELECT total FROM reservas WHERE id = :id");
+        $reservaStmt->execute([':id' => $reservaId]);
+        $reservaTotal = (float)$reservaStmt->fetchColumn();
+
+        $this->db->prepare("UPDATE reservas SET anticipo = :abonado, saldo = :saldo WHERE id = :id")->execute([
+            ':abonado' => $totalAbonado,
+            ':saldo'   => max(0, $reservaTotal - $totalAbonado),
+            ':id'      => $reservaId
+        ]);
+    }
+
+    /**
+     * Pagos de un mismo comprobante (un cobro dividido en varios métodos)
+     */
+    public function lineasDeComprobante(int $reservaId, string $tipo, string $numero): array
+    {
+        $stmt = $this->db->prepare("SELECT id, metodo_pago, monto FROM pagos
+                                    WHERE reserva_id = :r AND comprobante_tipo = :t AND comprobante_numero = :n ORDER BY id");
+        $stmt->execute([':r' => $reservaId, ':t' => $tipo, ':n' => $numero]);
+        return $stmt->fetchAll();
     }
 
     public function generarNumeroComprobante(string $tipo): string
@@ -121,7 +168,8 @@ class Pago extends Model
             'Nota de Crédito'=> 'NC01-',
             default          => 'B001-',
         };
-        $stmt = $this->db->prepare("SELECT COUNT(*) FROM pagos WHERE comprobante_tipo = :t");
+        // Un cobro dividido en varios métodos comparte el número: se cuentan comprobantes, no filas
+        $stmt = $this->db->prepare("SELECT COUNT(DISTINCT comprobante_numero) FROM pagos WHERE comprobante_tipo = :t");
         $stmt->execute([':t' => $tipo]);
         $conteo = ((int)$stmt->fetchColumn()) + 1;
         return $prefijo . sprintf("%06d", $conteo);

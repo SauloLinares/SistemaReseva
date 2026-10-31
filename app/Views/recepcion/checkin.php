@@ -20,7 +20,7 @@
                         <form method="POST" action="<?= url('recepcion/procesarCheckin') ?>">
                             <div class="mb-3">
                                 <label for="selectReserva" class="form-label">Reserva programada <span class="text-danger">*</span></label>
-                                <select name="reserva_id" id="selectReserva" class="form-select select-search" required placeholder="Escribe el código, nombre del huésped o habitación...">
+                                <select name="reserva_id" id="selectReserva" class="form-select select-search" data-atajo="F7" data-atajo-desc="Elegir la reserva" required placeholder="Escribe el código, nombre del huésped o habitación...">
                                     <option value="">-- Elige una reserva lista para ingreso --</option>
                                     <?php foreach ($reservas as $r): ?>
                                         <option value="<?= $r['id'] ?>" <?= ($reservaSeleccionada && $reservaSeleccionada['id'] == $r['id']) ? 'selected' : '' ?>>
@@ -42,7 +42,7 @@
                             </div>
 
                             <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-success">
+                                <button type="submit" class="btn btn-success" data-atajo="F9" data-atajo-desc="Confirmar el check-in">
                                     <i class="bi bi-check2-circle me-2"></i>Confirmar Check-in
                                 </button>
                             </div>

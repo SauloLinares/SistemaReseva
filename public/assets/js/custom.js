@@ -510,35 +510,143 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // ---------------------------------------------------------------
-    // 6. ATAJOS DE TECLADO GLOBALES (HOTKEYS PARA RECEPCIÓN)
+    // 6. ATAJOS DE TECLADO (RECEPCIÓN)
+    // Globales: F2 nueva reserva, F3 buscar huésped, F4 check-in, F1 esta ayuda.
+    // De cada pantalla: cualquier elemento con data-atajo="F9" (y data-atajo-desc). Un botón
+    // se pulsa; un campo recibe el foco. La tecla se muestra en el propio elemento (<kbd>).
+    // Si hay un modal abierto, solo cuentan los atajos de ese modal.
     // ---------------------------------------------------------------
+    const ATAJOS_GLOBALES = [
+        { tecla: 'F2', desc: 'Nueva reserva', ruta: 'reservas/crear' },
+        { tecla: 'F3', desc: 'Buscar huésped por documento', ruta: 'huespedes/buscar' },
+        { tecla: 'F4', desc: 'Check-in', ruta: 'recepcion/checkin' },
+    ];
+
+    const visible = el => !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
+    const ambitoActual = () => document.querySelector('.modal.show') || document;
+    const atajosDePantalla = () => [...ambitoActual().querySelectorAll('[data-atajo]')].filter(function (el) {
+        // Fuera de un modal no cuentan los elementos que están dentro de uno (cerrado)
+        return ambitoActual() !== document || !el.closest('.modal');
+    });
+
+    // Mostrar la tecla junto al botón o a la etiqueta del campo
+    document.querySelectorAll('[data-atajo]').forEach(function (el) {
+        const kbd = document.createElement('kbd');
+        kbd.className = 'kbd-atajo';
+        kbd.textContent = el.dataset.atajo;
+        kbd.setAttribute('aria-hidden', 'true');
+        if (el.matches('button, a.btn')) {
+            el.append(' ', kbd);
+        } else {
+            const etiqueta = el.id ? document.querySelector('label[for="' + el.id + '"]') : null;
+            etiqueta?.append(' ', kbd);
+        }
+        el.setAttribute('aria-keyshortcuts', el.dataset.atajo);
+    });
+
+    function activar(el) {
+        if (el.matches('button, a, input[type="submit"]')) {
+            el.click();
+            return;
+        }
+        if (el.tomselect) {
+            el.tomselect.focus();
+            return;
+        }
+        el.focus();
+        if (typeof el.select === 'function' && el.type !== 'number') el.select();
+    }
+
+    function mostrarAyudaAtajos() {
+        const filas = [];
+        const vistos = new Set();
+        atajosDePantalla().forEach(function (el) {
+            if (vistos.has(el.dataset.atajo)) return;
+            vistos.add(el.dataset.atajo);
+            filas.push([el.dataset.atajo, el.dataset.atajoDesc || el.textContent.trim() || 'Acción de esta pantalla']);
+        });
+        ATAJOS_GLOBALES.filter(a => !vistos.has(a.tecla)).forEach(a => filas.push([a.tecla, a.desc]));
+        filas.push(['F1', 'Mostrar esta ayuda']);
+        filas.sort((a, b) => parseInt(a[0].slice(1), 10) - parseInt(b[0].slice(1), 10));
+
+        const tabla = document.createElement('table');
+        tabla.className = 'table table-sm align-middle mb-0 tabla-atajos';
+        filas.forEach(function ([tecla, desc]) {
+            const fila = tabla.insertRow();
+            const kbd = document.createElement('kbd');
+            kbd.textContent = tecla;
+            fila.insertCell().append(kbd);
+            fila.insertCell().textContent = desc;
+        });
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({ title: 'Atajos de teclado', html: tabla, confirmButtonText: 'Entendido', confirmButtonColor: '#2563eb' });
+        }
+    }
+
     document.addEventListener('keydown', function (e) {
-        // F2 o Ctrl + K -> Ir a Nueva Reserva
-        if (e.key === 'F2' || (e.ctrlKey && e.key === 'k')) {
-            e.preventDefault();
-            const btnReserva = document.querySelector('a[href*="reservas/crear"]');
-            if (btnReserva) {
-                window.location.href = btnReserva.href;
+        if (!/^F\d{1,2}$/.test(e.key) || e.ctrlKey || e.altKey || e.metaKey) {
+            // Ctrl + K -> Nueva reserva
+            if (e.ctrlKey && e.key === 'k') {
+                e.preventDefault();
+                window.location.href = window.appUrl('reservas/crear');
             }
+            return;
         }
-        // F3 -> Ir a Consulta Rápida de Huésped por DNI en mostrador
-        if (e.key === 'F3') {
+        if (typeof Swal !== 'undefined' && Swal.isVisible()) return; // un diálogo abierto tiene prioridad
+
+        if (e.key === 'F1') {
             e.preventDefault();
-            const btnBuscar = document.querySelector('a[href*="huespedes/buscar"]');
-            if (btnBuscar) {
-                window.location.href = btnBuscar.href;
-            } else {
-                window.location.href = 'index.php?url=huespedes/buscar';
-            }
+            mostrarAyudaAtajos();
+            return;
         }
-        // F4 -> Ir a Check-in rápido
-        if (e.key === 'F4') {
+        // 1º el atajo de la pantalla (o del modal abierto), 2º el global
+        const propio = atajosDePantalla().find(el => el.dataset.atajo === e.key && (visible(el) || el.tomselect));
+        if (propio) {
             e.preventDefault();
-            const btnCheckin = document.querySelector('a[href*="recepcion/checkin"]');
-            if (btnCheckin) {
-                window.location.href = btnCheckin.href;
-            }
+            activar(propio);
+            return;
         }
+        const global = ATAJOS_GLOBALES.find(a => a.tecla === e.key);
+        if (global && ambitoActual() === document) {
+            e.preventDefault();
+            window.location.href = window.appUrl(global.ruta);
+        }
+    });
+
+    // ---------------------------------------------------------------
+    // 6.1 CAMPOS DE BÚSQUEDA CON BOTÓN PARA VACIARLOS (×) Y TECLADO NUMÉRICO EN EL CELULAR
+    // ---------------------------------------------------------------
+    window.hacerLimpiable = function (input) {
+        if (!input || input.dataset.limpiableListo) return;
+        input.dataset.limpiableListo = '1';
+        const caja = document.createElement('span');
+        caja.className = 'campo-limpiable';
+        input.parentNode.insertBefore(caja, input);
+        caja.appendChild(input);
+        const boton = document.createElement('button');
+        boton.type = 'button';
+        boton.className = 'btn-limpiar';
+        boton.setAttribute('aria-label', 'Vaciar la búsqueda');
+        boton.innerHTML = '<i class="bi bi-x-lg" aria-hidden="true"></i>';
+        caja.appendChild(boton);
+        const actualizar = () => { boton.hidden = input.value === ''; };
+        boton.addEventListener('click', function () {
+            input.value = '';
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.dispatchEvent(new Event('keyup', { bubbles: true })); // simple-datatables filtra en keyup
+            actualizar();
+            input.focus();
+        });
+        input.addEventListener('input', actualizar);
+        actualizar();
+    };
+    setTimeout(function () {
+        document.querySelectorAll('.datatable-input, [data-limpiable]').forEach(window.hacerLimpiable);
+    }, 0);
+
+    // Montos y cantidades: teclado numérico en el celular
+    document.querySelectorAll('input[type="number"]:not([inputmode])').forEach(function (input) {
+        input.setAttribute('inputmode', /[.,]/.test(input.step || '') ? 'decimal' : 'numeric');
     });
 
     // ---------------------------------------------------------------
@@ -623,15 +731,21 @@ function restaurarFormularioPrevio(previo) {
         return [...form.elements].filter(el => el.name === nombre || el.name === nombre + '[]');
     };
 
-    // Campos con índice (ej. servicios[3]) llegan como objeto: se aplanan a "servicios[3]"
+    // Campos con índice (ej. servicios[3], lineas[0][metodo]) llegan como objetos anidados:
+    // se aplanan a "servicios[3]" y "lineas[0][metodo]"
     const datos = {};
-    Object.entries(previo.datos || {}).forEach(function ([nombre, valor]) {
-        if (valor && typeof valor === 'object' && !Array.isArray(valor)) {
-            Object.entries(valor).forEach(([clave, v]) => { datos[nombre + '[' + clave + ']'] = v; });
-        } else {
-            datos[nombre] = valor;
-        }
-    });
+    (function aplanar(objeto, prefijo) {
+        Object.entries(objeto || {}).forEach(function ([clave, valor]) {
+            const nombre = prefijo ? prefijo + '[' + clave + ']' : clave;
+            // Listas de valores simples (habitaciones[]) se reponen tal cual; las de objetos se recorren
+            const anidado = valor && typeof valor === 'object' && (!Array.isArray(valor) || valor.some(v => v && typeof v === 'object'));
+            if (anidado) {
+                aplanar(valor, nombre);
+            } else {
+                datos[nombre] = valor;
+            }
+        });
+    })(previo.datos, '');
 
     // 1. Volver a poner lo que se había escrito
     reponerCampos(form, datos);
@@ -696,6 +810,9 @@ function restaurarFormularioPrevio(previo) {
  * Lo usan la restauración tras un error de validación y los borradores (borrador.js).
  */
 function reponerCampos(form, datos) {
+    // Mientras se reponen, los scripts de la vista pueden saber que no es el usuario quien
+    // cambia los campos (ej. no volver a poner el saldo encima del monto que se había escrito)
+    form.dataset.restaurando = '1';
     const campos = function (nombre) {
         return [...form.elements].filter(el => el.name === nombre || el.name === nombre + '[]');
     };
@@ -717,4 +834,5 @@ function reponerCampos(form, datos) {
             el.dispatchEvent(new Event(el.tagName === 'SELECT' || el.type === 'checkbox' || el.type === 'radio' ? 'change' : 'input', { bubbles: true }));
         });
     });
+    delete form.dataset.restaurando;
 }

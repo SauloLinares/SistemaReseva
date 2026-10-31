@@ -31,7 +31,7 @@
                                 <span class="input-group-text text-muted border-end-0">
                                     <i class="bi bi-search"></i>
                                 </span>
-                                <input type="text" name="documento" id="inputDocHuesped" class="form-control border-start-0" 
+                                <input type="text" name="documento" id="inputDocHuesped" data-limpiable class="form-control border-start-0" 
                                        placeholder="Ej: 71829341 ó PAS902188" 
                                        value="<?= htmlspecialchars($documento) ?>" 
                                        autocomplete="off" autofocus required>

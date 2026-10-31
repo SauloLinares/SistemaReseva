@@ -147,6 +147,21 @@ if (!function_exists('foto_habitacion')) {
     }
 }
 
+if (!function_exists('opciones_metodo_pago')) {
+    /**
+     * <option> de los métodos de pago que acepta la base de datos (Pago::METODOS).
+     * Usar siempre esta lista: un método escrito a mano que no esté en ella hace fallar el cobro.
+     */
+    function opciones_metodo_pago(?string $seleccionado = 'Efectivo'): string
+    {
+        $html = '';
+        foreach (\App\Models\Pago::METODOS as $metodo) {
+            $html .= '<option value="' . e($metodo) . '"' . ($metodo === $seleccionado ? ' selected' : '') . '>' . e($metodo) . '</option>';
+        }
+        return $html;
+    }
+}
+
 if (!function_exists('avatar_usuario')) {
     /**
      * Foto del usuario (Mi perfil) o, si no tiene, un círculo con sus iniciales.
