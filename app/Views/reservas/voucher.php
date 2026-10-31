@@ -75,8 +75,8 @@
                         <!-- Encabezado del Hotel -->
                         <div class="row align-items-center border-bottom pb-4 mb-4">
                             <div class="col-sm-7">
-                                <?php if (!empty($hotel['hotel_logo']) && file_exists(__DIR__ . '/../../../public/uploads/' . $hotel['hotel_logo'])): ?>
-                                    <img src="<?= base_url('uploads/' . $hotel['hotel_logo']) ?>" alt="Logo Hotel" class="mb-2 voucher-logo">
+                                <?php if (!empty($hotel['hotel_logo']) && file_exists(__DIR__ . '/../../../public/uploads/hotel/' . $hotel['hotel_logo'])): ?>
+                                    <img src="<?= base_url('uploads/hotel/' . $hotel['hotel_logo']) ?>" alt="Logo Hotel" class="mb-2 voucher-logo">
                                 <?php endif; ?>
                                 <h4 class="fw-bold mb-1 text-uppercase text-dark"><?= htmlspecialchars($hotel['hotel_nombre'] ?? 'Hotel Manager & Suites') ?></h4>
                                 <p class="text-muted small mb-0">RUC: <?= htmlspecialchars($hotel['hotel_ruc'] ?? '20601234567') ?> • <?= htmlspecialchars($hotel['hotel_direccion'] ?? 'Av. Principal 123, Miraflores, Lima') ?></p>

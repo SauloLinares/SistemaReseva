@@ -24,10 +24,12 @@
                                     <div class="position-relative d-inline-block">
                                         <?php 
                                             $logoActual = $config['hotel_logo'] ?? '';
-                                            $rutaLogo = !empty($logoActual) ? base_url('uploads/hotel/' . $logoActual) : asset('img/logo-placeholder.png');
+                                            $rutaLogo = !empty($logoActual) ? base_url('uploads/hotel/' . $logoActual) : '';
                                         ?>
-                                        <div class="bg-white border rounded-3 p-2 shadow-xs d-flex align-items-center justify-content-center logo-preview">
-                                            <img id="previewLogoHotel" src="<?= $rutaLogo ?>" alt="Logo del Hotel" class="img-fluid rounded">
+                                        <div class="logo-preview">
+                                            <!-- Sin logo: icono de marcador de posición (no hay imagen por defecto) -->
+                                            <i class="bi bi-buildings" id="previewLogoVacio"<?= $rutaLogo ? ' hidden' : '' ?>></i>
+                                            <img id="previewLogoHotel" src="<?= e($rutaLogo) ?>" alt="Logo del Hotel"<?= $rutaLogo ? '' : ' hidden' ?>>
                                         </div>
                                     </div>
                                 </div>
@@ -101,6 +103,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const reader = new FileReader();
                 reader.onload = function(evt) {
                     previewLogo.src = evt.target.result;
+                    previewLogo.hidden = false;
+                    document.getElementById('previewLogoVacio')?.setAttribute('hidden', '');
                 };
                 reader.readAsDataURL(file);
             }

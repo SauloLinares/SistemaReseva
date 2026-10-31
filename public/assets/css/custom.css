@@ -3217,14 +3217,27 @@ a.estado-stat {
 .mw-250 { max-width: 250px; }
 
 /* Vista previa de imágenes en formularios */
+/* Vista previa del logo: superficie neutra, sin marco blanco (los logos transparentes u
+   oscuros se ven tal como aparecerán en el sistema) */
 .logo-preview {
     width: 110px;
     height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border: 1px dashed var(--hm-border);
+    border-radius: var(--hm-radius);
+    background: var(--hm-addon-bg);
 }
 .logo-preview img {
-    max-width: 94px;
-    max-height: 94px;
+    max-width: 100%;
+    max-height: 100%;
     object-fit: contain;
+}
+.logo-preview .bi {
+    font-size: 2.5rem;
+    color: var(--hm-text-muted);
 }
 .foto-preview {
     width: 130px;
@@ -3237,10 +3250,13 @@ a.estado-stat {
     height: 32px;
     object-fit: cover;
 }
-.app-sidebar .brand-logo-icon img {
-    max-width: 28px;
-    max-height: 28px;
+/* Logo propio del hotel en el menú: se muestra tal cual, sin el cuadrado azul
+   que usa el icono genérico cuando no hay logo */
+.app-sidebar .brand-logo-img {
+    width: 40px;
+    height: 40px;
     object-fit: contain;
+    flex-shrink: 0;
 }
 .login-logo-img {
     width: 42px;
