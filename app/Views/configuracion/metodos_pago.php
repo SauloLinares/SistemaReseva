@@ -28,7 +28,7 @@
                                     <td><strong><i class="bi bi-check2-circle text-success me-2"></i><?= htmlspecialchars($m['nombre']) ?></strong></td>
                                     <td><?= htmlspecialchars($m['tipo']) ?></td>
                                     <td><?= htmlspecialchars($m['comision']) ?></td>
-                                    <td><span class="badge text-bg-success"><?= htmlspecialchars($m['estado']) ?></span></td>
+                                    <td><span class="badge badge-soft-success"><?= htmlspecialchars($m['estado']) ?></span></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>

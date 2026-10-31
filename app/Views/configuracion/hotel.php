@@ -9,7 +9,7 @@
 
         <div class="row justify-content-center">
             <div class="col-12 col-lg-9">
-                <form action="<?= url('configuracion/guardarHotel') ?>" method="POST" enctype="multipart/form-data" class="card border-top border-4 border-primary">
+                <form action="<?= url('configuracion/guardarHotel') ?>" method="POST" enctype="multipart/form-data" class="card">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="card-title mb-0"><i class="bi bi-sliders me-2"></i>Perfil y Marca del Establecimiento</h5>
                         <span class="badge badge-soft-info"><i class="bi bi-shield-check me-1"></i>Configuración Global</span>
@@ -26,8 +26,8 @@
                                             $logoActual = $config['hotel_logo'] ?? '';
                                             $rutaLogo = !empty($logoActual) ? base_url('uploads/hotel/' . $logoActual) : asset('img/logo-placeholder.png');
                                         ?>
-                                        <div class="bg-white border rounded-3 p-2 shadow-xs d-flex align-items-center justify-content-center" style="width: 110px; height: 110px;">
-                                            <img id="previewLogoHotel" src="<?= $rutaLogo ?>" alt="Logo del Hotel" class="img-fluid rounded" style="max-height: 94px; max-width: 94px; object-fit: contain;">
+                                        <div class="bg-white border rounded-3 p-2 shadow-xs d-flex align-items-center justify-content-center logo-preview">
+                                            <img id="previewLogoHotel" src="<?= $rutaLogo ?>" alt="Logo del Hotel" class="img-fluid rounded">
                                         </div>
                                     </div>
                                 </div>
@@ -43,36 +43,36 @@
 
                         <div class="row g-3">
                             <div class="col-12 col-md-8">
-                                <label class="form-label">Nombre Comercial del Hotel <span class="text-danger">*</span></label>
-                                <input type="text" name="hotel_nombre" class="form-control form-control-lg" value="<?= htmlspecialchars($config['hotel_nombre'] ?? 'Hotel Manager & Resort Gran Sol') ?>" required>
+                                <label for="hotel_nombre" class="form-label">Nombre Comercial del Hotel <span class="text-danger">*</span></label>
+                                <input id="hotel_nombre" type="text" name="hotel_nombre" class="form-control form-control-lg" value="<?= htmlspecialchars($config['hotel_nombre'] ?? 'Hotel Manager & Resort Gran Sol') ?>" required>
                             </div>
                             <div class="col-12 col-md-4">
-                                <label class="form-label">RUC / NIF / Identificación Tributaria <span class="text-danger">*</span></label>
-                                <input type="text" name="hotel_ruc" class="form-control form-control-lg" value="<?= htmlspecialchars($config['hotel_ruc'] ?? '20491823901') ?>" required>
+                                <label for="hotel_ruc" class="form-label">RUC / NIF / Identificación Tributaria <span class="text-danger">*</span></label>
+                                <input id="hotel_ruc" type="text" name="hotel_ruc" class="form-control form-control-lg" value="<?= htmlspecialchars($config['hotel_ruc'] ?? '20491823901') ?>" required>
                             </div>
 
                             <div class="col-12 col-md-6">
-                                <label class="form-label">Teléfonos de Contacto</label>
-                                <input type="text" name="hotel_telefono" class="form-control" value="<?= htmlspecialchars($config['hotel_telefono'] ?? '+51 1 450-8900 / +51 987 654 321') ?>">
+                                <label for="hotel_telefono" class="form-label">Teléfonos de Contacto</label>
+                                <input id="hotel_telefono" type="text" name="hotel_telefono" class="form-control" value="<?= htmlspecialchars($config['hotel_telefono'] ?? '+51 1 450-8900 / +51 987 654 321') ?>">
                             </div>
                             <div class="col-12 col-md-6">
-                                <label class="form-label">Correo Electrónico Oficial</label>
-                                <input type="email" name="hotel_correo" class="form-control" value="<?= htmlspecialchars($config['hotel_correo'] ?? 'reservas@hotelmanager.com') ?>">
+                                <label for="hotel_correo" class="form-label">Correo Electrónico Oficial</label>
+                                <input id="hotel_correo" type="email" name="hotel_correo" class="form-control" value="<?= htmlspecialchars($config['hotel_correo'] ?? 'reservas@hotelmanager.com') ?>">
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label">Dirección Física del Hotel</label>
-                                <input type="text" name="hotel_direccion" class="form-control" value="<?= htmlspecialchars($config['hotel_direccion'] ?? 'Av. Del Sol 1245, Zona Turística, Perú') ?>">
+                                <label for="hotel_direccion" class="form-label">Dirección Física del Hotel</label>
+                                <input id="hotel_direccion" type="text" name="hotel_direccion" class="form-control" value="<?= htmlspecialchars($config['hotel_direccion'] ?? 'Av. Del Sol 1245, Zona Turística, Perú') ?>">
                             </div>
 
                             <div class="col-12 col-md-6">
-                                <label class="form-label">Hora Oficial de Check-in</label>
-                                <input type="time" name="hotel_checkin_hora" class="form-control" value="<?= htmlspecialchars($config['hotel_checkin_hora'] ?? '14:00') ?>">
+                                <label for="hotel_checkin_hora" class="form-label">Hora Oficial de Check-in</label>
+                                <input id="hotel_checkin_hora" type="time" name="hotel_checkin_hora" class="form-control" value="<?= htmlspecialchars($config['hotel_checkin_hora'] ?? '14:00') ?>">
                                 <div class="form-text">Hora oficial de asignación y entrega de llaves.</div>
                             </div>
                             <div class="col-12 col-md-6">
-                                <label class="form-label">Hora Oficial de Check-out</label>
-                                <input type="time" name="hotel_checkout_hora" class="form-control" value="<?= htmlspecialchars($config['hotel_checkout_hora'] ?? '12:00') ?>">
+                                <label for="hotel_checkout_hora" class="form-label">Hora Oficial de Check-out</label>
+                                <input id="hotel_checkout_hora" type="time" name="hotel_checkout_hora" class="form-control" value="<?= htmlspecialchars($config['hotel_checkout_hora'] ?? '12:00') ?>">
                                 <div class="form-text">Hora límite para recepción de habitaciones.</div>
                             </div>
                         </div>

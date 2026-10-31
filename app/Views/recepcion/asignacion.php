@@ -12,15 +12,15 @@
 
         <div class="row">
             <div class="col-12 col-lg-8">
-                <div class="card border-top border-4 border-primary">
+                <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0"><i class="bi bi-shuffle me-2"></i>Mover Huésped a Otra Habitación</h5>
                     </div>
                     <div class="card-body">
                         <form method="POST" action="<?= url('recepcion/procesarCambio') ?>">
                             <div class="mb-3">
-                                <label class="form-label">1. Seleccionar Huésped y Habitación Actual <span class="text-danger">*</span></label>
-                                <select name="estancia_id" class="form-select form-select-lg" required>
+                                <label for="estancia_id" class="form-label">1. Seleccionar Huésped y Habitación Actual <span class="text-danger">*</span></label>
+                                <select id="estancia_id" name="estancia_id" class="form-select form-select-lg" required>
                                     <option value="">-- Elige la habitación a desocupar --</option>
                                     <?php foreach ($activas as $act): ?>
                                         <option value="<?= $act['id'] ?>">
@@ -31,8 +31,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">2. Seleccionar Nueva Habitación de Destino (Disponible) <span class="text-danger">*</span></label>
-                                <select name="nueva_habitacion_id" class="form-select form-select-lg" required>
+                                <label for="nueva_habitacion_id" class="form-label">2. Seleccionar Nueva Habitación de Destino (Disponible) <span class="text-danger">*</span></label>
+                                <select id="nueva_habitacion_id" name="nueva_habitacion_id" class="form-select form-select-lg" required>
                                     <option value="">-- Elige la nueva habitación disponible --</option>
                                     <?php foreach ($disponibles as $d): ?>
                                         <option value="<?= $d['id'] ?>">
@@ -43,8 +43,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Motivo del Cambio o Reubicación</label>
-                                <textarea name="motivo" class="form-control" rows="2" placeholder="Ej: Falla en aire acondicionado, ascenso a suite, requerimiento de piso bajo..."></textarea>
+                                <label for="motivo" class="form-label">Motivo del Cambio o Reubicación</label>
+                                <textarea id="motivo" name="motivo" class="form-control" rows="2" placeholder="Ej: Falla en aire acondicionado, ascenso a suite, requerimiento de piso bajo..."></textarea>
                             </div>
 
                             <div class="alert alert-secondary py-2 small d-flex align-items-center">

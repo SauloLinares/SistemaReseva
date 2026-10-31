@@ -41,12 +41,12 @@
                                             <small class="d-block text-primary"><?= htmlspecialchars($a['comprobante_numero']) ?></small>
                                         </td>
                                         <td>
-                                            <a href="<?= url('reservas/editar/' . $a['reserva_id']) ?>" class="badge text-bg-light border text-decoration-none">
+                                            <a href="<?= url('reservas/editar/' . $a['reserva_id']) ?>" class="badge badge-soft-secondary text-decoration-none">
                                                 <?= htmlspecialchars($a['codigo_reserva']) ?>
                                             </a>
                                         </td>
                                         <td><?= htmlspecialchars($a['huesped_nombre']) ?></td>
-                                        <td><span class="badge text-bg-light border"><?= htmlspecialchars($a['metodo_pago']) ?></span></td>
+                                        <td><span class="badge badge-soft-secondary"><?= htmlspecialchars($a['metodo_pago']) ?></span></td>
                                         <td><span class="fw-bold text-success fs-6"><?= dinero($a['monto']) ?></span></td>
                                         <td><small class="text-muted"><?= fecha_es($a['fecha_pago'], true) ?></small></td>
                                         <td><small class="text-muted"><?= htmlspecialchars($a['notas'] ?: '-') ?></small></td>

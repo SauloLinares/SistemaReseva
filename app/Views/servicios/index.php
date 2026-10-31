@@ -70,18 +70,18 @@
     <div class="modal-dialog">
         <form method="POST" action="<?= url('servicios/guardar') ?>" class="modal-content">
             <input type="hidden" name="id" id="servId">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="modalServTitle"><i class="bi bi-cup-hot-fill me-2"></i>Servicio Adicional</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalServTitle"><i class="bi bi-cup-hot-fill me-2 text-primary"></i>Servicio Adicional</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label">Nombre del Servicio <span class="text-danger">*</span></label>
+                    <label for="servNombre" class="form-label">Nombre del Servicio <span class="text-danger">*</span></label>
                     <input type="text" name="nombre" id="servNombre" class="form-control" placeholder="Ej: Desayuno Buffet Americano, Masaje Relajante" required>
                 </div>
                 <div class="row g-2 mb-3">
                     <div class="col-6">
-                        <label class="form-label">Categoría <span class="text-danger">*</span></label>
+                        <label for="servCategoria" class="form-label">Categoría <span class="text-danger">*</span></label>
                         <select name="categoria" id="servCategoria" class="form-select" required>
                             <option value="Restaurante">Restaurante</option>
                             <option value="Bar">Bar</option>
@@ -93,25 +93,25 @@
                         </select>
                     </div>
                     <div class="col-6">
-                        <label class="form-label">Precio (S/.) <span class="text-danger">*</span></label>
+                        <label for="servPrecio" class="form-label">Precio (S/.) <span class="text-danger">*</span></label>
                         <input type="number" step="0.01" name="precio" id="servPrecio" class="form-control" value="0.00" required>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Estado</label>
+                    <label for="servEstado" class="form-label">Estado</label>
                     <select name="estado" id="servEstado" class="form-select">
                         <option value="1">Activo / Disponible</option>
                         <option value="0">Deshabilitado</option>
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Descripción</label>
+                    <label for="servDescripcion" class="form-label">Descripción</label>
                     <textarea name="descripcion" id="servDescripcion" class="form-control" rows="2" placeholder="Detalles de lo que incluye..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-sm btn-primary">Guardar Servicio</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Guardar Servicio</button>
             </div>
         </form>
     </div>

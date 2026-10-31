@@ -62,8 +62,8 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Descripción / Concepto</th>
-                                    <th class="text-center" style="width: 100px;">Tipo</th>
-                                    <th class="text-end" style="width: 150px;">Importe</th>
+                                    <th class="text-center col-w-sm">Tipo</th>
+                                    <th class="text-end col-w-md">Importe</th>
                                 </tr>
                             </thead>
                             <tbody>

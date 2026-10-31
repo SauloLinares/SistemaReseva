@@ -13,11 +13,11 @@
         <div class="row g-4">
             <?php foreach ($roles as $r): ?>
                 <div class="col-12 col-md-4">
-                    <div class="card h-100 border-top border-4 border-primary">
+                    <div class="card h-100">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <h5 class="fw-bold mb-0 text-primary"><?= htmlspecialchars($r['nombre']) ?></h5>
-                                <span class="badge text-bg-light border"><?= $r['total_usuarios'] ?> usuarios</span>
+                                <span class="badge badge-soft-secondary"><?= $r['total_usuarios'] ?> usuarios</span>
                             </div>
                             <p class="text-muted small mb-3"><?= htmlspecialchars($r['descripcion'] ?: 'Sin descripción') ?></p>
                             <div class="d-flex justify-content-between align-items-center pt-2 border-top">
@@ -42,23 +42,23 @@
     <div class="modal-dialog">
         <form method="POST" action="<?= url('seguridad/guardarRol') ?>" class="modal-content">
             <input type="hidden" name="id" id="rolId">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="modalRolTitle"><i class="bi bi-shield-plus me-2"></i>Rol de Acceso</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalRolTitle"><i class="bi bi-shield-plus me-2 text-primary"></i>Rol de Acceso</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label">Nombre del Rol <span class="text-danger">*</span></label>
+                    <label for="rolNombre" class="form-label">Nombre del Rol <span class="text-danger">*</span></label>
                     <input type="text" name="nombre" id="rolNombre" class="form-control" placeholder="Ej: Auditor, Cajero, Recepcionista" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Descripción</label>
+                    <label for="rolDescripcion" class="form-label">Descripción</label>
                     <textarea name="descripcion" id="rolDescripcion" class="form-control" rows="3" placeholder="Funciones y alcance del rol..."></textarea>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-sm btn-primary">Guardar Rol</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Guardar Rol</button>
             </div>
         </form>
     </div>

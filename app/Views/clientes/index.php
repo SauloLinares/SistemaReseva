@@ -19,13 +19,13 @@
                     <table class="table table-hover align-middle mb-0 datatable-init">
                         <thead class="table-light">
                             <tr>
-                                <th style="width: 60px;" class="text-center">#</th>
+                                <th class="text-center col-w-xs">#</th>
                                 <th>Nombres y Apellidos</th>
                                 <th>DNI</th>
                                 <th>Correo Electrónico</th>
                                 <th>Teléfono</th>
                                 <th class="text-center">Estado</th>
-                                <th class="text-center" style="width: 150px;">Acciones</th>
+                                <th class="text-center col-w-md">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>

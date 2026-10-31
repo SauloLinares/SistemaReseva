@@ -54,6 +54,7 @@ Todos los colores, radios y sombras salen de los tokens de `public/assets/css/cu
 - Prefijos con `input-group-text` sin `bg-white` ni `bg-light`.
 - Ancho del formulario: `<div class="row"><div class="col-12 col-lg-8">` alineado a la izquierda, en el mismo eje que el título de la página. Solo los documentos imprimibles (voucher, comprobante) van centrados.
 - Botones del pie: partial `form_actions` (ver abajo).
+- **Seguridad (CSRF):** todo POST se valida con un token de sesión. Los `<form method="POST">` lo reciben solos al renderizar y `fetch()` lo envía en la cabecera `X-CSRF-Token`; no hay que escribir nada. Las acciones que borran o cambian datos van por POST: usa un formulario o un enlace con `data-confirm` (se envía por POST). Las rutas `eliminar*` rechazan GET.
 
 ## 4. Color
 
@@ -68,6 +69,13 @@ Todos los colores, radios y sombras salen de los tokens de `public/assets/css/cu
 - `<div class="card">` sin `shadow-sm`, `card-outline` ni `border-*`: el CSS ya aplica sombra y borde.
 - Encabezado: partial `card_header`.
 - Las cabeceras de color (`section-header-blue`, etc.) solo para paneles de resumen del dashboard o la caja.
+
+## 5.1 Modales
+
+- `modal-header` sin fondo de color: el color va solo en el icono del título (`text-danger` si la acción borra o cierra algo, `text-success` para cobros, `text-primary` para el resto).
+- Cerrar con `btn-close` (sin `btn-close-white`) y `aria-label="Cerrar"`.
+- Pie: `btn btn-outline-secondary` "Cancelar" + la acción principal, ambos de tamaño normal. Si la acción es "Confirmar cancelación", el botón que cierra dice "Volver".
+- Avisos de validación en JavaScript: `avisar(titulo, texto)`, no `alert()`.
 
 ## 6. Mensajes flash
 

@@ -14,10 +14,10 @@
         <div class="row justify-content-center py-4">
             <div class="col-12 col-md-8 col-lg-6 col-xl-5">
                 <div class="card border-0">
-                    <div class="card-header bg-success text-white py-3 text-center">
-                        <i class="bi bi-lock-fill fs-2 d-block mb-1"></i>
-                        <h5 class="card-title float-none mb-0 text-white">Apertura de Turno de Recepción</h5>
-                        <small class="d-block text-white-50">Inicia tu jornada registrando el fondo inicial de caja</small>
+                    <div class="card-header py-3 text-center">
+                        <i class="bi bi-unlock fs-2 d-block mb-1 text-success"></i>
+                        <h5 class="card-title float-none mb-0">Apertura de Turno de Recepción</h5>
+                        <small class="d-block text-body-secondary">Inicia tu jornada registrando el fondo inicial de caja</small>
                     </div>
                     <div class="card-body p-4">
                         <div class="alert alert-info py-2 px-3 small rounded-3 mb-4 d-flex align-items-center gap-2">
@@ -30,26 +30,26 @@
                         <form action="<?= url('caja/abrir') ?>" method="POST" id="formAperturaCaja">
                             <!-- Datos del recepcionista -->
                             <div class="mb-3">
-                                <label class="form-label">Recepcionista Responsable</label>
+                                <label for="recepcionistaApertura" class="form-label">Recepcionista Responsable</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
-                                    <input type="text" class="form-control bg-body-secondary fw-semibold" value="<?= htmlspecialchars($usuario['nombre'] ?? 'Administrador') ?> (<?= htmlspecialchars($usuario['email'] ?? 'Recepcion') ?>)" readonly>
+                                    <input type="text" id="recepcionistaApertura" class="form-control bg-body-secondary fw-semibold" value="<?= htmlspecialchars($usuario['nombre'] ?? 'Administrador') ?> (<?= htmlspecialchars($usuario['email'] ?? 'Recepcion') ?>)" readonly>
                                 </div>
                             </div>
 
                             <!-- Fecha y Hora -->
                             <div class="mb-3">
-                                <label class="form-label">Fecha y Hora de Apertura</label>
+                                <label for="fechaApertura" class="form-label">Fecha y Hora de Apertura</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
-                                    <input type="text" class="form-control bg-body-secondary" value="<?= date('d/m/Y - h:i A') ?>" readonly>
+                                    <input type="text" id="fechaApertura" class="form-control bg-body-secondary" value="<?= date('d/m/Y - h:i A') ?>" readonly>
                                 </div>
                             </div>
 
                             <!-- Monto inicial / Fondo de sencillo -->
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <label class="form-label mb-0">Fondo Inicial en Efectivo (S/.) <span class="text-danger">*</span></label>
+                                    <label for="monto_inicial" class="form-label mb-0">Fondo Inicial en Efectivo (S/.) <span class="text-danger">*</span></label>
                                     <small class="text-muted">Sencillo para dar vuelto</small>
                                 </div>
                                 <div class="input-group input-group-lg">
@@ -68,8 +68,8 @@
 
                             <!-- Observaciones -->
                             <div class="mb-4">
-                                <label class="form-label">Observaciones / Novedades de Entrada</label>
-                                <textarea name="observaciones" class="form-control form-control-sm" rows="2" placeholder="Ej: Se recibe caja con S/. 100 en monedas de S/. 2 y S/. 5..."></textarea>
+                                <label for="observaciones" class="form-label">Observaciones / Novedades de Entrada</label>
+                                <textarea id="observaciones" name="observaciones" class="form-control form-control-sm" rows="2" placeholder="Ej: Se recibe caja con S/. 100 en monedas de S/. 2 y S/. 5..."></textarea>
                             </div>
 
                             <!-- Botón de apertura -->

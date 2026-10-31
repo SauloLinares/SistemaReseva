@@ -8,6 +8,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="<?= e(csrf_token()) ?>" />
     <title><?= htmlspecialchars($pageTitle ?? 'Sistema de Reserva') ?> | AdminLTE</title>
 
     <!-- Script de inicialización de tema claro/oscuro & estado del sidebar (AdminLTE v4) -->
@@ -62,7 +63,7 @@
 </head>
 <body class="layout-fixed fixed-header sidebar-expand-lg bg-body-tertiary">
     <!-- Toast Container Flotante para notificaciones no invasivas -->
-    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1095;" id="toastContainer">
+    <div class="toast-container position-fixed top-0 end-0 p-3 app-toasts" id="toastContainer">
         <?php if (!empty($_SESSION['flash'])): ?>
             <?php 
                 $flashTipo = $_SESSION['flash']['tipo'] ?? 'info';

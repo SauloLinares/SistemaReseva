@@ -31,6 +31,10 @@ abstract class Controller
         // Estructura modular de AdminLTE
         $layoutsPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'layouts' . DIRECTORY_SEPARATOR;
 
+        // Se captura la página completa para insertar el token CSRF en sus formularios
+        csrf_token();
+        ob_start();
+
         require_once $layoutsPath . 'header.php';
         require_once $layoutsPath . 'navbar.php';
         require_once $layoutsPath . 'sidebar.php';
@@ -40,6 +44,8 @@ abstract class Controller
         echo "\n</main>\n<!--end::App Main-->\n";
 
         require_once $layoutsPath . 'footer.php';
+
+        echo csrf_inyectar(ob_get_clean());
     }
 
     /**
@@ -71,7 +77,10 @@ abstract class Controller
             die("La vista <code>{$vista}</code> no existe en: <strong>{$viewPath}</strong>");
         }
 
+        csrf_token();
+        ob_start();
         require_once $viewPath;
+        echo csrf_inyectar(ob_get_clean());
     }
 
     /**

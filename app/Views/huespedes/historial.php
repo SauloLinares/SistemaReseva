@@ -18,13 +18,13 @@
                     <div class="col-12 col-md-6">
                         <h5 class="fw-bold mb-1"><?= htmlspecialchars($huesped['nombres'] . ' ' . $huesped['apellidos']) ?></h5>
                         <div class="text-muted small">
-                            <span class="badge text-bg-light border"><?= htmlspecialchars($huesped['tipo_documento']) ?>: <?= htmlspecialchars($huesped['numero_documento']) ?></span>
+                            <span class="badge badge-soft-secondary"><?= htmlspecialchars($huesped['tipo_documento']) ?>: <?= htmlspecialchars($huesped['numero_documento']) ?></span>
                             &nbsp;|&nbsp; Tel: <?= htmlspecialchars($huesped['telefono'] ?: '-') ?>
                             &nbsp;|&nbsp; Email: <?= htmlspecialchars($huesped['correo'] ?: '-') ?>
                         </div>
                     </div>
                     <div class="col-12 col-md-6 text-md-end mt-2 mt-md-0">
-                        <span class="badge text-bg-primary fs-6 px-3 py-2">
+                        <span class="badge badge-soft-primary">
                             Total Estadías: <?= count($historial) ?>
                         </span>
                     </div>
@@ -62,7 +62,7 @@
                                             <span class="fw-bold text-primary"><?= htmlspecialchars($item['codigo_reserva']) ?></span>
                                         </td>
                                         <td>
-                                            <span class="badge text-bg-light border">
+                                            <span class="badge badge-soft-secondary">
                                                 <i class="bi bi-door-closed me-1"></i><?= htmlspecialchars($item['habitaciones'] ?: 'N/A') ?>
                                             </span>
                                             <small class="text-muted d-block"><?= htmlspecialchars($item['tipos'] ?: '') ?></small>

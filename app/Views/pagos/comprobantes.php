@@ -32,7 +32,7 @@
                         <tbody>
                             <?php foreach ($pagos as $p): ?>
                                 <tr>
-                                    <td><span class="badge text-bg-secondary text-uppercase"><?= htmlspecialchars($p['comprobante_tipo']) ?></span></td>
+                                    <td><span class="badge badge-soft-secondary text-uppercase"><?= htmlspecialchars($p['comprobante_tipo']) ?></span></td>
                                     <td><span class="fw-bold text-primary"><?= htmlspecialchars($p['comprobante_numero']) ?></span></td>
                                     <td><?= htmlspecialchars($p['codigo_reserva']) ?></td>
                                     <td><?= htmlspecialchars($p['huesped_nombre']) ?></td>

@@ -15,7 +15,7 @@
             <div class="col-12 col-xl-10">
 
                 <!-- Buscador Principal de Ventanilla -->
-                <div class="card border-top border-4 border-primary mb-4">
+                <div class="card mb-4">
                     <div class="card-body p-4">
                         <form method="GET" action="<?= url('huespedes/buscar') ?>" id="formBuscarHuesped">
                             <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
@@ -58,15 +58,15 @@
                         <?php 
                             $iniciales = mb_strtoupper(mb_substr($huesped['nombres'], 0, 1) . mb_substr($huesped['apellidos'], 0, 1));
                         ?>
-                        <div class="card border-success mb-4">
-                            <div class="card-header bg-success-subtle text-success-emphasis d-flex justify-content-between align-items-center py-2.5">
-                                <span class="fw-bold fs-6"><i class="bi bi-check-circle-fill me-2"></i>Huésped Registrado en el Sistema</span>
-                                <span class="badge bg-success">Cliente Activo</span>
+                        <div class="card mb-4">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <span class="fw-bold fs-6"><i class="bi bi-check-circle-fill text-success me-2"></i>Huésped Registrado en el Sistema</span>
+                                <span class="badge badge-soft-success">Cliente Activo</span>
                             </div>
                             <div class="card-body p-4">
                                 <div class="row align-items-center g-3">
                                     <div class="col-auto">
-                                        <div class="avatar-circle avatar-primary fs-3 shadow-xs" style="width: 75px; height: 75px;">
+                                        <div class="avatar-circle avatar-primary fs-3 shadow-xs avatar-xl">
                                             <?= $iniciales ?>
                                         </div>
                                     </div>
@@ -76,7 +76,7 @@
                                             <span class="badge bg-body-secondary text-body border">
                                                 <i class="bi bi-person-vcard text-primary me-1"></i><?= htmlspecialchars($huesped['tipo_documento']) ?>: <strong><?= htmlspecialchars($huesped['numero_documento']) ?></strong>
                                             </span>
-                                            <span class="badge bg-secondary-subtle text-secondary-emphasis">
+                                            <span class="badge badge-soft-secondary">
                                                 <i class="bi bi-geo-alt me-1"></i><?= htmlspecialchars($huesped['nacionalidad'] ?: 'Perú') ?>
                                             </span>
                                         </div>
@@ -113,8 +113,8 @@
                         </div>
                     <?php else: ?>
                         <!-- Huésped No Encontrado -->
-                        <div class="card border-warning mb-4 p-4 text-center">
-                            <div class="avatar-circle avatar-warning mx-auto mb-3" style="width: 65px; height: 65px; font-size: 1.75rem;">
+                        <div class="card mb-4 p-4 text-center">
+                            <div class="avatar-circle avatar-warning mx-auto mb-3 avatar-lg">
                                 <i class="bi bi-person-x"></i>
                             </div>
                             <h5 class="fw-bold mb-1">No se encontró ningún huésped con el documento: "<?= htmlspecialchars($documento) ?>"</h5>
@@ -155,14 +155,14 @@
                                             <div>
                                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                                     <div class="d-flex align-items-center gap-2 min-w-0">
-                                                        <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-xs flex-shrink-0" style="width: 34px; height: 34px; font-size: 0.82rem; background: <?= $esVip ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'linear-gradient(135deg, #3b82f6, #1d4ed8)' ?>;">
+                                                        <div class="avatar-circle avatar-xs fw-bold flex-shrink-0 <?= $esVip ? 'avatar-warning' : 'avatar-primary' ?>">
                                                             <?= $iniHf ?>
                                                         </div>
-                                                        <h6 class="fw-bold mb-0 text-truncate text-body" style="max-width: 145px;" title="<?= htmlspecialchars($hf['nombres'] . ' ' . $hf['apellidos']) ?>">
+                                                        <h6 class="fw-bold mb-0 text-truncate text-body mw-140" title="<?= htmlspecialchars($hf['nombres'] . ' ' . $hf['apellidos']) ?>">
                                                             <?= htmlspecialchars($hf['nombres'] . ' ' . $hf['apellidos']) ?>
                                                         </h6>
                                                     </div>
-                                                    <span class="badge <?= $esVip ? 'bg-warning-subtle text-warning-emphasis border border-warning-subtle' : 'bg-primary-subtle text-primary border border-primary-subtle' ?>" style="font-size: 0.72rem;">
+                                                    <span class="badge <?= $esVip ? 'badge-soft-warning' : 'badge-soft-primary' ?> text-2xs">
                                                         <?= $totalRes ?> <?= $totalRes === 1 ? 'visita' : 'visitas' ?>
                                                     </span>
                                                 </div>
@@ -174,7 +174,7 @@
                                                 <span class="text-secondary small">
                                                     <i class="bi bi-geo-alt me-1 text-info"></i><?= htmlspecialchars($hf['nacionalidad'] ?: 'Perú') ?>
                                                 </span>
-                                                <a href="<?= url('huespedes/buscar?documento=' . urlencode($hf['numero_documento'])) ?>" class="btn btn-outline-primary btn-xs" style="font-size: 0.75rem;">
+                                                <a href="<?= url('huespedes/buscar?documento=' . urlencode($hf['numero_documento'])) ?>" class="btn btn-outline-primary btn-xs text-xs">
                                                     <i class="bi bi-search me-1"></i>Consultar
                                                 </a>
                                             </div>

@@ -60,6 +60,59 @@ if (!function_exists('partial')) {
     }
 }
 
+/*
+ * Protección CSRF
+ * Cada sesión tiene un token aleatorio. Todo POST debe enviarlo (campo _csrf o
+ * cabecera X-CSRF-Token); el Router lo valida antes de llamar al controlador.
+ * Así otra página no puede enviar formularios en nombre del usuario conectado.
+ */
+if (!function_exists('csrf_token')) {
+    function csrf_token(): string
+    {
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            session_start();
+        }
+        if (empty($_SESSION['_csrf'])) {
+            $_SESSION['_csrf'] = bin2hex(random_bytes(32));
+        }
+        return $_SESSION['_csrf'];
+    }
+}
+
+if (!function_exists('csrf_field')) {
+    function csrf_field(): string
+    {
+        return '<input type="hidden" name="_csrf" value="' . e(csrf_token()) . '">';
+    }
+}
+
+if (!function_exists('csrf_valido')) {
+    /**
+     * Compara el token recibido con el de la sesión en tiempo constante
+     */
+    function csrf_valido(?string $token): bool
+    {
+        $esperado = $_SESSION['_csrf'] ?? '';
+        return $esperado !== '' && is_string($token) && hash_equals($esperado, $token);
+    }
+}
+
+if (!function_exists('csrf_inyectar')) {
+    /**
+     * Agrega el campo _csrf a cada <form method="post"> del HTML generado,
+     * para no tener que escribirlo a mano en cada vista.
+     */
+    function csrf_inyectar(string $html): string
+    {
+        $campo = csrf_field();
+        return preg_replace_callback(
+            '/<form\b[^>]*\bmethod\s*=\s*["\']?post["\']?[^>]*>/i',
+            fn(array $m) => $m[0] . $campo,
+            $html
+        ) ?? $html;
+    }
+}
+
 if (!function_exists('redirect')) {
     function redirect(string $route = ''): void
     {

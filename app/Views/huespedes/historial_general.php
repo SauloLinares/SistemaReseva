@@ -30,9 +30,9 @@
                             <?php foreach ($huespedes as $h): ?>
                                 <tr>
                                     <td class="fw-bold"><?= htmlspecialchars($h['nombres'] . ' ' . $h['apellidos']) ?></td>
-                                    <td><span class="badge text-bg-light border"><?= htmlspecialchars($h['tipo_documento'] . ' ' . $h['numero_documento']) ?></span></td>
+                                    <td><span class="badge badge-soft-secondary"><?= htmlspecialchars($h['tipo_documento'] . ' ' . $h['numero_documento']) ?></span></td>
                                     <td><?= htmlspecialchars($h['telefono'] ?: '-') ?></td>
-                                    <td><span class="badge text-bg-primary fs-6"><?= $h['total_reservas'] ?></span></td>
+                                    <td><span class="badge badge-soft-primary"><?= $h['total_reservas'] ?></span></td>
                                     <td><?= fecha_es($h['ultima_estadia']) ?></td>
                                     <td class="text-end pe-3">
                                         <a href="<?= url('huespedes/historial/' . $h['id']) ?>" class="btn btn-sm btn-primary btn-with-text text-nowrap" title="Ver Historial de Estadías">

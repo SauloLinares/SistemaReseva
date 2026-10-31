@@ -19,8 +19,8 @@
                 <!-- Columna Izquierda: Datos del Huésped, Fechas, Habitaciones y Servicios (Scroll Independiente) -->
                 <div class="col-12 col-lg-7 col-xl-8 pos-split-left">
                     <!-- 1. Datos del Huésped -->
-                    <div class="card mb-3 card-guest-select" style="position: relative; z-index: 25;">
-                        <div class="card-header section-header-blue d-flex justify-content-between align-items-center">
+                    <div class="card mb-3 card-guest-select">
+                        <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0">
                                 <i class="bi bi-person-circle text-primary me-2"></i>1. Seleccionar o Registrar Huésped
                             </h5>
@@ -31,7 +31,7 @@
                         <div class="card-body">
                             <div class="row g-3">
                                 <div class="col-12">
-                                    <label class="form-label">Huésped Titular <span class="text-danger">*</span></label>
+                                    <label for="huesped_id" class="form-label">Huésped Titular <span class="text-danger">*</span></label>
                                     <select name="huesped_id" id="huesped_id" class="form-select select-search select-huesped" required>
                                         <option value="" data-nombres="" data-doc="" data-tipo-doc="" data-telefono="" data-correo="" data-nacionalidad="" data-total-reservas="0">-- Escribe para buscar por nombre, documento o teléfono --</option>
                                         <?php foreach ($huespedes as $h): ?>
@@ -65,7 +65,7 @@
                                     <div id="cardPreviewHuesped" class="guest-preview-card d-none">
                                         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
                                             <div class="d-flex align-items-center gap-3">
-                                                <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center shadow-xs" style="width: 46px; height: 46px; font-size: 1.15rem;" id="prevAvatar">
+                                                <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center shadow-xs avatar-md" id="prevAvatar">
                                                     <i class="bi bi-person-fill"></i>
                                                 </div>
                                                 <div>
@@ -74,8 +74,8 @@
                                                         <span id="prevBadgeVIP"></span>
                                                     </div>
                                                     <div class="d-flex align-items-center gap-2 flex-wrap mt-1">
-                                                        <span class="badge bg-secondary-subtle text-secondary border px-2 py-1" id="prevDoc">DNI: --</span>
-                                                        <span class="badge bg-info-subtle text-info-emphasis border px-2 py-1" id="prevNacionalidad"><i class="bi bi-geo-alt me-1"></i>--</span>
+                                                        <span class="badge badge-soft-secondary" id="prevDoc">DNI: --</span>
+                                                        <span class="badge badge-soft-info" id="prevNacionalidad"><i class="bi bi-geo-alt me-1"></i>--</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -92,12 +92,12 @@
 
                     <!-- 2. Fechas de Estadía y Huéspedes -->
                     <div class="card mb-4">
-                        <div class="card-header section-header-cyan d-flex justify-content-between align-items-center">
+                        <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0">
                                 <i class="bi bi-calendar-range text-info me-2"></i>2. Fechas de Estadía y Ocupantes
                             </h5>
                             <span id="statusDisponibilidad" class="badge badge-soft-success d-none">
-                                <span class="spinner-border spinner-border-sm me-1" style="width: 0.65rem; height: 0.65rem;"></span>Verificando disponibilidad...
+                                <span class="spinner-border spinner-border-sm me-1 spinner-xs"></span>Verificando disponibilidad...
                             </span>
                         </div>
                         <div class="card-body">
@@ -128,16 +128,16 @@
                                 </div>
 
                                 <div class="col-6 col-md-4">
-                                    <label class="form-label">Adultos <span class="text-danger">*</span></label>
+                                    <label for="numAdultos" class="form-label">Adultos <span class="text-danger">*</span></label>
                                     <input type="number" name="adultos" id="numAdultos" class="form-control" value="1" min="1" max="15">
                                 </div>
                                 <div class="col-6 col-md-4">
-                                    <label class="form-label">Niños</label>
+                                    <label for="numNinos" class="form-label">Niños</label>
                                     <input type="number" name="ninos" id="numNinos" class="form-control" value="0" min="0" max="10">
                                 </div>
                                 <div class="col-12 col-md-4">
-                                    <label class="form-label">Canal / Origen</label>
-                                    <select name="origen" class="form-select">
+                                    <label for="origen" class="form-label">Canal / Origen</label>
+                                    <select id="origen" name="origen" class="form-select">
                                         <option value="manual">Manual (Recepción)</option>
                                         <option value="telefonica">Telefónica</option>
                                         <option value="web">Página Web</option>
@@ -183,7 +183,7 @@
                         }
                     ?>
                     <div class="card mb-4">
-                        <div class="card-header section-header-amber d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                             <div>
                                 <h5 class="card-title mb-0">
                                     <i class="bi bi-door-open-fill text-warning me-2"></i>3. Seleccionar Habitación(es) <span class="text-danger">*</span>
@@ -233,12 +233,12 @@
                                         <div class="small fw-semibold text-muted mb-1"><i class="bi bi-tag me-1"></i>Filtrar por Categoría:</div>
                                         <div class="filter-chip-container" id="chipsFiltroTipo">
                                             <button type="button" class="btn-chip-filter active" data-tipo="">
-                                                Todos <span class="badge bg-secondary-subtle text-secondary rounded-pill ms-1"><?= count($habitaciones) ?></span>
+                                                Todos <span class="badge badge-soft-secondary ms-1"><?= count($habitaciones) ?></span>
                                             </button>
                                             <?php foreach ($tiposHab as $t): ?>
                                                 <button type="button" class="btn-chip-filter" data-tipo="<?= htmlspecialchars(strtolower($t)) ?>">
                                                     <?= htmlspecialchars($t) ?>
-                                                    <span class="badge bg-secondary-subtle text-secondary rounded-pill ms-1"><?= $conteoPorTipo[$t] ?? 0 ?></span>
+                                                    <span class="badge badge-soft-secondary ms-1"><?= $conteoPorTipo[$t] ?? 0 ?></span>
                                                 </button>
                                             <?php endforeach; ?>
                                         </div>
@@ -287,7 +287,7 @@
                                          data-capacidad="<?= (int)($hab['capacidad'] ?? 2) ?>">
                                         <div class="card-room-selectable h-100 shadow-xs position-relative">
                                             <!-- Badge de no disponible (manejado vía AJAX) -->
-                                            <span class="badge bg-danger position-absolute top-0 end-0 m-2 d-none badge-ocupada-ajax" style="font-size: 0.68rem; z-index: 2;">
+                                            <span class="badge bg-danger position-absolute top-0 end-0 m-2 d-none badge-ocupada-ajax text-2xs z-2">
                                                 <i class="bi bi-x-circle me-1"></i>Ocupada
                                             </span>
 
@@ -313,7 +313,7 @@
                                                 <div class="flex-grow-1 min-w-0">
                                                     <div class="d-flex justify-content-between align-items-center mb-1">
                                                         <strong class="fs-5 text-primary">Hab. <?= htmlspecialchars($hab['numero']) ?></strong>
-                                                        <span class="text-2xs badge bg-dark bg-opacity-75 text-white">Piso <?= htmlspecialchars($hab['piso']) ?></span>
+                                                        <span class="room-floor-badge">Piso <?= htmlspecialchars($hab['piso']) ?></span>
                                                     </div>
                                                     <div class="text-muted small fw-semibold text-truncate">
                                                         <?= htmlspecialchars($hab['tipo_nombre']) ?> • <span class="text-secondary"><i class="bi bi-person me-1"></i><?= $hab['capacidad'] ?? 2 ?> pers.</span>
@@ -325,7 +325,7 @@
                                                             <small class="text-xs text-muted">/ noche</small>
                                                         </div>
                                                         <div class="text-end">
-                                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle precio-estadia-hab" style="font-size: 0.72rem; display: none;"></span>
+                                                            <span class="badge badge-soft-primary precio-estadia-hab text-2xs" style="display: none;"></span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -350,7 +350,7 @@
                     <!-- 4. Servicios Adicionales & Extras (Opcional) -->
                     <?php if (!empty($servicios)): ?>
                         <div class="card mb-4">
-                            <div class="card-header section-header-emerald d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                                 <div>
                                     <h5 class="card-title mb-0">
                                         <i class="bi bi-plus-circle text-success me-2"></i>4. Servicios Adicionales & Paquetes (Opcional)
@@ -390,11 +390,11 @@
                 <!-- Columna Derecha: Resumen de Costo, Capacidad y Facturación (Panel Fijo con Scroll Interno) -->
                 <div class="col-12 col-lg-5 col-xl-4 pos-split-right">
                     <div class="card pos-split-card">
-                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-2.5">
+                        <div class="card-header d-flex justify-content-between align-items-center">
                             <h5 class="card-title mb-0 fs-6">
                                 <i class="bi bi-receipt-cutoff me-2"></i>Resumen y Cobro
                             </h5>
-                            <span class="badge bg-white bg-opacity-25 text-white fw-semibold border border-white border-opacity-25" id="badgeTotalNochesResumen">1 noche</span>
+                            <span class="badge badge-soft-primary" id="badgeTotalNochesResumen">1 noche</span>
                         </div>
                         <div class="card-body pos-split-card-body">
                             <!-- Fechas Programadas -->
@@ -417,10 +417,10 @@
 
                             <!-- Habitaciones Seleccionadas en Tags Removibles -->
                             <div class="mb-3">
-                                <label class="form-label d-flex justify-content-between">
+                                <div class="form-label d-flex justify-content-between">
                                     <span>Habitaciones:</span>
-                                    <span id="contadorHabTag" class="badge bg-primary-subtle text-primary">0</span>
-                                </label>
+                                    <span id="contadorHabTag" class="badge badge-soft-primary">0</span>
+                                </div>
                                 <div id="listaHabitacionesTags" class="d-flex flex-wrap gap-1">
                                     <span class="text-muted small fst-italic py-1" id="sinHabitacionesMsg">Ninguna habitación seleccionada</span>
                                 </div>
@@ -428,10 +428,10 @@
 
                             <!-- Servicios Adicionales en Tags -->
                             <div class="mb-3" id="bloqueServiciosTags" style="display: none;">
-                                <label class="form-label d-flex justify-content-between">
+                                <div class="form-label d-flex justify-content-between">
                                     <span>Extras Contratados:</span>
-                                    <span id="contadorSrvTag" class="badge bg-success-subtle text-success">0</span>
-                                </label>
+                                    <span id="contadorSrvTag" class="badge badge-soft-success">0</span>
+                                </div>
                                 <div id="listaServiciosTags" class="d-flex flex-wrap gap-1"></div>
                             </div>
 
@@ -444,11 +444,11 @@
                                     <div class="p-2 bg-body-tertiary rounded-3 border">
                                         <div class="row g-2">
                                             <div class="col-6">
-                                                <label class="form-label mb-1">Descuento (S/.)</label>
+                                                <label for="inputDescuento" class="form-label mb-1">Descuento (S/.)</label>
                                                 <input type="number" step="1.00" min="0" name="descuento" id="inputDescuento" class="form-control form-control-sm text-danger fw-bold" value="0.00">
                                             </div>
                                             <div class="col-6">
-                                                <label class="form-label mb-1">Motivo</label>
+                                                <label for="motivoDescuento" class="form-label mb-1">Motivo</label>
                                                 <input type="text" name="motivo_descuento" id="motivoDescuento" class="form-control form-control-sm" placeholder="Ej: Corporativo, VIP">
                                             </div>
                                         </div>
@@ -477,7 +477,7 @@
                             <!-- Botones de Porcentaje de Anticipo Rápido -->
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <label class="form-label mb-0">Anticipo / Adelanto (S/.)</label>
+                                    <label for="inputAnticipo" class="form-label mb-0">Anticipo / Adelanto (S/.)</label>
                                     <div class="d-flex gap-1">
                                         <button type="button" class="btn btn-outline-secondary btn-anticipo-preset" data-pct="0">0%</button>
                                         <button type="button" class="btn btn-outline-secondary btn-anticipo-preset" data-pct="30">30%</button>
@@ -499,8 +499,8 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Método de Pago del Anticipo</label>
-                                <select name="metodo_pago" class="form-select form-select-sm">
+                                <label for="metodo_pago" class="form-label">Método de Pago del Anticipo</label>
+                                <select id="metodo_pago" name="metodo_pago" class="form-select form-select-sm">
                                     <option value="Efectivo">Efectivo</option>
                                     <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
                                     <option value="Tarjeta de Débito">Tarjeta de Débito</option>
@@ -510,7 +510,7 @@
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label">Estado de la Reserva</label>
+                                <label for="selectEstado" class="form-label">Estado de la Reserva</label>
                                 <select name="estado" id="selectEstado" class="form-select form-select-sm">
                                     <option value="confirmada" selected>Confirmada</option>
                                     <option value="pendiente">Pendiente de pago</option>
@@ -518,8 +518,8 @@
                             </div>
 
                             <div class="mb-2">
-                                <label class="form-label">Notas / Requerimientos</label>
-                                <textarea name="notas" class="form-control form-control-sm" rows="2" placeholder="Ej: Cama adicional, llegada tardía, vista exterior..."></textarea>
+                                <label for="notas" class="form-label">Notas / Requerimientos</label>
+                                <textarea id="notas" name="notas" class="form-control form-control-sm" rows="2" placeholder="Ej: Cama adicional, llegada tardía, vista exterior..."></textarea>
                             </div>
                         </div>
 
@@ -555,12 +555,12 @@
 <!-- MODAL: REGISTRO RÁPIDO DE HUÉSPED (POPUP SIN RECARGAR PÁGINA) -->
 <div class="modal fade" id="modalNuevoHuesped" tabindex="-1" aria-labelledby="modalNuevoHuespedLabel" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-primary text-white py-3">
-                <h5 class="modal-title fw-bold" id="modalNuevoHuespedLabel">
-                    <i class="bi bi-person-plus-fill me-2"></i>Registrar Nuevo Huésped
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalNuevoHuespedLabel">
+                    <i class="bi bi-person-plus-fill me-2 text-primary"></i>Registrar Nuevo Huésped
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <form id="formModalHuesped">
                 <div class="modal-body p-4">
@@ -568,8 +568,8 @@
 
                     <div class="row g-3">
                         <div class="col-12 col-md-5">
-                            <label class="form-label">Tipo de Documento <span class="text-danger">*</span></label>
-                            <select name="tipo_documento" class="form-select" required>
+                            <label for="tipo_documento" class="form-label">Tipo de Documento <span class="text-danger">*</span></label>
+                            <select id="tipo_documento" name="tipo_documento" class="form-select" required>
                                 <option value="DNI" selected>DNI (Documento Nacional)</option>
                                 <option value="Pasaporte">Pasaporte</option>
                                 <option value="Carnet Extranjeria">Carné de Extranjería</option>
@@ -577,41 +577,41 @@
                             </select>
                         </div>
                         <div class="col-12 col-md-7">
-                            <label class="form-label">Número de Documento <span class="text-danger">*</span></label>
-                            <input type="text" name="numero_documento" class="form-control" placeholder="Ej: 71829341" required autofocus>
+                            <label for="numero_documento" class="form-label">Número de Documento <span class="text-danger">*</span></label>
+                            <input id="numero_documento" type="text" name="numero_documento" class="form-control" placeholder="Ej: 71829341" required autofocus>
                         </div>
 
                         <div class="col-12 col-md-6">
-                            <label class="form-label">Nombres <span class="text-danger">*</span></label>
-                            <input type="text" name="nombres" class="form-control" placeholder="Ej: Juan Carlos" required>
+                            <label for="nombres" class="form-label">Nombres <span class="text-danger">*</span></label>
+                            <input id="nombres" type="text" name="nombres" class="form-control" placeholder="Ej: Juan Carlos" required>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label class="form-label">Apellidos <span class="text-danger">*</span></label>
-                            <input type="text" name="apellidos" class="form-control" placeholder="Ej: Pérez Rodríguez" required>
+                            <label for="apellidos" class="form-label">Apellidos <span class="text-danger">*</span></label>
+                            <input id="apellidos" type="text" name="apellidos" class="form-control" placeholder="Ej: Pérez Rodríguez" required>
                         </div>
 
                         <div class="col-12 col-md-6">
-                            <label class="form-label">Teléfono / WhatsApp</label>
+                            <label for="telefono" class="form-label">Teléfono / WhatsApp</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-telephone"></i></span>
-                                <input type="tel" name="telefono" class="form-control" placeholder="+51 987 654 321">
+                                <input id="telefono" type="tel" name="telefono" class="form-control" placeholder="+51 987 654 321">
                             </div>
                         </div>
                         <div class="col-12 col-md-6">
-                            <label class="form-label">Correo Electrónico</label>
+                            <label for="correo" class="form-label">Correo Electrónico</label>
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                                <input type="email" name="correo" class="form-control" placeholder="cliente@correo.com">
+                                <input id="correo" type="email" name="correo" class="form-control" placeholder="cliente@correo.com">
                             </div>
                         </div>
 
                         <div class="col-12 col-md-6">
-                            <label class="form-label">Nacionalidad</label>
-                            <input type="text" name="nacionalidad" class="form-control" value="Perú" placeholder="Ej: Perú, Chile, Argentina">
+                            <label for="nacionalidad" class="form-label">Nacionalidad</label>
+                            <input id="nacionalidad" type="text" name="nacionalidad" class="form-control" value="Perú" placeholder="Ej: Perú, Chile, Argentina">
                         </div>
                         <div class="col-12 col-md-6">
-                            <label class="form-label">Dirección / Procedencia</label>
-                            <input type="text" name="direccion" class="form-control" placeholder="Ciudad o dirección de origen">
+                            <label for="direccion" class="form-label">Dirección / Procedencia</label>
+                            <input id="direccion" type="text" name="direccion" class="form-control" placeholder="Ciudad o dirección de origen">
                         </div>
                     </div>
                 </div>
@@ -774,7 +774,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (cardSrv) cardSrv.classList.add('is-active');
 
                 htmlTagsSrv += `
-                    <span class="badge bg-success-subtle text-success border px-2 py-1 shadow-xs">
+                    <span class="badge badge-soft-success">
                         <i class="bi bi-check2 me-1"></i>${nombre} (S/. ${precio.toFixed(2)})
                     </span>
                 `;
@@ -1054,11 +1054,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Badge VIP / Frecuencia
         if (prevBadgeVIP) {
             if (estadiasPrevias >= 2) {
-                prevBadgeVIP.innerHTML = `<span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle"><i class="bi bi-star-fill text-warning me-1"></i>Huésped VIP (${estadiasPrevias} visitas)</span>`;
+                prevBadgeVIP.innerHTML = `<span class="badge badge-soft-warning"><i class="bi bi-star-fill text-warning me-1"></i>Huésped VIP (${estadiasPrevias} visitas)</span>`;
             } else if (estadiasPrevias === 1) {
-                prevBadgeVIP.innerHTML = `<span class="badge bg-info-subtle text-info border"><i class="bi bi-person-check me-1"></i>Cliente Registrado (1 visita previa)</span>`;
+                prevBadgeVIP.innerHTML = `<span class="badge badge-soft-info"><i class="bi bi-person-check me-1"></i>Cliente Registrado (1 visita previa)</span>`;
             } else {
-                prevBadgeVIP.innerHTML = `<span class="badge bg-secondary-subtle text-secondary border"><i class="bi bi-person-plus me-1"></i>Primera Visita (Nuevo)</span>`;
+                prevBadgeVIP.innerHTML = `<span class="badge badge-soft-secondary"><i class="bi bi-person-plus me-1"></i>Primera Visita (Nuevo)</span>`;
             }
         }
 
@@ -1399,16 +1399,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!huespedVal) {
                 e.preventDefault();
                 e.stopPropagation();
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Huésped no seleccionado',
-                        text: 'Debes buscar o seleccionar un huésped registrado antes de confirmar la reserva.',
-                        confirmButtonColor: '#2563eb'
-                    });
-                } else {
-                    alert('Debes buscar o seleccionar un huésped registrado.');
-                }
+                avisar('Huésped no seleccionado', 'Debes buscar o seleccionar un huésped registrado antes de confirmar la reserva.');
                 if (selectHuesped.tomselect) {
                     selectHuesped.tomselect.focus();
                 }
@@ -1420,16 +1411,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (habsSeleccionadas.length === 0) {
                 e.preventDefault();
                 e.stopPropagation();
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Ninguna habitación seleccionada',
-                        text: 'Debes elegir al menos una habitación disponible haciendo clic sobre su tarjeta.',
-                        confirmButtonColor: '#2563eb'
-                    });
-                } else {
-                    alert('Debes elegir al menos una habitación disponible haciendo clic sobre su tarjeta.');
-                }
+                avisar('Ninguna habitación seleccionada', 'Debes elegir al menos una habitación disponible haciendo clic sobre su tarjeta.');
                 document.getElementById('contenedorHabitaciones')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 return false;
             }
@@ -1438,16 +1420,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!entradaInput.value || !salidaInput.value || salidaInput.value <= entradaInput.value) {
                 e.preventDefault();
                 e.stopPropagation();
-                if (typeof Swal !== 'undefined') {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Fechas de estadía inválidas',
-                        text: 'La fecha de check-out debe ser posterior a la fecha de check-in.',
-                        confirmButtonColor: '#2563eb'
-                    });
-                } else {
-                    alert('La fecha de check-out debe ser posterior a la fecha de check-in.');
-                }
+                avisar('Fechas de estadía inválidas', 'La fecha de check-out debe ser posterior a la fecha de check-in.');
                 return false;
             }
         });

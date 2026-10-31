@@ -22,7 +22,7 @@
                         <div class="text-center border-bottom pb-4 mb-4">
                             <h4 class="fw-bold mb-1 text-uppercase text-dark">Hotel Manager & Suites</h4>
                             <p class="text-muted small mb-0">RUC: 20601234567 • Av. Principal 123, Miraflores, Lima</p>
-                            <span class="badge bg-dark text-white px-3 py-1.5 mt-2 fw-semibold" style="letter-spacing: 0.05em;">
+                            <span class="badge badge-soft-secondary mt-2 section-label">
                                 ARQUEO Y CIERRE DE CAJA OFICIAL #<?= sprintf('%04d', $turno['id']) ?>
                             </span>
                         </div>
@@ -35,7 +35,7 @@
                             </div>
                             <div class="col-6 text-end">
                                 <span class="text-muted d-block">Estado del Turno:</span>
-                                <span class="badge bg-secondary-subtle text-secondary border px-2">CERRADO</span>
+                                <span class="badge badge-soft-secondary">CERRADO</span>
                             </div>
                             <div class="col-6">
                                 <span class="text-muted d-block">Apertura:</span>
@@ -49,7 +49,7 @@
 
                         <!-- 1. RESUMEN DE ARQUEO FÍSICO EN EFECTIVO -->
                         <div class="mb-4">
-                            <h6 class="fw-bold text-uppercase border-bottom pb-2 mb-3 text-secondary" style="font-size: 0.8rem; letter-spacing: 0.05em;">
+                            <h6 class="fw-bold text-uppercase border-bottom pb-2 mb-3 text-secondary section-label">
                                 1. Conciliación de Efectivo en Gaveta
                             </h6>
                             <table class="table table-sm table-borderless mb-0">
@@ -97,7 +97,7 @@
 
                         <!-- 2. VENTAS POR CANALES DIGITALES (BANCOS) -->
                         <div class="mb-4">
-                            <h6 class="fw-bold text-uppercase border-bottom pb-2 mb-3 text-secondary" style="font-size: 0.8rem; letter-spacing: 0.05em;">
+                            <h6 class="fw-bold text-uppercase border-bottom pb-2 mb-3 text-secondary section-label">
                                 2. Pagos Recibidos en Cuentas del Hotel (Bancos)
                             </h6>
                             <table class="table table-sm table-borderless mb-0">

@@ -2003,6 +2003,29 @@ body.pos-split-active .page-title {
     color: var(--hm-slate-600);
 }
 
+/* En pantallas angostas el buscador baja a su propia línea y ocupa todo el ancho
+   (las reglas de arriba llevan !important, por eso aquí también) */
+@media (max-width: 575.98px) {
+    .datatable-wrapper .datatable-top {
+        flex-wrap: wrap !important;
+        gap: 0.5rem !important;
+    }
+    .datatable-wrapper .datatable-top .datatable-search {
+        flex: 1 1 100% !important;
+        margin-left: 0 !important;
+        float: none !important;
+    }
+    .datatable-wrapper .datatable-top .datatable-search .datatable-input {
+        flex: 1 1 auto;
+        min-width: 0 !important;
+        width: 100%;
+    }
+    .datatable-wrapper .datatable-bottom {
+        flex-direction: column !important;
+        gap: 0.5rem !important;
+    }
+}
+
 .datatable-input {
     border-radius: 4px !important;
     border: 1px solid var(--hm-slate-300) !important;
@@ -3138,4 +3161,145 @@ a.estado-stat {
     font-size: 2.25rem;
     margin-bottom: 0.5rem;
     opacity: 0.6;
+}
+
+/* ====================================================================
+   18. UTILIDADES QUE REEMPLAZAN style="..." EN LAS VISTAS
+   ==================================================================== */
+/* Rótulo de sección en mayúsculas (voucher, arqueo de caja) */
+.section-label {
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+}
+
+/* Tamaños de avatar / círculo con icono o iniciales */
+.avatar-xs { width: 32px; height: 32px; font-size: 0.75rem; }
+.avatar-sm { width: 40px; height: 40px; font-size: 1rem; }
+.avatar-md { width: 44px; height: 44px; font-size: 1.2rem; }
+.avatar-lg { width: 64px; height: 64px; font-size: 1.7rem; }
+.avatar-xl { width: 75px; height: 75px; font-size: 1.9rem; }
+
+/* Anchos de columna fijos en tablas y controles compactos */
+.col-w-xs { width: 60px; }
+.col-w-sm { width: 120px; }
+.col-w-md { width: 150px; }
+.col-w-lg { width: 170px; }
+.col-w-xl { width: 250px; }
+
+/* Ancho máximo para textos con text-truncate */
+.mw-140 { max-width: 140px; }
+.mw-250 { max-width: 250px; }
+
+/* Vista previa de imágenes en formularios */
+.logo-preview {
+    width: 110px;
+    height: 110px;
+}
+.logo-preview img {
+    max-width: 94px;
+    max-height: 94px;
+    object-fit: contain;
+}
+.foto-preview {
+    width: 130px;
+    height: 95px;
+    overflow: hidden;
+}
+
+.app-header .user-image {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+}
+.app-sidebar .brand-logo-icon img {
+    max-width: 28px;
+    max-height: 28px;
+    object-fit: contain;
+}
+.login-logo-img {
+    width: 42px;
+    height: 42px;
+}
+.alert-list-container {
+    max-height: 380px;
+    overflow-y: auto;
+}
+.toast-container.app-toasts {
+    z-index: 1095;
+}
+.modal-room-photo {
+    height: 150px;
+}
+.progress.progress-sm {
+    height: 14px;
+}
+.spinner-xs {
+    width: 0.65rem;
+    height: 0.65rem;
+}
+/* El selector de huésped del POS despliega su lista por encima de las tarjetas siguientes */
+.card-guest-select {
+    position: relative;
+    z-index: 25;
+}
+#calendar {
+    min-height: 650px;
+}
+
+/* Leyenda del calendario: mismos colores que los eventos de FullCalendar */
+.legend-dot {
+    display: inline-block;
+    width: 0.85rem;
+    height: 0.85rem;
+    border-radius: 3px;
+    vertical-align: -0.1rem;
+}
+.legend-confirmada { background-color: #0d6efd; }
+.legend-estadia    { background-color: #198754; }
+.legend-pendiente  { background-color: #ffc107; }
+.legend-finalizada { background-color: #6c757d; }
+.voucher-logo {
+    max-height: 52px;
+    object-fit: contain;
+}
+
+/* ====================================================================
+   19. MODALES
+   Cabecera neutra (el icono lleva el color de la acción), pie con
+   "Cancelar" en outline-secondary y la acción principal a la derecha.
+   ==================================================================== */
+.modal-content {
+    border: 1px solid var(--hm-border);
+    border-radius: var(--hm-radius-lg);
+    background: var(--hm-surface);
+    box-shadow: var(--hm-shadow-lg);
+}
+.modal-header {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--hm-border-header);
+    background: var(--hm-surface-header);
+    border-top-left-radius: calc(var(--hm-radius-lg) - 1px);
+    border-top-right-radius: calc(var(--hm-radius-lg) - 1px);
+}
+.modal-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--hm-text);
+}
+.modal-body {
+    padding: 1.25rem;
+}
+.modal-footer {
+    padding: 0.85rem 1.25rem;
+    border-top: 1px solid var(--hm-border);
+    background: var(--hm-surface-footer);
+    border-bottom-left-radius: calc(var(--hm-radius-lg) - 1px);
+    border-bottom-right-radius: calc(var(--hm-radius-lg) - 1px);
+}
+/* AdminLTE fuerza .fade { opacity: 1 !important } con "reducir movimiento" activado,
+   lo que dejaba el fondo del modal totalmente negro. Se respeta su opacidad propia. */
+@media (prefers-reduced-motion: reduce) {
+    .modal-backdrop.show {
+        opacity: var(--bs-backdrop-opacity) !important;
+    }
 }

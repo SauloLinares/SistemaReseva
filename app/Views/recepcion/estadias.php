@@ -138,12 +138,12 @@
 <!-- MODAL: CARGAR CONSUMO RÁPIDO A LA HABITACIÓN -->
 <div class="modal fade" id="modalCargarConsumo" tabindex="-1" aria-labelledby="modalCargarConsumoLabel" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-primary text-white py-3">
-                <h5 class="modal-title fw-bold" id="modalCargarConsumoLabel">
-                    <i class="bi bi-cart-plus-fill me-2"></i>Cargar Consumo a Habitación
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCargarConsumoLabel">
+                    <i class="bi bi-cart-plus-fill me-2 text-primary"></i>Cargar Consumo a Habitación
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <form id="formModalConsumo">
                 <input type="hidden" name="reserva_id" id="modalConsumoReservaId" value="">
@@ -163,7 +163,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Seleccionar Producto o Servicio <span class="text-danger">*</span></label>
+                        <label for="modalSelectServicio" class="form-label">Seleccionar Producto o Servicio <span class="text-danger">*</span></label>
                         <select name="servicio_id" id="modalSelectServicio" class="form-select" required>
                             <option value="">-- Elige un producto o servicio --</option>
                             <?php if (!empty($servicios)): ?>
@@ -178,11 +178,11 @@
 
                     <div class="row g-2 mb-3">
                         <div class="col-6">
-                            <label class="form-label">Cantidad <span class="text-danger">*</span></label>
+                            <label for="modalConsumoCantidad" class="form-label">Cantidad <span class="text-danger">*</span></label>
                             <input type="number" name="cantidad" id="modalConsumoCantidad" class="form-control" value="1" min="1" max="100" required>
                         </div>
                         <div class="col-6">
-                            <label class="form-label">Precio Unitario (S/.) <span class="text-danger">*</span></label>
+                            <label for="modalConsumoPrecio" class="form-label">Precio Unitario (S/.) <span class="text-danger">*</span></label>
                             <input type="number" step="0.01" name="precio_unitario" id="modalConsumoPrecio" class="form-control" placeholder="0.00" required>
                         </div>
                     </div>
@@ -200,8 +200,8 @@
                     </div>
 
                     <div class="mb-2">
-                        <label class="form-label">Observaciones / Notas</label>
-                        <input type="text" name="notas" class="form-control" placeholder="Ej: Solicitado por teléfono, entregado por mozo">
+                        <label for="notas" class="form-label">Observaciones / Notas</label>
+                        <input id="notas" type="text" name="notas" class="form-control" placeholder="Ej: Solicitado por teléfono, entregado por mozo">
                     </div>
                 </div>
                 <div class="modal-footer bg-body-tertiary px-4 py-3">

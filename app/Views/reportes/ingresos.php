@@ -15,12 +15,12 @@
             <div class="card-body py-2">
                 <form method="GET" action="<?= url('reportes/ingresos') ?>" class="row g-2 align-items-end">
                     <div class="col-12 col-md-4">
-                        <label class="form-label">Fecha Inicial</label>
-                        <input type="date" name="desde" class="form-control form-control-sm" value="<?= htmlspecialchars($desde) ?>">
+                        <label for="desde" class="form-label">Fecha Inicial</label>
+                        <input id="desde" type="date" name="desde" class="form-control form-control-sm" value="<?= htmlspecialchars($desde) ?>">
                     </div>
                     <div class="col-12 col-md-4">
-                        <label class="form-label">Fecha Final</label>
-                        <input type="date" name="hasta" class="form-control form-control-sm" value="<?= htmlspecialchars($hasta) ?>">
+                        <label for="hasta" class="form-label">Fecha Final</label>
+                        <input id="hasta" type="date" name="hasta" class="form-control form-control-sm" value="<?= htmlspecialchars($hasta) ?>">
                     </div>
                     <div class="col-12 col-md-4 d-flex gap-2">
                         <button type="submit" class="btn btn-sm btn-primary w-100"><i class="bi bi-funnel me-1"></i> Filtrar Período</button>
@@ -86,8 +86,8 @@
                                     <td><strong><?= htmlspecialchars($p['comprobante_tipo'] . ' ' . $p['comprobante_numero']) ?></strong></td>
                                     <td><?= htmlspecialchars($p['codigo_reserva']) ?></td>
                                     <td><?= htmlspecialchars($p['huesped_nombre']) ?></td>
-                                    <td><span class="badge text-bg-light border"><?= htmlspecialchars($p['metodo_pago']) ?></span></td>
-                                    <td><span class="badge text-bg-secondary text-uppercase"><?= htmlspecialchars($p['tipo']) ?></span></td>
+                                    <td><span class="badge badge-soft-secondary"><?= htmlspecialchars($p['metodo_pago']) ?></span></td>
+                                    <td><span class="badge badge-soft-secondary text-uppercase"><?= htmlspecialchars($p['tipo']) ?></span></td>
                                     <td class="text-end pe-3 fw-bold <?= ($p['tipo'] === 'devolucion') ? 'text-danger' : 'text-success' ?>">
                                         <?= ($p['tipo'] === 'devolucion' ? '-' : '+') . dinero($p['monto']) ?>
                                     </td>

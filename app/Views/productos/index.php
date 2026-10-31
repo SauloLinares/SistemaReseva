@@ -24,14 +24,14 @@
                     <table class="table table-hover align-middle mb-0 datatable-init">
                         <thead class="table-light">
                             <tr>
-                                <th style="width: 50px;" class="text-center">#</th>
-                                <th style="width: 120px;">Código</th>
+                                <th class="text-center col-w-xs">#</th>
+                                <th class="col-w-sm">Código</th>
                                 <th>Nombre y Descripción</th>
                                 <th>Categoría</th>
                                 <th class="text-end">Precio (S/.)</th>
                                 <th class="text-center">Stock</th>
                                 <th class="text-center">Estado</th>
-                                <th class="text-center" style="width: 130px;">Acciones</th>
+                                <th class="text-center col-w-md">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -47,13 +47,13 @@
                                         <td>
                                             <div class="fw-bold text-body-emphasis"><?= htmlspecialchars($p['nombre']) ?></div>
                                             <?php if (!empty($p['descripcion'])): ?>
-                                                <small class="text-muted d-block text-truncate" style="max-width: 250px;">
+                                                <small class="text-muted d-block text-truncate mw-250">
                                                     <?= htmlspecialchars($p['descripcion']) ?>
                                                 </small>
                                             <?php endif; ?>
                                         </td>
                                         <td>
-                                            <span class="badge text-bg-secondary">
+                                            <span class="badge badge-soft-secondary">
                                                 <?= htmlspecialchars($p['categoria'] ?: 'Sin categoría') ?>
                                             </span>
                                         </td>
@@ -62,15 +62,15 @@
                                         </td>
                                         <td class="text-center">
                                             <?php if ((int)$p['stock'] <= 5): ?>
-                                                <span class="badge text-bg-danger" title="¡Stock crítico!">
+                                                <span class="badge badge-soft-danger" title="¡Stock crítico!">
                                                     <i class="bi bi-exclamation-triangle"></i> <?= (int)$p['stock'] ?>
                                                 </span>
                                             <?php elseif ((int)$p['stock'] <= 15): ?>
-                                                <span class="badge text-bg-warning">
+                                                <span class="badge badge-soft-warning">
                                                     <?= (int)$p['stock'] ?>
                                                 </span>
                                             <?php else: ?>
-                                                <span class="badge text-bg-success">
+                                                <span class="badge badge-soft-success">
                                                     <?= (int)$p['stock'] ?>
                                                 </span>
                                             <?php endif; ?>

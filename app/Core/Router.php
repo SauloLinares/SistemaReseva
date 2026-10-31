@@ -18,6 +18,13 @@ class Router
 {
     public function dispatch(): void
     {
+        // 0. Todo POST debe traer el token CSRF de la sesión (formulario o cabecera AJAX)
+        $esPost = ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST';
+        if ($esPost && !csrf_valido($_POST['_csrf'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
+            $this->rechazarPeticion('La sesión del formulario expiró o la petición no es válida. Vuelve a intentarlo.');
+            return;
+        }
+
         // 1. Obtener la ruta solicitada
         $url = $_GET['url'] ?? '';
 
@@ -90,8 +97,41 @@ class Router
             }
         }
 
-        // 7. Ejecutar el método pasando los parámetros
+        // 7. Las acciones de borrado solo se aceptan por POST (con token): un simple
+        //    enlace o <img src="..."> de otra página no puede eliminar registros.
+        if (!$esPost && stripos($metodo, 'eliminar') === 0) {
+            $this->rechazarPeticion('Esta acción solo puede ejecutarse desde el botón del sistema.');
+            return;
+        }
+
+        // 8. Ejecutar el método pasando los parámetros
         call_user_func_array([$instanciaControlador, $metodo], $parametros);
+    }
+
+    /**
+     * Responde a una petición rechazada por seguridad:
+     * JSON 403 para AJAX, o mensaje flash y regreso a la página anterior.
+     */
+    private function rechazarPeticion(string $mensaje): void
+    {
+        $esAjax = ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest'
+            || str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')
+            || isset($_SERVER['HTTP_X_CSRF_TOKEN'])
+            || !empty($_POST['ajax']);
+
+        if ($esAjax) {
+            http_response_code(403);
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['success' => false, 'message' => $mensaje], JSON_UNESCAPED_UNICODE);
+            return;
+        }
+
+        $_SESSION['flash'] = ['tipo' => 'danger', 'mensaje' => $mensaje];
+
+        // Volver a la página anterior solo si es de este mismo sitio
+        $anterior = $_SERVER['HTTP_REFERER'] ?? '';
+        $destino = str_starts_with($anterior, base_url()) ? $anterior : url();
+        header('Location: ' . $destino);
     }
 
     /**

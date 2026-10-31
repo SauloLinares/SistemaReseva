@@ -18,7 +18,7 @@
             <div class="alert alert-success d-print-none shadow-sm rounded-3 p-3 mb-4 border-success-subtle">
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; font-size: 1.4rem;">
+                        <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center avatar-md">
                             <i class="bi bi-check-lg"></i>
                         </div>
                         <div>
@@ -76,7 +76,7 @@
                         <div class="row align-items-center border-bottom pb-4 mb-4">
                             <div class="col-sm-7">
                                 <?php if (!empty($hotel['hotel_logo']) && file_exists(__DIR__ . '/../../../public/uploads/' . $hotel['hotel_logo'])): ?>
-                                    <img src="<?= base_url('uploads/' . $hotel['hotel_logo']) ?>" alt="Logo Hotel" class="mb-2" style="max-height: 52px; object-fit: contain;">
+                                    <img src="<?= base_url('uploads/' . $hotel['hotel_logo']) ?>" alt="Logo Hotel" class="mb-2 voucher-logo">
                                 <?php endif; ?>
                                 <h4 class="fw-bold mb-1 text-uppercase text-dark"><?= htmlspecialchars($hotel['hotel_nombre'] ?? 'Hotel Manager & Suites') ?></h4>
                                 <p class="text-muted small mb-0">RUC: <?= htmlspecialchars($hotel['hotel_ruc'] ?? '20601234567') ?> • <?= htmlspecialchars($hotel['hotel_direccion'] ?? 'Av. Principal 123, Miraflores, Lima') ?></p>
@@ -95,7 +95,7 @@
 
                         <!-- 1. Datos del Huésped Titular -->
                         <div class="mb-4">
-                            <h6 class="fw-bold text-uppercase border-bottom pb-2 mb-3 text-secondary" style="font-size: 0.8rem; letter-spacing: 0.05em;">
+                            <h6 class="fw-bold text-uppercase border-bottom pb-2 mb-3 text-secondary section-label">
                                 1. Datos del Huésped Titular
                             </h6>
                             <div class="row g-2 small">
@@ -120,7 +120,7 @@
 
                         <!-- 2. Detalles de la Estadía -->
                         <div class="mb-4">
-                            <h6 class="fw-bold text-uppercase border-bottom pb-2 mb-3 text-secondary" style="font-size: 0.8rem; letter-spacing: 0.05em;">
+                            <h6 class="fw-bold text-uppercase border-bottom pb-2 mb-3 text-secondary section-label">
                                 2. Detalles de Estadía y Horarios
                             </h6>
                             <div class="row g-3 text-center">
@@ -150,7 +150,7 @@
 
                         <!-- 3. Habitaciones Reservadas -->
                         <div class="mb-4">
-                            <h6 class="fw-bold text-uppercase border-bottom pb-2 mb-3 text-secondary" style="font-size: 0.8rem; letter-spacing: 0.05em;">
+                            <h6 class="fw-bold text-uppercase border-bottom pb-2 mb-3 text-secondary section-label">
                                 3. Habitaciones Asignadas
                             </h6>
                             <table class="table table-sm table-bordered align-middle mb-0">
@@ -186,7 +186,7 @@
                         <!-- 4. Servicios Adicionales (Si fueron contratados) -->
                         <?php if (!empty($reserva['servicios'])): ?>
                             <div class="mb-4">
-                                <h6 class="fw-bold text-uppercase border-bottom pb-2 mb-3 text-secondary" style="font-size: 0.8rem; letter-spacing: 0.05em;">
+                                <h6 class="fw-bold text-uppercase border-bottom pb-2 mb-3 text-secondary section-label">
                                     4. Servicios Adicionales Contratados
                                 </h6>
                                 <table class="table table-sm table-bordered align-middle mb-0">

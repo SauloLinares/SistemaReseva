@@ -47,9 +47,9 @@
                                             <div class="fw-bold"><?= htmlspecialchars($c['huesped_nombre']) ?></div>
                                             <small class="text-muted"><?= htmlspecialchars($c['numero_documento']) ?></small>
                                         </td>
-                                        <td><span class="badge text-bg-light border">Hab. <?= htmlspecialchars($c['habitaciones'] ?: '-') ?></span></td>
+                                        <td><span class="badge badge-soft-secondary">Hab. <?= htmlspecialchars($c['habitaciones'] ?: '-') ?></span></td>
                                         <td>
-                                            <a href="<?= url('reservas/editar/' . $c['reserva_id']) ?>" class="badge text-bg-primary text-decoration-none">
+                                            <a href="<?= url('reservas/editar/' . $c['reserva_id']) ?>" class="badge badge-soft-primary text-decoration-none">
                                                 <?= htmlspecialchars($c['codigo_reserva']) ?>
                                             </a>
                                         </td>
@@ -57,12 +57,12 @@
                                             <strong class="text-body-emphasis"><?= htmlspecialchars($c['servicio_nombre']) ?></strong>
                                             <small class="text-muted d-block"><?= htmlspecialchars($c['categoria']) ?></small>
                                         </td>
-                                        <td><span class="badge text-bg-secondary fs-6"><?= $c['cantidad'] ?></span></td>
+                                        <td><span class="badge badge-soft-secondary"><?= $c['cantidad'] ?></span></td>
                                         <td><?= dinero($c['precio_unitario']) ?></td>
                                         <td><strong class="text-success fs-6"><?= dinero($c['subtotal']) ?></strong></td>
                                         <td><small class="text-muted"><?= fecha_es($c['fecha_consumo'], true) ?></small></td>
                                         <td>
-                                            <?= $c['pagado'] ? '<span class="badge text-bg-success"><i class="bi bi-check-circle me-1"></i>Pagado</span>' : '<span class="badge badge-soft-warning"><i class="bi bi-clock me-1"></i>A Cuenta</span>' ?>
+                                            <?= $c['pagado'] ? '<span class="badge badge-soft-success"><i class="bi bi-check-circle me-1"></i>Pagado</span>' : '<span class="badge badge-soft-warning"><i class="bi bi-clock me-1"></i>A Cuenta</span>' ?>
                                         </td>
                                         <td><small class="text-muted"><?= htmlspecialchars($c['notas'] ?: '-') ?></small></td>
                                     </tr>

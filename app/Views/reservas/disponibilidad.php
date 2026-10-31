@@ -31,16 +31,16 @@
             <div class="card-body">
                 <form method="GET" action="<?= url('reservas/disponibilidad') ?>" class="row g-3 align-items-end" id="formDisponibilidad">
                     <div class="col-12 col-md-3">
-                        <label class="form-label">Fecha de Entrada</label>
-                        <input type="date" name="entrada" class="form-control" value="<?= htmlspecialchars($entrada) ?>" required>
+                        <label for="entrada" class="form-label">Fecha de Entrada</label>
+                        <input id="entrada" type="date" name="entrada" class="form-control" value="<?= htmlspecialchars($entrada) ?>" required>
                     </div>
                     <div class="col-12 col-md-3">
-                        <label class="form-label">Fecha de Salida</label>
-                        <input type="date" name="salida" class="form-control" value="<?= htmlspecialchars($salida) ?>" required>
+                        <label for="salida" class="form-label">Fecha de Salida</label>
+                        <input id="salida" type="date" name="salida" class="form-control" value="<?= htmlspecialchars($salida) ?>" required>
                     </div>
                     <div class="col-12 col-md-4">
-                        <label class="form-label">Tipo de Habitación (Opcional)</label>
-                        <select name="tipo_id" class="form-select">
+                        <label for="tipo_id" class="form-label">Tipo de Habitación (Opcional)</label>
+                        <select id="tipo_id" name="tipo_id" class="form-select">
                             <option value="">-- Todos los tipos --</option>
                             <?php foreach ($tipos as $t): ?>
                                 <option value="<?= $t['id'] ?>" <?= ($tipoId == $t['id']) ? 'selected' : '' ?>>
@@ -97,7 +97,7 @@
                                             <span class="pulse-dot pulse-dot-disponible"></span>
                                             <span class="fw-bold fs-5 text-body-emphasis">Hab. <?= htmlspecialchars($h['numero']) ?></span>
                                         </div>
-                                        <span class="badge bg-secondary-subtle text-secondary-emphasis" style="font-size: 0.72rem; border-radius: 6px;">
+                                        <span class="badge badge-soft-secondary text-2xs">
                                             Piso <?= htmlspecialchars($h['piso']) ?>
                                         </span>
                                     </div>

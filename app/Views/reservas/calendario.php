@@ -20,10 +20,10 @@
             <div class="card-body py-2 d-flex flex-wrap align-items-center justify-content-between gap-2">
                 <span class="fw-semibold small text-muted"><i class="bi bi-info-circle me-1"></i>Leyenda de Estados:</span>
                 <div class="d-flex flex-wrap gap-3 small">
-                    <span><span class="badge" style="background-color: #0d6efd;">&nbsp;</span> Confirmada</span>
-                    <span><span class="badge" style="background-color: #198754;">&nbsp;</span> En Estadía (Alojado)</span>
-                    <span><span class="badge" style="background-color: #ffc107; color: #000;">&nbsp;</span> Pendiente de Pago</span>
-                    <span><span class="badge" style="background-color: #6c757d;">&nbsp;</span> Finalizada</span>
+                    <span><span class="legend-dot legend-confirmada">&nbsp;</span> Confirmada</span>
+                    <span><span class="legend-dot legend-estadia">&nbsp;</span> En Estadía (Alojado)</span>
+                    <span><span class="legend-dot legend-pendiente">&nbsp;</span> Pendiente de Pago</span>
+                    <span><span class="legend-dot legend-finalizada">&nbsp;</span> Finalizada</span>
                 </div>
             </div>
         </div>
@@ -31,7 +31,7 @@
         <!-- Contenedor del Calendario -->
         <div class="card border-0">
             <div class="card-body p-3">
-                <div id="calendar" style="min-height: 650px;"></div>
+                <div id="calendar"></div>
             </div>
         </div>
 
@@ -41,10 +41,10 @@
 <!-- Modal Detalle Rápido de Reserva en Calendario -->
 <div class="modal fade" id="modalDetalleEvento" tabindex="-1" aria-labelledby="modalDetalleEventoLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
+        <div class="modal-content">
             <div class="modal-header border-bottom-0 pb-0">
                 <div class="d-flex align-items-center gap-2">
-                    <div class="avatar-circle avatar-primary flex-shrink-0" style="width: 44px; height: 44px; font-size: 1.25rem;">
+                    <div class="avatar-circle avatar-primary flex-shrink-0 avatar-md">
                         <i class="bi bi-calendar-event"></i>
                     </div>
                     <div>
@@ -60,7 +60,7 @@
             <div class="modal-body pt-3">
                 <div class="p-3 bg-light rounded-3 mb-3 border">
                     <div class="d-flex align-items-center gap-3 mb-3">
-                        <div class="avatar-circle avatar-secondary flex-shrink-0" style="width: 40px; height: 40px; font-size: 1rem;">
+                        <div class="avatar-circle avatar-secondary flex-shrink-0 avatar-sm">
                             <i class="bi bi-person-fill"></i>
                         </div>
                         <div>

@@ -33,20 +33,20 @@
                             <?php $i = 1; foreach ($huespedes as $h): ?>
                                 <tr>
                                     <td>
-                                        <span class="badge <?= ($i <= 3) ? 'text-bg-warning text-dark' : 'text-bg-light border' ?>">
+                                        <span class="badge <?= ($i <= 3) ? 'badge-soft-warning' : 'badge-soft-secondary' ?>">
                                             #<?= $i++ ?>
                                         </span>
                                     </td>
                                     <td>
                                         <div class="fw-bold"><?= htmlspecialchars($h['nombres'] . ' ' . $h['apellidos']) ?></div>
                                     </td>
-                                    <td><span class="badge text-bg-light border"><?= htmlspecialchars($h['tipo_documento'] . ' ' . $h['numero_documento']) ?></span></td>
+                                    <td><span class="badge badge-soft-secondary"><?= htmlspecialchars($h['tipo_documento'] . ' ' . $h['numero_documento']) ?></span></td>
                                     <td>
                                         <small class="d-block"><i class="bi bi-telephone me-1"></i><?= htmlspecialchars($h['telefono'] ?: '-') ?></small>
                                         <small class="text-muted"><i class="bi bi-envelope me-1"></i><?= htmlspecialchars($h['correo'] ?: '-') ?></small>
                                     </td>
                                     <td><?= htmlspecialchars($h['nacionalidad'] ?: 'Perú') ?></td>
-                                    <td><span class="badge text-bg-primary fs-6"><?= $h['total_reservas'] ?> reservas</span></td>
+                                    <td><span class="badge badge-soft-primary"><?= $h['total_reservas'] ?> reservas</span></td>
                                     <td><small class="text-muted"><?= fecha_es($h['ultima_visita']) ?></small></td>
                                     <td class="text-end pe-3 fw-bold text-success fs-6"><?= dinero($h['total_gastado']) ?></td>
                                 </tr>

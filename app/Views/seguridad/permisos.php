@@ -15,10 +15,10 @@
             <div class="card-body py-2">
                 <div class="row align-items-center">
                     <div class="col-12 col-md-3">
-                        <label class="form-label mb-0">Seleccionar Rol a Configurar:</label>
+                        <label for="rolConfigurar" class="form-label mb-0">Seleccionar Rol a Configurar:</label>
                     </div>
                     <div class="col-12 col-md-5">
-                        <select class="form-select" onchange="window.location.href='<?= url("seguridad/permisos?rol_id=") ?>' + this.value">
+                        <select id="rolConfigurar" class="form-select" onchange="window.location.href='<?= url("seguridad/permisos?rol_id=") ?>' + this.value">
                             <?php foreach ($roles as $r): ?>
                                 <option value="<?= $r['id'] ?>" <?= ($r['id'] == $rolSeleccionadoId) ? 'selected' : '' ?>>
                                     <?= htmlspecialchars($r['nombre']) ?>
@@ -58,10 +58,10 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Módulo Funcional</th>
-                                    <th class="text-center" style="width: 140px;">Ver / Listar</th>
-                                    <th class="text-center" style="width: 140px;">Crear / Registrar</th>
-                                    <th class="text-center" style="width: 140px;">Modificar / Editar</th>
-                                    <th class="text-center" style="width: 140px;">Eliminar / Anular</th>
+                                    <th class="text-center col-w-md">Ver / Listar</th>
+                                    <th class="text-center col-w-md">Crear / Registrar</th>
+                                    <th class="text-center col-w-md">Modificar / Editar</th>
+                                    <th class="text-center col-w-md">Eliminar / Anular</th>
                                 </tr>
                             </thead>
                             <tbody>

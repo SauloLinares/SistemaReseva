@@ -15,16 +15,16 @@
             <div class="card-body">
                 <form method="GET" action="<?= url('reportes/reservas') ?>" class="row g-2 align-items-end">
                     <div class="col-12 col-md-3">
-                        <label class="form-label">Desde</label>
-                        <input type="date" name="desde" class="form-control form-control-sm" value="<?= htmlspecialchars($desde ?? '') ?>">
+                        <label for="desde" class="form-label">Desde</label>
+                        <input id="desde" type="date" name="desde" class="form-control form-control-sm" value="<?= htmlspecialchars($desde ?? '') ?>">
                     </div>
                     <div class="col-12 col-md-3">
-                        <label class="form-label">Hasta</label>
-                        <input type="date" name="hasta" class="form-control form-control-sm" value="<?= htmlspecialchars($hasta ?? '') ?>">
+                        <label for="hasta" class="form-label">Hasta</label>
+                        <input id="hasta" type="date" name="hasta" class="form-control form-control-sm" value="<?= htmlspecialchars($hasta ?? '') ?>">
                     </div>
                     <div class="col-12 col-md-3">
-                        <label class="form-label">Estado</label>
-                        <select name="estado" class="form-select form-select-sm">
+                        <label for="estado" class="form-label">Estado</label>
+                        <select id="estado" name="estado" class="form-select form-select-sm">
                             <option value="">-- Todos los estados --</option>
                             <option value="confirmada" <?= ($estado === 'confirmada') ? 'selected' : '' ?>>Confirmada</option>
                             <option value="pendiente" <?= ($estado === 'pendiente') ? 'selected' : '' ?>>Pendiente</option>
@@ -49,7 +49,7 @@
                     $totalMonto = 0;
                     foreach ($reservas as $r) $totalMonto += (float)$r['total'];
                 ?>
-                <span class="badge text-bg-primary fs-6 px-3 py-2">Total Facturado: <?= dinero($totalMonto) ?></span>
+                <span class="badge badge-soft-primary">Total Facturado: <?= dinero($totalMonto) ?></span>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">

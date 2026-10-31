@@ -37,10 +37,10 @@
                                         <i class="bi bi-person me-1"></i><strong><?= htmlspecialchars($reg['usuario_nombre'] ?: 'Sistema') ?></strong>
                                     </td>
                                     <td>
-                                        <span class="badge text-bg-light border"><?= htmlspecialchars($reg['modulo']) ?></span>
+                                        <span class="badge badge-soft-secondary"><?= htmlspecialchars($reg['modulo']) ?></span>
                                     </td>
                                     <td>
-                                        <span class="badge text-bg-primary text-uppercase"><?= htmlspecialchars($reg['accion']) ?></span>
+                                        <span class="badge badge-soft-primary text-uppercase"><?= htmlspecialchars($reg['accion']) ?></span>
                                     </td>
                                     <td><?= htmlspecialchars($reg['detalle']) ?></td>
                                     <td><small class="text-muted font-monospace"><?= htmlspecialchars($reg['ip'] ?: '127.0.0.1') ?></small></td>

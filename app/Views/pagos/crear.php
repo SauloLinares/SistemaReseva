@@ -19,7 +19,7 @@
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-12">
-                                <label class="form-label">Seleccionar Reserva con Saldo Pendiente <span class="text-danger">*</span></label>
+                                <label for="selectReserva" class="form-label">Seleccionar Reserva con Saldo Pendiente <span class="text-danger">*</span></label>
                                 <select name="reserva_id" id="selectReserva" class="form-select form-select-lg" required onchange="actualizarSaldo(this)">
                                     <option value="">-- Elige una reserva para cobrar --</option>
                                     <?php foreach ($saldosPendientes as $sp): ?>
@@ -31,7 +31,7 @@
                             </div>
 
                             <div class="col-12 col-md-6">
-                                <label class="form-label">Tipo de Comprobante <span class="text-danger">*</span></label>
+                                <label for="comprobante_tipo" class="form-label">Tipo de Comprobante <span class="text-danger">*</span></label>
                                 <select name="comprobante_tipo" id="comprobante_tipo" class="form-select" onchange="actualizarNumeroComprobante(this.value)">
                                     <option value="Boleta" selected>Boleta de Venta</option>
                                     <option value="Factura">Factura</option>
@@ -39,12 +39,12 @@
                                 </select>
                             </div>
                             <div class="col-12 col-md-6">
-                                <label class="form-label">Número de Comprobante <span class="text-danger">*</span></label>
+                                <label for="comprobante_numero" class="form-label">Número de Comprobante <span class="text-danger">*</span></label>
                                 <input type="text" name="comprobante_numero" id="comprobante_numero" class="form-control" value="<?= htmlspecialchars($numBoleta) ?>" required>
                             </div>
 
                             <div class="col-12 col-md-6">
-                                <label class="form-label">Monto a Cobrar (S/.) <span class="text-danger">*</span></label>
+                                <label for="inputMonto" class="form-label">Monto a Cobrar (S/.) <span class="text-danger">*</span></label>
                                 <div class="input-group input-group-lg">
                                     <span class="input-group-text">S/.</span>
                                     <input type="number" step="0.01" name="monto" id="inputMonto" class="form-control fw-bold" placeholder="0.00" value="<?= $reservaSeleccionada ? $reservaSeleccionada['saldo'] : '' ?>" required>
@@ -53,8 +53,8 @@
                             </div>
 
                             <div class="col-12 col-md-6">
-                                <label class="form-label">Método de Pago <span class="text-danger">*</span></label>
-                                <select name="metodo_pago" class="form-select form-select-lg">
+                                <label for="metodo_pago" class="form-label">Método de Pago <span class="text-danger">*</span></label>
+                                <select id="metodo_pago" name="metodo_pago" class="form-select form-select-lg">
                                     <option value="Efectivo" selected>Efectivo</option>
                                     <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
                                     <option value="Tarjeta de Débito">Tarjeta de Débito</option>
@@ -64,20 +64,20 @@
                             </div>
 
                             <div class="col-12 col-md-6">
-                                <label class="form-label">Tipo de Operación</label>
-                                <select name="tipo" class="form-select">
+                                <label for="tipo" class="form-label">Tipo de Operación</label>
+                                <select id="tipo" name="tipo" class="form-select">
                                     <option value="pago" selected>Pago / Liquidación</option>
                                     <option value="anticipo">Anticipo</option>
                                 </select>
                             </div>
                             <div class="col-12 col-md-6">
-                                <label class="form-label">Fecha y Hora de Pago</label>
-                                <input type="datetime-local" name="fecha_pago" class="form-control" value="<?= date('Y-m-d\TH:i') ?>" required>
+                                <label for="fecha_pago" class="form-label">Fecha y Hora de Pago</label>
+                                <input id="fecha_pago" type="datetime-local" name="fecha_pago" class="form-control" value="<?= date('Y-m-d\TH:i') ?>" required>
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label">Notas / Observaciones del Pago</label>
-                                <textarea name="notas" class="form-control" rows="2" placeholder="Ej: Cancelación de estadía, pago con POS Visa..."></textarea>
+                                <label for="notas" class="form-label">Notas / Observaciones del Pago</label>
+                                <textarea id="notas" name="notas" class="form-control" rows="2" placeholder="Ej: Cancelación de estadía, pago con POS Visa..."></textarea>
                             </div>
                         </div>
                     </div>

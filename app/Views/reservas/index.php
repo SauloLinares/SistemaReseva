@@ -17,8 +17,8 @@
             <div class="card-body">
                 <form method="GET" action="<?= url('reservas') ?>" class="row g-2 align-items-end">
                     <div class="col-12 col-md-3">
-                        <label class="form-label">Estado de Reserva</label>
-                        <select name="estado" class="form-select form-select-sm">
+                        <label for="filtroEstado" class="form-label">Estado de Reserva</label>
+                        <select name="estado" id="filtroEstado" class="form-select form-select-sm">
                             <option value="">-- Todos los estados --</option>
                             <option value="confirmada" <?= ($filtroEstado === 'confirmada') ? 'selected' : '' ?>>Confirmada</option>
                             <option value="pendiente" <?= ($filtroEstado === 'pendiente') ? 'selected' : '' ?>>Pendiente</option>
@@ -28,12 +28,12 @@
                         </select>
                     </div>
                     <div class="col-6 col-md-3">
-                        <label class="form-label">Desde (Fecha Entrada)</label>
-                        <input type="date" name="desde" class="form-control form-control-sm" value="<?= htmlspecialchars($filtroDesde ?? '') ?>">
+                        <label for="filtroDesde" class="form-label">Desde (fecha entrada)</label>
+                        <input type="date" name="desde" id="filtroDesde" class="form-control form-control-sm" value="<?= htmlspecialchars($filtroDesde ?? '') ?>">
                     </div>
                     <div class="col-6 col-md-3">
-                        <label class="form-label">Hasta (Fecha Salida)</label>
-                        <input type="date" name="hasta" class="form-control form-control-sm" value="<?= htmlspecialchars($filtroHasta ?? '') ?>">
+                        <label for="filtroHasta" class="form-label">Hasta (fecha salida)</label>
+                        <input type="date" name="hasta" id="filtroHasta" class="form-control form-control-sm" value="<?= htmlspecialchars($filtroHasta ?? '') ?>">
                     </div>
                     <div class="col-12 col-md-3 d-flex gap-2">
                         <button type="submit" class="btn btn-sm btn-primary w-100">
@@ -123,21 +123,21 @@
                                             <div class="modal fade" id="modalCancelar<?= $r['id'] ?>" tabindex="-1" aria-hidden="true">
                                                 <div class="modal-dialog text-start">
                                                     <form method="POST" action="<?= url('reservas/cancelar') ?>" class="modal-content">
-                                                        <div class="modal-header bg-danger text-white">
-                                                            <h5 class="modal-title fs-6"><i class="bi bi-exclamation-triangle-fill me-2"></i>Cancelar Reserva <?= htmlspecialchars($r['codigo_reserva']) ?></h5>
-                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title"><i class="bi bi-exclamation-triangle-fill me-2 text-danger"></i>Cancelar Reserva <?= htmlspecialchars($r['codigo_reserva']) ?></h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                                                         </div>
                                                         <div class="modal-body">
                                                             <input type="hidden" name="id" value="<?= $r['id'] ?>">
                                                             <p>¿Estás seguro de cancelar esta reserva para el huésped <strong><?= htmlspecialchars($r['huesped_nombre']) ?></strong>?</p>
                                                             <div class="mb-3">
-                                                                <label class="form-label">Motivo de Cancelación</label>
-                                                                <textarea name="motivo_cancelacion" class="form-control" rows="2" placeholder="Ej: Cancelación del viaje por motivos laborales..." required></textarea>
+                                                                <label for="motivoCancelacion<?= $r['id'] ?>" class="form-label">Motivo de Cancelación</label>
+                                                                <textarea name="motivo_cancelacion" id="motivoCancelacion<?= $r['id'] ?>" class="form-control" rows="2" placeholder="Ej: Cancelación del viaje por motivos laborales..." required></textarea>
                                                             </div>
                                                         </div>
                                                         <div class="modal-footer">
-                                                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Volver</button>
-                                                            <button type="submit" class="btn btn-sm btn-danger">Confirmar Cancelación</button>
+                                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Volver</button>
+                                                            <button type="submit" class="btn btn-danger">Confirmar Cancelación</button>
                                                         </div>
                                                     </form>
                                                 </div>

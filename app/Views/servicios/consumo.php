@@ -13,15 +13,15 @@
 
         <div class="row justify-content-center">
             <div class="col-12 col-lg-8">
-                <form action="<?= url('servicios/guardarConsumo') ?>" method="POST" class="card border-top border-4 border-success">
+                <form action="<?= url('servicios/guardarConsumo') ?>" method="POST" class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0"><i class="bi bi-cart4 me-2"></i>Cargar Consumo</h5>
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-12">
-                                <label class="form-label">Habitación / Huésped en Estadía <span class="text-danger">*</span></label>
-                                <select name="reserva_id" class="form-select form-select-lg" required>
+                                <label for="reserva_id" class="form-label">Habitación / Huésped en Estadía <span class="text-danger">*</span></label>
+                                <select id="reserva_id" name="reserva_id" class="form-select form-select-lg" required>
                                     <option value="">-- Seleccionar huésped alojado --</option>
                                     <?php foreach ($estadias as $est): ?>
                                         <option value="<?= $est['reserva_id'] ?>" <?= ($reservaIdFijada == $est['reserva_id']) ? 'selected' : '' ?>>
@@ -32,7 +32,7 @@
                             </div>
 
                             <div class="col-12 col-md-8">
-                                <label class="form-label">Servicio Contratado / Consumido <span class="text-danger">*</span></label>
+                                <label for="servicio_id" class="form-label">Servicio Contratado / Consumido <span class="text-danger">*</span></label>
                                 <select name="servicio_id" id="servicio_id" class="form-select form-select-lg" required onchange="calcularTotal()">
                                     <option value="">-- Seleccionar del catálogo --</option>
                                     <?php foreach ($servicios as $s): ?>
@@ -44,7 +44,7 @@
                             </div>
 
                             <div class="col-12 col-md-4">
-                                <label class="form-label">Cantidad <span class="text-danger">*</span></label>
+                                <label for="inputCantidad" class="form-label">Cantidad <span class="text-danger">*</span></label>
                                 <input type="number" name="cantidad" id="inputCantidad" class="form-control form-control-lg text-center" value="1" min="1" max="50" required onchange="calcularTotal()" onkeyup="calcularTotal()">
                             </div>
 
@@ -56,16 +56,16 @@
                             </div>
 
                             <div class="col-12 col-md-6">
-                                <label class="form-label">Forma de Facturación</label>
-                                <select name="pagado" class="form-select">
+                                <label for="pagado" class="form-label">Forma de Facturación</label>
+                                <select id="pagado" name="pagado" class="form-select">
                                     <option value="0" selected>Cargar a la cuenta de la habitación (Pendiente de cobro al check-out)</option>
                                     <option value="1">Cobrado en el acto (Pagado inmediatamente)</option>
                                 </select>
                             </div>
 
                             <div class="col-12 col-md-6">
-                                <label class="form-label">Método de Pago (Si se cobra de inmediato)</label>
-                                <select name="metodo_pago" class="form-select">
+                                <label for="metodo_pago" class="form-label">Método de Pago (Si se cobra de inmediato)</label>
+                                <select id="metodo_pago" name="metodo_pago" class="form-select">
                                     <option value="Efectivo" selected>Efectivo</option>
                                     <option value="Tarjeta de Crédito">Tarjeta de Crédito</option>
                                     <option value="Tarjeta de Débito">Tarjeta de Débito</option>
@@ -74,8 +74,8 @@
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label">Notas / Detalles Adicionales</label>
-                                <input type="text" name="notas" class="form-control" placeholder="Ej: Entregado a las 11:30 PM en habitación 201">
+                                <label for="notas" class="form-label">Notas / Detalles Adicionales</label>
+                                <input id="notas" type="text" name="notas" class="form-control" placeholder="Ej: Entregado a las 11:30 PM en habitación 201">
                             </div>
                         </div>
                     </div>

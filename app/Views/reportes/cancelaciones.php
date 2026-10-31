@@ -10,8 +10,8 @@
 <div class="app-content">
     <div class="container-fluid">
 
-        <div class="card border-danger">
-            <div class="card-header bg-danger-subtle text-danger-emphasis d-flex justify-content-between align-items-center">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="card-title mb-0"><i class="bi bi-calendar-x me-2"></i>Reservas Canceladas (<?= count($cancelaciones) ?>)</h5>
             </div>
             <div class="card-body p-0">
@@ -34,7 +34,7 @@
                             <?php else: ?>
                                 <?php foreach ($cancelaciones as $c): ?>
                                     <tr>
-                                        <td><span class="badge text-bg-danger fw-bold"><?= htmlspecialchars($c['codigo_reserva']) ?></span></td>
+                                        <td><span class="badge badge-soft-danger"><?= htmlspecialchars($c['codigo_reserva']) ?></span></td>
                                         <td>
                                             <div class="fw-bold"><?= htmlspecialchars($c['huesped_nombre']) ?></div>
                                             <small class="text-muted">Doc: <?= htmlspecialchars($c['numero_documento']) ?></small>

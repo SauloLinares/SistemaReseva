@@ -5,6 +5,73 @@
  * ====================================================================
  */
 
+// ---------------------------------------------------------------
+// 0. PROTECCIÓN CSRF
+// El servidor exige el token de sesión en todo POST. Los formularios ya lo
+// traen desde PHP; aquí se cubren las peticiones fetch() y los formularios
+// que se crean con JavaScript. Va fuera de DOMContentLoaded para que esté
+// listo antes que los scripts de cada vista.
+// ---------------------------------------------------------------
+(function () {
+    'use strict';
+
+    window.csrfToken = function () {
+        const meta = document.querySelector('meta[name="csrf-token"]');
+        return meta ? meta.getAttribute('content') : '';
+    };
+
+    // fetch(): agrega la cabecera X-CSRF-Token a toda petición no-GET del mismo sitio
+    const fetchOriginal = window.fetch;
+    window.fetch = function (recurso, opciones) {
+        opciones = opciones || {};
+        const metodo = (opciones.method || (recurso instanceof Request ? recurso.method : 'GET')).toUpperCase();
+        const destino = new URL(recurso instanceof Request ? recurso.url : recurso, window.location.href);
+
+        if (metodo !== 'GET' && metodo !== 'HEAD' && destino.origin === window.location.origin) {
+            const cabeceras = new Headers(opciones.headers || (recurso instanceof Request ? recurso.headers : undefined));
+            cabeceras.set('X-CSRF-Token', window.csrfToken());
+            opciones = Object.assign({}, opciones, { headers: cabeceras });
+        }
+        return fetchOriginal.call(this, recurso, opciones);
+    };
+
+    // Formularios POST creados en el navegador: se les agrega el campo antes de enviarse
+    document.addEventListener('submit', function (e) {
+        const form = e.target;
+        if (form.method.toLowerCase() === 'post' && !form.querySelector('input[name="_csrf"]')) {
+            const campo = document.createElement('input');
+            campo.type = 'hidden';
+            campo.name = '_csrf';
+            campo.value = window.csrfToken();
+            form.appendChild(campo);
+        }
+    }, true);
+
+    // Aviso de validación con SweetAlert (o alert() si la librería no cargó)
+    window.avisar = function (titulo, texto, icono) {
+        if (typeof Swal !== 'undefined') {
+            return Swal.fire({ icon: icono || 'warning', title: titulo, text: texto, confirmButtonColor: '#2563eb' });
+        }
+        alert(texto);
+        return Promise.resolve();
+    };
+
+    // Envía una acción (ej. eliminar) por POST con el token, en lugar de seguir un enlace GET
+    window.enviarPost = function (url) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = url;
+        form.hidden = true;
+        const campo = document.createElement('input');
+        campo.type = 'hidden';
+        campo.name = '_csrf';
+        campo.value = window.csrfToken();
+        form.appendChild(campo);
+        document.body.appendChild(form);
+        form.submit();
+    };
+})();
+
 document.addEventListener('DOMContentLoaded', function () {
     'use strict';
 
@@ -330,7 +397,12 @@ document.addEventListener('DOMContentLoaded', function () {
             // dispara el evento submit (protección de doble envío) y envía el name/value del botón.
             const ejecutar = function () {
                 if (trigger.tagName === 'A' && trigger.href) {
-                    window.location.href = trigger.href;
+                    // Los enlaces que cambian datos (eliminar, anular...) se envían por POST con token
+                    if (trigger.dataset.method === 'get') {
+                        window.location.href = trigger.href;
+                    } else {
+                        window.enviarPost(trigger.href);
+                    }
                 } else if (form) {
                     if (typeof form.requestSubmit === 'function') {
                         form.requestSubmit(trigger.type === 'submit' ? trigger : undefined);

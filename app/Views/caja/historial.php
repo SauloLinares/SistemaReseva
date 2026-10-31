@@ -16,7 +16,7 @@
                     <i class="bi bi-clock-history me-1"></i>Registro de Turnos
                 </h5>
                 <div class="d-flex align-items-center gap-2">
-                    <input type="text" id="filtroHistorialCaja" class="form-control form-control-sm" placeholder="Buscar por recepcionista, fecha..." style="width: 250px;">
+                    <input type="text" id="filtroHistorialCaja" class="form-control form-control-sm col-w-xl" placeholder="Buscar por recepcionista, fecha...">
                 </div>
             </div>
             <div class="card-body p-0">
@@ -55,7 +55,7 @@
                                             <?= date('d/m/Y', strtotime($t['fecha_cierre'])) ?>
                                             <span class="d-block text-muted"><?= date('h:i A', strtotime($t['fecha_cierre'])) ?></span>
                                         <?php else: ?>
-                                            <span class="badge bg-success-subtle text-success border">En curso</span>
+                                            <span class="badge badge-soft-success">En curso</span>
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-end small"><?= dinero($t['monto_inicial']) ?></td>
@@ -69,19 +69,19 @@
                                         <?php else: ?>
                                             <?php $dif = (float)($t['diferencia'] ?? 0); ?>
                                             <?php if (abs($dif) < 0.01): ?>
-                                                <span class="badge bg-success-subtle text-success border">Cuadrado</span>
+                                                <span class="badge badge-soft-success">Cuadrado</span>
                                             <?php elseif ($dif > 0): ?>
-                                                <span class="badge bg-warning-subtle text-warning-emphasis border">+<?= dinero($dif) ?></span>
+                                                <span class="badge badge-soft-warning">+<?= dinero($dif) ?></span>
                                             <?php else: ?>
-                                                <span class="badge bg-danger-subtle text-danger border"><?= dinero($dif) ?></span>
+                                                <span class="badge badge-soft-danger"><?= dinero($dif) ?></span>
                                             <?php endif; ?>
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-center">
                                         <?php if ($t['estado'] === 'abierta'): ?>
-                                            <span class="badge bg-success">Abierta</span>
+                                            <span class="badge badge-soft-success">Abierta</span>
                                         <?php else: ?>
-                                            <span class="badge bg-secondary">Cerrada</span>
+                                            <span class="badge badge-soft-secondary">Cerrada</span>
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-center pe-3">

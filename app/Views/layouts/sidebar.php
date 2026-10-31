@@ -24,7 +24,7 @@ $nombreEmpresa = $configApp['hotel_nombre'] ?? 'Hotel Manager';
         <a href="<?= url() ?>" class="brand-link">
             <?php if (!empty($logoArchivo) && file_exists(__DIR__ . '/../../../public/uploads/hotel/' . $logoArchivo)): ?>
                 <div class="brand-logo-icon bg-white p-1 d-flex align-items-center justify-content-center shadow-xs">
-                    <img src="<?= base_url('uploads/hotel/' . $logoArchivo) ?>" alt="Logo" style="max-height: 28px; max-width: 28px; object-fit: contain;">
+                    <img src="<?= base_url('uploads/hotel/' . $logoArchivo) ?>" alt="Logo">
                 </div>
             <?php else: ?>
                 <div class="brand-logo-icon">

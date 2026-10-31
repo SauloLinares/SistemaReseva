@@ -33,7 +33,7 @@
                                 <tr>
                                     <td class="fw-bold fs-5 text-primary">Hab. <?= htmlspecialchars($h['numero']) ?></td>
                                     <td>Piso <?= htmlspecialchars($h['piso']) ?></td>
-                                    <td><span class="badge text-bg-light border"><?= htmlspecialchars($h['tipo_nombre']) ?></span></td>
+                                    <td><span class="badge badge-soft-secondary"><?= htmlspecialchars($h['tipo_nombre']) ?></span></td>
                                     <td><?= dinero($h['precio_base'] ?? 0) ?></td>
                                     <td>
                                         <span class="fs-5 fw-bold text-success"><?= dinero($h['precio_diario']) ?></span>
@@ -41,7 +41,7 @@
                                     <td class="text-end pe-4">
                                         <form method="POST" action="<?= url('habitaciones/guardarTarifa') ?>" class="d-inline-flex align-items-center gap-2">
                                             <input type="hidden" name="id" value="<?= $h['id'] ?>">
-                                            <div class="input-group input-group-sm" style="width: 170px;">
+                                            <div class="input-group input-group-sm col-w-lg">
                                                 <span class="input-group-text">S/.</span>
                                                 <input type="number" step="0.01" name="precio_diario" class="form-control text-end fw-bold" value="<?= $h['precio_diario'] ?>" required>
                                             </div>

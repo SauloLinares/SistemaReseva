@@ -178,16 +178,16 @@ try {
                     </div>
 
                     <!-- Lista de Alertas -->
-                    <div class="alert-list-container" style="max-height: 380px; overflow-y: auto;">
+                    <div class="alert-list-container">
                         <?php if (!empty($alertasSistema)): ?>
                             <?php foreach ($alertasSistema as $alerta): ?>
                                 <a href="<?= $alerta['enlace'] ?>" class="dropdown-item d-flex align-items-start gap-3 py-2 px-3 border-bottom alert-item-hover">
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 text-white bg-<?= $alerta['color'] ?> shadow-xs" style="width: 36px; height: 36px; font-size: 0.95rem;">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 text-white bg-<?= $alerta['color'] ?> shadow-xs avatar-sm">
                                         <i class="bi <?= $alerta['icono'] ?>"></i>
                                     </div>
                                     <div class="flex-grow-1 min-w-0">
                                         <div class="d-flex align-items-center justify-content-between gap-1 mb-1">
-                                            <strong class="text-body fw-bold text-truncate" style="font-size: 0.82rem;"><?= htmlspecialchars($alerta['titulo']) ?></strong>
+                                            <strong class="text-body fw-bold text-truncate text-sm"><?= htmlspecialchars($alerta['titulo']) ?></strong>
                                             <span class="text-2xs badge <?= $alerta['badge_bg'] ?>"><?= htmlspecialchars($alerta['badge']) ?></span>
                                         </div>
                                         <p class="text-sm text-muted mb-0 small text-truncate"><?= htmlspecialchars($alerta['desc']) ?></p>
@@ -225,8 +225,8 @@ try {
             <!-- Perfil de Usuario Autenticado -->
             <li class="nav-item dropdown user-menu">
                 <a href="#" class="nav-link d-flex align-items-center gap-2 py-0" data-bs-toggle="dropdown">
-                    <img src="<?= asset('adminlte/img/avatar.png') ?>" class="user-image rounded-circle shadow-xs" alt="User Image" style="width: 32px; height: 32px; object-fit: cover;" />
-                    <span class="d-none d-md-inline fw-semibold text-truncate" style="max-width: 130px;"><?= htmlspecialchars(auth_user('nombre') ?? 'Usuario') ?></span>
+                    <img src="<?= asset('adminlte/img/avatar.png') ?>" class="user-image rounded-circle shadow-xs" alt="User Image" />
+                    <span class="d-none d-md-inline fw-semibold text-truncate mw-140"><?= htmlspecialchars(auth_user('nombre') ?? 'Usuario') ?></span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end shadow">
                     <li class="user-header text-bg-primary">
@@ -234,7 +234,7 @@ try {
                         <p>
                             <?= htmlspecialchars(auth_user('nombre') ?? 'Usuario') ?>
                             <small class="d-block text-white-50"><?= htmlspecialchars(auth_user('email') ?? '') ?></small>
-                            <span class="badge bg-light text-dark mt-1"><?= htmlspecialchars(auth_user('rol') ?? 'Administrador') ?></span>
+                            <span class="badge badge-soft-secondary mt-1"><?= htmlspecialchars(auth_user('rol') ?? 'Administrador') ?></span>
                         </p>
                     </li>
                     <li class="user-footer d-flex justify-content-between">

@@ -261,10 +261,10 @@ if (!empty($estadiasActivas)) {
                                                 <td><span class="fw-bold text-primary font-monospace"><?= htmlspecialchars($r['codigo_reserva']) ?></span></td>
                                                 <td>
                                                     <div class="d-flex align-items-center">
-                                                        <div class="avatar-circle avatar-primary me-2 flex-shrink-0" style="width: 32px; height: 32px; font-size: 0.75rem;">
+                                                        <div class="avatar-circle avatar-primary me-2 flex-shrink-0 avatar-xs">
                                                             <?= $inicial ?>
                                                         </div>
-                                                        <div class="text-truncate" style="max-width: 140px;">
+                                                        <div class="text-truncate mw-140">
                                                             <div class="fw-semibold text-truncate"><?= htmlspecialchars($r['huesped_nombre']) ?></div>
                                                             <small class="text-muted"><?= htmlspecialchars($r['numero_documento']) ?></small>
                                                         </div>
@@ -369,16 +369,16 @@ if (!empty($estadiasActivas)) {
 <!-- Modal de Inspección Rápida y Centro de Mando de Habitación -->
 <div class="modal fade" id="modalDetalleHabitacion" tabindex="-1" aria-labelledby="modalDetalleHabitacionLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
+        <div class="modal-content">
             <div class="modal-header border-bottom-0 pb-0">
                 <div class="d-flex align-items-center gap-2">
-                    <div class="avatar-circle avatar-primary flex-shrink-0" id="mHabIconWrapper" style="width: 44px; height: 44px; font-size: 1.25rem;">
+                    <div class="avatar-circle avatar-primary flex-shrink-0 avatar-md" id="mHabIconWrapper">
                         <i class="bi bi-door-closed" id="mHabIcon"></i>
                     </div>
                     <div>
                         <h5 class="modal-title fw-bold mb-0" id="mHabNumeroTitulo">Habitación ---</h5>
                         <div class="d-flex align-items-center gap-2 mt-1">
-                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle" id="mHabTipo">Tipo</span>
+                            <span class="badge badge-soft-secondary" id="mHabTipo">Tipo</span>
                             <span class="badge" id="mHabEstadoBadge">Estado</span>
                             <span class="text-muted small" id="mHabPiso">Piso -</span>
                         </div>
@@ -389,8 +389,8 @@ if (!empty($estadiasActivas)) {
             <div class="modal-body pt-3">
                 
                 <!-- Fotografía Banner de la Habitación -->
-                <div class="mb-3 position-relative rounded-3 overflow-hidden border shadow-xs" style="height: 150px;">
-                    <img id="mHabFotoBanner" src="<?= base_url('uploads/habitaciones/simple.jpg') ?>" alt="Foto de la Habitación" class="w-100 h-100" style="object-fit: cover;">
+                <div class="mb-3 position-relative rounded-3 overflow-hidden border shadow-xs modal-room-photo">
+                    <img id="mHabFotoBanner" src="<?= base_url('uploads/habitaciones/simple.jpg') ?>" alt="Foto de la Habitación" class="w-100 h-100 object-fit-cover">
                 </div>
 
                 <!-- Sección para Habitación Disponible -->
@@ -428,7 +428,7 @@ if (!empty($estadiasActivas)) {
                 <div id="mSeccionOcupada" class="d-none">
                     <div class="p-3 bg-light rounded-3 mb-3 border">
                         <div class="d-flex align-items-center gap-3 mb-3">
-                            <div class="avatar-circle avatar-danger flex-shrink-0" style="width: 44px; height: 44px; font-size: 1.1rem;">
+                            <div class="avatar-circle avatar-danger flex-shrink-0 avatar-md">
                                 <i class="bi bi-person-fill"></i>
                             </div>
                             <div>
@@ -448,7 +448,7 @@ if (!empty($estadiasActivas)) {
                             </div>
                             <div class="col-6 mt-2">
                                 <span class="text-muted d-block">Código Reserva:</span>
-                                <span class="badge bg-light text-dark border" id="mCodigoReserva">---</span>
+                                <span class="badge badge-soft-secondary" id="mCodigoReserva">---</span>
                             </div>
                             <div class="col-6 mt-2">
                                 <span class="text-muted d-block">Saldo Pendiente:</span>
@@ -507,7 +507,7 @@ if (!empty($estadiasActivas)) {
 
             </div>
             <div class="modal-footer border-top-0 pt-0">
-                <button type="button" class="btn btn-light btn-sm w-100" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>

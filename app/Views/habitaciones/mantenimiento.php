@@ -83,14 +83,14 @@
 <div class="modal fade" id="modalMant" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <form method="POST" action="<?= url('habitaciones/guardarMantenimiento') ?>" class="modal-content">
-            <div class="modal-header bg-secondary text-white">
-                <h5 class="modal-title"><i class="bi bi-tools me-2"></i>Nueva Tarea de Mantenimiento / Limpieza</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-tools me-2 text-body-secondary"></i>Nueva Tarea de Mantenimiento / Limpieza</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label">Habitación <span class="text-danger">*</span></label>
-                    <select name="habitacion_id" class="form-select" required>
+                    <label for="habitacion_id" class="form-label">Habitación <span class="text-danger">*</span></label>
+                    <select id="habitacion_id" name="habitacion_id" class="form-select" required>
                         <?php foreach ($habitaciones as $h): ?>
                             <option value="<?= $h['id'] ?>">
                                 Hab. <?= htmlspecialchars($h['numero']) ?> - <?= htmlspecialchars($h['tipo_nombre']) ?> (Piso <?= $h['piso'] ?> - Actual: <?= $h['estado'] ?>)
@@ -100,8 +100,8 @@
                 </div>
                 <div class="row g-2 mb-3">
                     <div class="col-6">
-                        <label class="form-label">Tipo</label>
-                        <select name="tipo" class="form-select">
+                        <label for="tipo" class="form-label">Tipo</label>
+                        <select id="tipo" name="tipo" class="form-select">
                             <option value="limpieza">Limpieza y Desinfección</option>
                             <option value="mantenimiento">Mantenimiento Preventivo</option>
                             <option value="reparacion">Reparación / Avería</option>
@@ -109,29 +109,29 @@
                         </select>
                     </div>
                     <div class="col-6">
-                        <label class="form-label">Estado Inicial</label>
-                        <select name="estado" class="form-select">
+                        <label for="estado" class="form-label">Estado Inicial</label>
+                        <select id="estado" name="estado" class="form-select">
                             <option value="pendiente">Pendiente</option>
                             <option value="en_proceso" selected>En Proceso</option>
                         </select>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Responsable / Encargado</label>
-                    <input type="text" name="responsable" class="form-control" placeholder="Ej: Juan Pérez / Empresa externa">
+                    <label for="responsable" class="form-label">Responsable / Encargado</label>
+                    <input id="responsable" type="text" name="responsable" class="form-control" placeholder="Ej: Juan Pérez / Empresa externa">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Costo Estimado (S/.)</label>
-                    <input type="number" step="0.01" name="costo" class="form-control" value="0.00">
+                    <label for="costo" class="form-label">Costo Estimado (S/.)</label>
+                    <input id="costo" type="number" step="0.01" name="costo" class="form-control" value="0.00">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Descripción del Trabajo <span class="text-danger">*</span></label>
-                    <textarea name="descripcion" class="form-control" rows="3" placeholder="Describe la falla, requerimiento o protocolo a ejecutar..." required></textarea>
+                    <label for="descripcion" class="form-label">Descripción del Trabajo <span class="text-danger">*</span></label>
+                    <textarea id="descripcion" name="descripcion" class="form-control" rows="3" placeholder="Describe la falla, requerimiento o protocolo a ejecutar..." required></textarea>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="submit" class="btn btn-sm btn-primary">Registrar e Iniciar</button>
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Registrar e Iniciar</button>
             </div>
         </form>
     </div>

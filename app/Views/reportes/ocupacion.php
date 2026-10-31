@@ -27,7 +27,7 @@
                                 <th>Habitaciones Ocupadas</th>
                                 <th>Habitaciones Libres</th>
                                 <th>% Ocupación</th>
-                                <th style="width: 250px;">Barra de Ocupación</th>
+                                <th class="col-w-xl">Barra de Ocupación</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -35,11 +35,11 @@
                                 <tr>
                                     <td><strong><?= $d['dia'] ?></strong></td>
                                     <td><?= fecha_es($d['fecha']) ?></td>
-                                    <td><span class="badge text-bg-danger"><?= $d['ocupadas'] ?></span></td>
-                                    <td><span class="badge text-bg-success"><?= $d['libres'] ?></span></td>
+                                    <td><span class="badge badge-soft-danger"><?= $d['ocupadas'] ?></span></td>
+                                    <td><span class="badge badge-soft-success"><?= $d['libres'] ?></span></td>
                                     <td><strong><?= $d['porcentaje'] ?>%</strong></td>
                                     <td>
-                                        <div class="progress" style="height: 14px;">
+                                        <div class="progress progress-sm">
                                             <div class="progress-bar <?= ($d['porcentaje'] >= 80) ? 'bg-danger' : (($d['porcentaje'] >= 50) ? 'bg-warning' : 'bg-success') ?>" 
                                                  role="progressbar" style="width: <?= $d['porcentaje'] ?>%;">
                                             </div>
@@ -77,7 +77,7 @@
                             <?php $pos = 1; foreach ($populares as $pop): ?>
                                 <tr>
                                     <td>
-                                        <span class="badge <?= ($pos === 1) ? 'text-bg-warning text-dark' : (($pos === 2) ? 'text-bg-secondary' : 'text-bg-light border') ?> fs-6">
+                                        <span class="badge <?= ($pos === 1) ? 'badge-soft-warning' : (($pos === 2) ? 'badge-soft-primary' : 'badge-soft-secondary') ?>">
                                             #<?= $pos++ ?>
                                         </span>
                                     </td>
@@ -85,7 +85,7 @@
                                     <td><?= htmlspecialchars($pop['tipo_nombre']) ?></td>
                                     <td>Piso <?= htmlspecialchars($pop['piso']) ?></td>
                                     <td><?= dinero($pop['precio_diario']) ?></td>
-                                    <td><span class="badge text-bg-info text-white fs-6"><?= $pop['total_veces_reservada'] ?> veces</span></td>
+                                    <td><span class="badge badge-soft-info"><?= $pop['total_veces_reservada'] ?> veces</span></td>
                                     <td><strong><?= $pop['total_noches'] ?> noches</strong></td>
                                     <td class="text-end pe-3 fw-bold text-success fs-6"><?= dinero($pop['total_recaudado']) ?></td>
                                 </tr>

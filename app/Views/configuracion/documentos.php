@@ -26,11 +26,11 @@
                         <tbody>
                             <?php foreach ($documentos as $d): ?>
                                 <tr>
-                                    <td><span class="badge text-bg-primary fs-6"><?= htmlspecialchars($d['codigo']) ?></span></td>
+                                    <td><span class="badge badge-soft-primary"><?= htmlspecialchars($d['codigo']) ?></span></td>
                                     <td><strong><?= htmlspecialchars($d['nombre']) ?></strong></td>
                                     <td><?= htmlspecialchars($d['longitud']) ?></td>
                                     <td><?= htmlspecialchars($d['pais']) ?></td>
-                                    <td><span class="badge text-bg-success"><i class="bi bi-check-circle me-1"></i>Habilitado</span></td>
+                                    <td><span class="badge badge-soft-success"><i class="bi bi-check-circle me-1"></i>Habilitado</span></td>
                                 </tr>
                             <?php endforeach; ?>
                         </tbody>

@@ -108,7 +108,7 @@
                 <!-- Logo y Nombre del Sistema -->
                 <div class="login-logo text-center mb-3">
                     <a href="<?= url('login') ?>" class="text-decoration-none d-inline-flex align-items-center justify-content-center">
-                        <img src="<?= asset('adminlte/img/AdminLTELogo.png') ?>" alt="Logo" class="rounded me-2 shadow-sm" style="width: 42px; height: 42px;" />
+                        <img src="<?= asset('adminlte/img/AdminLTELogo.png') ?>" alt="Logo" class="rounded me-2 shadow-sm login-logo-img" />
                     </a>
                 </div>
                 <div class="text-center">
@@ -192,7 +192,7 @@
                 <div class="demo-credentials-box p-3 rounded mb-2">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <span class="fw-bold text-primary"><i class="bi bi-key-fill me-1"></i> Credenciales de prueba:</span>
-                        <button type="button" class="btn btn-sm btn-outline-primary py-0 px-2" id="btnAutocompletar" style="font-size: 0.75rem;">
+                        <button type="button" class="btn btn-sm btn-outline-primary py-0 px-2 text-xs" id="btnAutocompletar">
                             Autocompletar
                         </button>
                     </div>

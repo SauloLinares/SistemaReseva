@@ -30,8 +30,8 @@ partial('page_header', [
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-12 col-md-6">
-                                <label class="form-label">Huésped Titular <span class="text-danger">*</span></label>
-                                <select name="huesped_id" class="form-select select-search select-huesped" required>
+                                <label for="huesped_id" class="form-label">Huésped Titular <span class="text-danger">*</span></label>
+                                <select id="huesped_id" name="huesped_id" class="form-select select-search select-huesped" required>
                                     <?php foreach ($huespedes as $h): ?>
                                         <option value="<?= $h['id'] ?>" <?= ($h['id'] == $reserva['huesped_id']) ? 'selected' : '' ?>
                                             data-nombres="<?= htmlspecialchars($h['nombres'] . ' ' . $h['apellidos']) ?>"
@@ -57,8 +57,8 @@ partial('page_header', [
                                 </select>
                             </div>
                             <div class="col-12 col-md-6">
-                                <label class="form-label">Estado de Reserva</label>
-                                <select name="estado" class="form-select">
+                                <label for="estado" class="form-label">Estado de Reserva</label>
+                                <select id="estado" name="estado" class="form-select">
                                     <option value="confirmada" <?= ($reserva['estado'] === 'confirmada') ? 'selected' : '' ?>>Confirmada</option>
                                     <option value="pendiente" <?= ($reserva['estado'] === 'pendiente') ? 'selected' : '' ?>>Pendiente de Pago</option>
                                     <option value="en_estadia" <?= ($reserva['estado'] === 'en_estadia') ? 'selected' : '' ?>>En Estadía (Check-in)</option>
@@ -68,29 +68,29 @@ partial('page_header', [
                             </div>
 
                             <div class="col-12 col-md-4">
-                                <label class="form-label">Fecha de Entrada</label>
-                                <input type="date" name="fecha_entrada" class="form-control" value="<?= htmlspecialchars($reserva['fecha_entrada']) ?>" required>
+                                <label for="fecha_entrada" class="form-label">Fecha de Entrada</label>
+                                <input id="fecha_entrada" type="date" name="fecha_entrada" class="form-control" value="<?= htmlspecialchars($reserva['fecha_entrada']) ?>" required>
                             </div>
                             <div class="col-12 col-md-4">
-                                <label class="form-label">Fecha de Salida</label>
-                                <input type="date" name="fecha_salida" class="form-control" value="<?= htmlspecialchars($reserva['fecha_salida']) ?>" required>
+                                <label for="fecha_salida" class="form-label">Fecha de Salida</label>
+                                <input id="fecha_salida" type="date" name="fecha_salida" class="form-control" value="<?= htmlspecialchars($reserva['fecha_salida']) ?>" required>
                             </div>
                             <div class="col-12 col-md-4">
-                                <label class="form-label">Noches</label>
-                                <input type="text" class="form-control bg-light" value="<?= $reserva['noches'] ?> noches" readonly>
+                                <label for="nochesReserva" class="form-label">Noches</label>
+                                <input type="text" id="nochesReserva" class="form-control bg-light" value="<?= $reserva['noches'] ?> noches" readonly>
                             </div>
 
                             <div class="col-6 col-md-3">
-                                <label class="form-label">Adultos</label>
-                                <input type="number" name="adultos" class="form-control" value="<?= $reserva['adultos'] ?>" min="1">
+                                <label for="adultos" class="form-label">Adultos</label>
+                                <input id="adultos" type="number" name="adultos" class="form-control" value="<?= $reserva['adultos'] ?>" min="1">
                             </div>
                             <div class="col-6 col-md-3">
-                                <label class="form-label">Niños</label>
-                                <input type="number" name="ninos" class="form-control" value="<?= $reserva['ninos'] ?>" min="0">
+                                <label for="ninos" class="form-label">Niños</label>
+                                <input id="ninos" type="number" name="ninos" class="form-control" value="<?= $reserva['ninos'] ?>" min="0">
                             </div>
                             <div class="col-12 col-md-6">
-                                <label class="form-label">Método de Pago Preferido</label>
-                                <select name="metodo_pago" class="form-select">
+                                <label for="metodo_pago" class="form-label">Método de Pago Preferido</label>
+                                <select id="metodo_pago" name="metodo_pago" class="form-select">
                                     <option value="Efectivo" <?= ($reserva['metodo_pago'] === 'Efectivo') ? 'selected' : '' ?>>Efectivo</option>
                                     <option value="Tarjeta de Crédito" <?= ($reserva['metodo_pago'] === 'Tarjeta de Crédito') ? 'selected' : '' ?>>Tarjeta de Crédito</option>
                                     <option value="Tarjeta de Débito" <?= ($reserva['metodo_pago'] === 'Tarjeta de Débito') ? 'selected' : '' ?>>Tarjeta de Débito</option>
@@ -100,8 +100,8 @@ partial('page_header', [
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label">Notas y Observaciones</label>
-                                <textarea name="notas" class="form-control" rows="2"><?= htmlspecialchars($reserva['notas'] ?? '') ?></textarea>
+                                <label for="notas" class="form-label">Notas y Observaciones</label>
+                                <textarea id="notas" name="notas" class="form-control" rows="2"><?= htmlspecialchars($reserva['notas'] ?? '') ?></textarea>
                             </div>
                         </div>
 
@@ -172,13 +172,13 @@ partial('page_header', [
                                         <?php foreach ($reserva['servicios'] as $serv): ?>
                                             <tr>
                                                 <td class="fw-semibold"><?= htmlspecialchars($serv['servicio_nombre']) ?></td>
-                                                <td><span class="badge text-bg-light border"><?= htmlspecialchars($serv['categoria']) ?></span></td>
+                                                <td><span class="badge badge-soft-secondary"><?= htmlspecialchars($serv['categoria']) ?></span></td>
                                                 <td><?= $serv['cantidad'] ?></td>
                                                 <td><?= dinero($serv['precio_unitario']) ?></td>
                                                 <td class="fw-bold"><?= dinero($serv['subtotal']) ?></td>
                                                 <td><small><?= fecha_es($serv['fecha_consumo'], true) ?></small></td>
                                                 <td>
-                                                    <?= $serv['pagado'] ? '<span class="badge text-bg-success">Pagado</span>' : '<span class="badge text-bg-warning text-dark">A cuenta</span>' ?>
+                                                    <?= $serv['pagado'] ? '<span class="badge badge-soft-success">Pagado</span>' : '<span class="badge badge-soft-warning">A cuenta</span>' ?>
                                                 </td>
                                             </tr>
                                         <?php endforeach; ?>
@@ -193,7 +193,7 @@ partial('page_header', [
             <!-- Columna Derecha: Estado Financiero y Pagos -->
             <div class="col-12 col-lg-4">
                 <div class="card mb-4">
-                    <div class="card-header bg-primary text-white">
+                    <div class="card-header">
                         <h5 class="card-title mb-0">
                             <i class="bi bi-cash-coin me-2"></i>Balance Financiero
                         </h5>
@@ -250,7 +250,7 @@ partial('page_header', [
                                                 <?= ($p['tipo'] === 'devolucion' ? '-' : '+') . dinero($p['monto']) ?>
                                             </span>
                                             <div>
-                                                <a href="<?= url('pagos/comprobante/' . $p['id']) ?>" target="_blank" class="badge text-bg-light border text-decoration-none" title="Imprimir">
+                                                <a href="<?= url('pagos/comprobante/' . $p['id']) ?>" target="_blank" class="badge badge-soft-secondary text-decoration-none" title="Imprimir">
                                                     <i class="bi bi-printer"></i>
                                                 </a>
                                             </div>

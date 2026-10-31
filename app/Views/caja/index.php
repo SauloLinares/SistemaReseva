@@ -204,7 +204,7 @@
                 </div>
 
                 <!-- Tarjeta de Arqueo Inmediato -->
-                <div class="card border-primary border-opacity-25 mb-4">
+                <div class="card mb-4">
                     <div class="card-body text-center p-4">
                         <i class="bi bi-safe2 fs-1 text-primary d-block mb-2"></i>
                         <h5 class="fw-bold">¿Listo para entregar el turno?</h5>
@@ -227,29 +227,29 @@
 <!-- ========================================================== -->
 <div class="modal fade" id="modalEgreso" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-danger text-white py-3">
-                <h5 class="modal-title fw-bold"><i class="bi bi-dash-circle me-2"></i>Registrar Salida / Gasto de Caja</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-dash-circle me-2 text-danger"></i>Registrar Salida / Gasto de Caja</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <form action="<?= url('caja/guardarMovimiento') ?>" method="POST">
                 <input type="hidden" name="tipo" value="egreso">
                 <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label">Concepto o Motivo del Gasto <span class="text-danger">*</span></label>
-                        <input type="text" name="concepto" class="form-control" placeholder="Ej: Compra de bidón de agua, taxi urgente, bombillas..." required autofocus>
+                        <label for="concepto" class="form-label">Concepto o Motivo del Gasto <span class="text-danger">*</span></label>
+                        <input id="concepto" type="text" name="concepto" class="form-control" placeholder="Ej: Compra de bidón de agua, taxi urgente, bombillas..." required autofocus>
                     </div>
                     <div class="row g-2 mb-3">
                         <div class="col-6">
-                            <label class="form-label">Monto (S/.) <span class="text-danger">*</span></label>
+                            <label for="monto" class="form-label">Monto (S/.) <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text">S/.</span>
-                                <input type="number" step="0.10" min="0.10" name="monto" class="form-control fw-bold text-danger" placeholder="0.00" required>
+                                <input id="monto" type="number" step="0.10" min="0.10" name="monto" class="form-control fw-bold text-danger" placeholder="0.00" required>
                             </div>
                         </div>
                         <div class="col-6">
-                            <label class="form-label">Categoría</label>
-                            <select name="categoria" class="form-select">
+                            <label for="categoria" class="form-label">Categoría</label>
+                            <select id="categoria" name="categoria" class="form-select">
                                 <option value="Insumos">Insumos de Recepción</option>
                                 <option value="Limpieza">Limpieza y Aseo</option>
                                 <option value="Mantenimiento">Mantenimiento Rápido</option>
@@ -260,8 +260,8 @@
                         </div>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Nº Comprobante / Recibo (Opcional)</label>
-                        <input type="text" name="comprobante" class="form-control form-control-sm" placeholder="Ej: Ticket 04829, Boleta B001-291">
+                        <label for="comprobante" class="form-label">Nº Comprobante / Recibo (Opcional)</label>
+                        <input id="comprobante" type="text" name="comprobante" class="form-control form-control-sm" placeholder="Ej: Ticket 04829, Boleta B001-291">
                     </div>
                 </div>
                 <div class="modal-footer bg-body-tertiary">
@@ -278,29 +278,29 @@
 <!-- ========================================================== -->
 <div class="modal fade" id="modalIngreso" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-primary text-white py-3">
-                <h5 class="modal-title fw-bold"><i class="bi bi-plus-circle me-2"></i>Registrar Ingreso Extra a Caja</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-plus-circle me-2 text-primary"></i>Registrar Ingreso Extra a Caja</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <form action="<?= url('caja/guardarMovimiento') ?>" method="POST">
                 <input type="hidden" name="tipo" value="ingreso">
                 <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label">Concepto del Ingreso <span class="text-danger">*</span></label>
-                        <input type="text" name="concepto" class="form-control" placeholder="Ej: Inyección de sencillo por gerencia, cobro no tarifario..." required autofocus>
+                        <label for="concepto_2" class="form-label">Concepto del Ingreso <span class="text-danger">*</span></label>
+                        <input id="concepto_2" type="text" name="concepto" class="form-control" placeholder="Ej: Inyección de sencillo por gerencia, cobro no tarifario..." required autofocus>
                     </div>
                     <div class="row g-2 mb-3">
                         <div class="col-6">
-                            <label class="form-label">Monto (S/.) <span class="text-danger">*</span></label>
+                            <label for="monto_2" class="form-label">Monto (S/.) <span class="text-danger">*</span></label>
                             <div class="input-group">
                                 <span class="input-group-text">S/.</span>
-                                <input type="number" step="0.10" min="0.10" name="monto" class="form-control fw-bold text-success" placeholder="0.00" required>
+                                <input id="monto_2" type="number" step="0.10" min="0.10" name="monto" class="form-control fw-bold text-success" placeholder="0.00" required>
                             </div>
                         </div>
                         <div class="col-6">
-                            <label class="form-label">Método</label>
-                            <select name="metodo_pago" class="form-select">
+                            <label for="metodo_pago" class="form-label">Método</label>
+                            <select id="metodo_pago" name="metodo_pago" class="form-select">
                                 <option value="Efectivo" selected>Efectivo</option>
                                 <option value="Yape/Plin">Yape/Plin</option>
                                 <option value="Transferencia Bancaria">Transferencia</option>
@@ -308,8 +308,8 @@
                         </div>
                     </div>
                     <div class="mb-2">
-                        <label class="form-label">Referencia / Comprobante (Opcional)</label>
-                        <input type="text" name="comprobante" class="form-control form-control-sm" placeholder="Ej: Recibo Interno 001">
+                        <label for="comprobante_2" class="form-label">Referencia / Comprobante (Opcional)</label>
+                        <input id="comprobante_2" type="text" name="comprobante" class="form-control form-control-sm" placeholder="Ej: Recibo Interno 001">
                     </div>
                 </div>
                 <div class="modal-footer bg-body-tertiary">
@@ -326,10 +326,10 @@
 <!-- ========================================================== -->
 <div class="modal fade" id="modalCierreCaja" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-dark text-white py-3">
-                <h5 class="modal-title fw-bold"><i class="bi bi-lock-fill me-2"></i>Arqueo y Cierre Oficial de Turno</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-lock-fill me-2 text-body-secondary"></i>Arqueo y Cierre Oficial de Turno</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <form action="<?= url('caja/cerrar') ?>" method="POST" id="formCierreCaja">
                 <div class="modal-body p-4">
@@ -357,7 +357,7 @@
 
                     <!-- Input de Efectivo Real Contado -->
                     <div class="mb-3">
-                        <label class="form-label">Ingresa el Efectivo Físico Contado en tu Cajón (S/.) <span class="text-danger">*</span></label>
+                        <label for="monto_real_efectivo" class="form-label">Ingresa el Efectivo Físico Contado en tu Cajón (S/.) <span class="text-danger">*</span></label>
                         <div class="input-group input-group-lg">
                             <span class="input-group-text bg-success text-white fw-bold">S/.</span>
                             <input type="number" step="0.10" min="0" name="monto_real_efectivo" id="monto_real_efectivo" class="form-control fw-bold fs-3 text-success" value="<?= number_format($resumen['monto_esperado_efectivo'], 2, '.', '') ?>" required autofocus>
@@ -375,8 +375,8 @@
 
                     <!-- Observaciones de Cierre -->
                     <div class="mb-2">
-                        <label class="form-label">Observaciones de Cierre / Novedades</label>
-                        <textarea name="observaciones_cierre" class="form-control form-control-sm" rows="2" placeholder="Ej: Se deja sobre con S/. 450 en caja fuerte, se entrega turno a María..."></textarea>
+                        <label for="observaciones_cierre" class="form-label">Observaciones de Cierre / Novedades</label>
+                        <textarea id="observaciones_cierre" name="observaciones_cierre" class="form-control form-control-sm" rows="2" placeholder="Ej: Se deja sobre con S/. 450 en caja fuerte, se entrega turno a María..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer bg-body-tertiary px-4 py-3">

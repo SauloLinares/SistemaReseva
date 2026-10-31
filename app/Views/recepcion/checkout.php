@@ -13,15 +13,15 @@
         <div class="row g-4">
             <!-- Formulario de Check-out -->
             <div class="col-12 col-lg-6">
-                <div class="card border-top border-4 border-danger">
+                <div class="card">
                     <div class="card-header">
                         <h5 class="card-title mb-0"><i class="bi bi-door-closed text-danger me-2"></i>Procesar Salida de Habitación</h5>
                     </div>
                     <div class="card-body">
                         <form method="POST" action="<?= url('recepcion/procesarCheckout') ?>">
                             <div class="mb-3">
-                                <label class="form-label">Seleccionar Huésped / Habitación Alojada <span class="text-danger">*</span></label>
-                                <select name="estancia_id" class="form-select select-search" required onchange="cambiarEstancia(this.value)" placeholder="Escribe el número de habitación, nombre de huésped o código...">
+                                <label for="estancia_id" class="form-label">Seleccionar Huésped / Habitación Alojada <span class="text-danger">*</span></label>
+                                <select id="estancia_id" name="estancia_id" class="form-select select-search" required onchange="cambiarEstancia(this.value)" placeholder="Escribe el número de habitación, nombre de huésped o código...">
                                     <option value="">-- Seleccionar huésped alojado --</option>
                                     <?php foreach ($activas as $act): ?>
                                         <option value="<?= $act['id'] ?>" <?= ($estanciaSeleccionada && $estanciaSeleccionada['id'] == $act['id']) ? 'selected' : '' ?>>
@@ -59,8 +59,8 @@
                             <?php endif; ?>
 
                             <div class="mb-3">
-                                <label class="form-label">Observaciones de Salida / Estado de la Habitación</label>
-                                <textarea name="observaciones" class="form-control" rows="3" placeholder="Ej: Se recibieron todas las llaves, toallas completas, sin desperfectos..."></textarea>
+                                <label for="observaciones" class="form-label">Observaciones de Salida / Estado de la Habitación</label>
+                                <textarea id="observaciones" name="observaciones" class="form-control" rows="3" placeholder="Ej: Se recibieron todas las llaves, toallas completas, sin desperfectos..."></textarea>
                             </div>
 
                             <div class="alert alert-info py-2 small d-flex align-items-center">
@@ -81,8 +81,8 @@
             <!-- Ficha Resumen -->
             <div class="col-12 col-lg-6">
                 <?php if ($estanciaSeleccionada): ?>
-                    <div class="card border-danger">
-                        <div class="card-header bg-danger text-white">
+                    <div class="card">
+                        <div class="card-header">
                             <h5 class="card-title mb-0">
                                 <i class="bi bi-door-open me-2"></i>Habitación <?= htmlspecialchars($estanciaSeleccionada['habitacion_numero']) ?> (Piso <?= $estanciaSeleccionada['piso'] ?>)
                             </h5>
@@ -148,12 +148,12 @@
 <!-- MODAL: COBRO RÁPIDO EN CAJA (CHECK-OUT) -->
 <div class="modal fade" id="modalCobroRapido" tabindex="-1" aria-labelledby="modalCobroRapidoLabel" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-success text-white py-3">
-                <h5 class="modal-title fw-bold" id="modalCobroRapidoLabel">
-                    <i class="bi bi-cash-stack me-2"></i>Registrar Pago / Liquidar Cuenta
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCobroRapidoLabel">
+                    <i class="bi bi-cash-stack me-2 text-success"></i>Registrar Pago / Liquidar Cuenta
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
             </div>
             <form id="formModalCobro">
                 <input type="hidden" name="reserva_id" value="<?= $estanciaSeleccionada['reserva_id'] ?>">
@@ -177,7 +177,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">Monto a Cobrar (S/.) <span class="text-danger">*</span></label>
+                        <label for="inputMontoCobro" class="form-label">Monto a Cobrar (S/.) <span class="text-danger">*</span></label>
                         <div class="input-group input-group-lg">
                             <span class="input-group-text fw-bold text-success">S/.</span>
                             <input type="number" step="0.01" name="monto" id="inputMontoCobro" class="form-control fw-bold fs-4 text-success" value="<?= $estanciaSeleccionada['reserva_saldo'] ?>" required>
@@ -187,8 +187,8 @@
 
                     <div class="row g-2 mb-3">
                         <div class="col-6">
-                            <label class="form-label">Método de Pago <span class="text-danger">*</span></label>
-                            <select name="metodo_pago" class="form-select" required>
+                            <label for="metodo_pago" class="form-label">Método de Pago <span class="text-danger">*</span></label>
+                            <select id="metodo_pago" name="metodo_pago" class="form-select" required>
                                 <option value="Efectivo" selected>Efectivo</option>
                                 <option value="Yape">Yape</option>
                                 <option value="Plin">Plin</option>
@@ -197,8 +197,8 @@
                             </select>
                         </div>
                         <div class="col-6">
-                            <label class="form-label">Comprobante <span class="text-danger">*</span></label>
-                            <select name="comprobante_tipo" class="form-select" required>
+                            <label for="comprobante_tipo" class="form-label">Comprobante <span class="text-danger">*</span></label>
+                            <select id="comprobante_tipo" name="comprobante_tipo" class="form-select" required>
                                 <option value="Boleta" selected>Boleta de Venta</option>
                                 <option value="Factura">Factura</option>
                                 <option value="Recibo de Caja">Recibo de Caja</option>
@@ -207,8 +207,8 @@
                     </div>
 
                     <div class="mb-2">
-                        <label class="form-label">Notas / Observación</label>
-                        <input type="text" name="notas" class="form-control" placeholder="Ej: Liquidación total en Check-out">
+                        <label for="notas" class="form-label">Notas / Observación</label>
+                        <input id="notas" type="text" name="notas" class="form-control" placeholder="Ej: Liquidación total en Check-out">
                     </div>
                 </div>
                 <div class="modal-footer bg-body-tertiary px-4 py-3">
