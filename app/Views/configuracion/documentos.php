@@ -1,20 +1,15 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-file-earmark-text text-primary me-2"></i>Tipos de Documento</h3>
-                <p class="text-muted mb-0 small">Documentos de identidad admitidos para el registro de huéspedes</p>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Tipos de Documento',
+    'icono'     => 'bi-file-earmark-text',
+    'subtitulo' => 'Documentos de identidad admitidos para el registro de huéspedes',
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
-        <div class="card shadow-sm">
-            <div class="card-header bg-body-tertiary">
-                <h5 class="card-title mb-0 fw-bold"><i class="bi bi-card-checklist me-2"></i>Documentos Validados en el Sistema</h5>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-card-checklist me-2"></i>Documentos Validados en el Sistema</h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">

@@ -75,6 +75,22 @@ class HabitacionController extends Controller
             redirect('habitaciones/crear');
         }
 
+        // Procesar subida de fotografía de habitación
+        if (!empty($_FILES['foto']['name']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+            $ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+            $permitidas = ['jpg', 'jpeg', 'png', 'webp'];
+            if (in_array($ext, $permitidas)) {
+                $dirUploads = __DIR__ . '/../../../public/uploads/habitaciones/';
+                if (!is_dir($dirUploads)) {
+                    mkdir($dirUploads, 0777, true);
+                }
+                $nombreArchivo = 'hab_' . $numero . '_' . time() . '.' . $ext;
+                if (move_uploaded_file($_FILES['foto']['tmp_name'], $dirUploads . $nombreArchivo)) {
+                    $_POST['foto'] = $nombreArchivo;
+                }
+            }
+        }
+
         $ok = $this->habModel->crear($_POST);
 
         if ($ok) {
@@ -116,6 +132,26 @@ class HabitacionController extends Controller
         }
 
         $id = (int)($_POST['id'] ?? 0);
+        $numero = trim($_POST['numero'] ?? '');
+
+        // Procesar subida de fotografía de habitación
+        if (!empty($_FILES['foto']['name']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+            $ext = strtolower(pathinfo($_FILES['foto']['name'], PATHINFO_EXTENSION));
+            $permitidas = ['jpg', 'jpeg', 'png', 'webp'];
+            if (in_array($ext, $permitidas)) {
+                $dirUploads = __DIR__ . '/../../../public/uploads/habitaciones/';
+                if (!is_dir($dirUploads)) {
+                    mkdir($dirUploads, 0777, true);
+                }
+                $nombreArchivo = 'hab_' . ($numero ?: $id) . '_' . time() . '.' . $ext;
+                if (move_uploaded_file($_FILES['foto']['tmp_name'], $dirUploads . $nombreArchivo)) {
+                    $_POST['foto'] = $nombreArchivo;
+                }
+            }
+        } elseif (!empty($_POST['foto_actual'])) {
+            $_POST['foto'] = $_POST['foto_actual'];
+        }
+
         $ok = $this->habModel->actualizar($id, $_POST);
 
         if ($ok) {

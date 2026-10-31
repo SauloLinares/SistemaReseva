@@ -9,54 +9,29 @@ $disponibles = (int)($conteoHab['disponible'] ?? 0);
 $limpieza = (int)($conteoHab['limpieza'] ?? 0);
 $mantenimiento = (int)($conteoHab['mantenimiento'] ?? 0);
 $porcentajeOcupacion = round(($ocupadas / $totalHab) * 100);
+
+$estadiasPorHab = [];
+if (!empty($estadiasActivas)) {
+    foreach ($estadiasActivas as $ea) {
+        $estadiasPorHab[$ea['habitacion_id']] = $ea;
+    }
+}
 ?>
 
-<!--begin::App Content Header-->
-<div class="app-content-header py-3">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-7">
-                <div class="d-flex align-items-center">
-                    <div class="rounded-3 bg-primary bg-opacity-10 text-primary p-2 me-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
-                        <i class="bi bi-speedometer2 fs-3"></i>
-                    </div>
-                    <div>
-                        <h3 class="mb-0 fw-bold">Panel de Control</h3>
-                        <p class="text-muted mb-0 small">
-                            <i class="bi bi-calendar3 me-1"></i><?= date('d') ?> de <?= ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][date('n')-1] ?> de <?= date('Y') ?> &bull; Estado del Hotel en vivo
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-5 text-sm-end mt-3 mt-sm-0">
-                <a href="<?= url('reservas/crear') ?>" class="btn btn-primary shadow-sm me-1">
-                    <i class="bi bi-plus-circle me-1"></i> Nueva Reserva
-                </a>
-                <a href="<?= url('recepcion/checkin') ?>" class="btn btn-success shadow-sm me-1">
-                    <i class="bi bi-box-arrow-in-right me-1"></i> Check-in
-                </a>
-                <a href="<?= url('reservas/disponibilidad') ?>" class="btn btn-outline-secondary shadow-sm">
-                    <i class="bi bi-calendar-range me-1"></i> Disponibilidad
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
-<!--end::App Content Header-->
+<?php partial('page_header', [
+    'titulo'    => 'Panel de Control',
+    'icono'     => 'bi-speedometer2',
+    'subtitulo' => date('d') . ' de ' . ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][date('n') - 1] . ' de ' . date('Y') . ' • Estado del Hotel en vivo',
+    'acciones'  => [
+        ['texto' => 'Nueva Reserva', 'url' => 'reservas/crear', 'icono' => 'bi-plus-circle'],
+        ['texto' => 'Check-in', 'url' => 'recepcion/checkin', 'icono' => 'bi-box-arrow-in-right', 'variante' => 'success'],
+        ['texto' => 'Disponibilidad', 'url' => 'reservas/disponibilidad', 'icono' => 'bi-calendar-range', 'variante' => 'outline-secondary'],
+    ],
+]) ?>
 
 <!--begin::App Content-->
 <div class="app-content">
     <div class="container-fluid">
-
-        <!-- Mensajes Flash de Sesión -->
-        <?php if (!empty($_SESSION['flash'])): ?>
-            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['tipo']) ?> alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>
-                <?= htmlspecialchars($_SESSION['flash']['mensaje']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <?php unset($_SESSION['flash']); ?>
-        <?php endif; ?>
 
         <!-- Tarjetas de Estadísticas Principales (KPIs) -->
         <div class="row g-3 mb-4">
@@ -141,11 +116,22 @@ $porcentajeOcupacion = round(($ocupadas / $totalHab) * 100);
                     </h5>
                     <small class="text-muted">Monitoreo y asignación inmediata por habitación</small>
                 </div>
-                <div class="d-flex gap-2 align-items-center flex-wrap">
-                    <span class="badge badge-soft-success"><span class="pulse-dot pulse-dot-disponible"></span>Disponible (<?= $disponibles ?>)</span>
-                    <span class="badge badge-soft-danger"><span class="pulse-dot pulse-dot-ocupada"></span>Ocupada (<?= $ocupadas ?>)</span>
-                    <span class="badge badge-soft-warning"><span class="pulse-dot pulse-dot-limpieza"></span>Limpieza (<?= $limpieza ?>)</span>
-                    <span class="badge badge-soft-secondary"><span class="pulse-dot pulse-dot-mantenimiento"></span>Mantenimiento (<?= $mantenimiento ?>)</span>
+                <div class="d-flex gap-1 align-items-center flex-wrap" id="filtroHabitacionesDashboard">
+                    <button type="button" class="btn btn-xs btn-primary rounded-pill btn-filtro-dash active" data-filtro="todos">
+                        Todas (<?= count($habitaciones) ?>)
+                    </button>
+                    <button type="button" class="btn btn-xs btn-outline-success rounded-pill btn-filtro-dash" data-filtro="disponible">
+                        <span class="pulse-dot pulse-dot-disponible"></span> Disponibles (<?= $disponibles ?>)
+                    </button>
+                    <button type="button" class="btn btn-xs btn-outline-danger rounded-pill btn-filtro-dash" data-filtro="ocupada">
+                        <span class="pulse-dot pulse-dot-ocupada"></span> Ocupadas (<?= $ocupadas ?>)
+                    </button>
+                    <button type="button" class="btn btn-xs btn-outline-warning rounded-pill btn-filtro-dash" data-filtro="limpieza">
+                        <span class="pulse-dot pulse-dot-limpieza"></span> Limpieza (<?= $limpieza ?>)
+                    </button>
+                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill btn-filtro-dash" data-filtro="mantenimiento">
+                        <span class="pulse-dot pulse-dot-mantenimiento"></span> Mantenimiento (<?= $mantenimiento ?>)
+                    </button>
                 </div>
             </div>
 
@@ -161,10 +147,11 @@ $porcentajeOcupacion = round(($ocupadas / $totalHab) * 100);
             </div>
 
             <div class="card-body">
-                <div class="row g-3">
+                <div class="row g-3" id="gridHabitacionesDashboard">
                     <?php foreach ($habitaciones as $h): ?>
                         <?php
                             $estado = $h['estado'];
+                            $est = $estadiasPorHab[$h['id']] ?? null;
                             $stateClass = match($estado) {
                                 'disponible'    => 'room-state-disponible',
                                 'ocupada'       => 'room-state-ocupada',
@@ -180,8 +167,27 @@ $porcentajeOcupacion = round(($ocupadas / $totalHab) * 100);
                                 default         => 'bi-door-closed'
                             };
                         ?>
-                        <div class="col-6 col-sm-4 col-md-3 col-lg-2">
-                            <div class="card room-card-modern <?= $stateClass ?> h-100 text-center p-3">
+                        <div class="col-6 col-sm-4 col-md-3 col-lg-2 item-hab-card" data-estado="<?= $estado ?>">
+                            <div class="card room-card-modern room-card-interactive <?= $stateClass ?> h-100 text-center p-3"
+                                 data-id="<?= $h['id'] ?>"
+                                 data-numero="<?= htmlspecialchars($h['numero']) ?>"
+                                 data-tipo="<?= htmlspecialchars($h['tipo_nombre']) ?>"
+                                 data-piso="<?= $h['piso'] ?>"
+                                 data-precio="<?= dinero($h['precio_diario']) ?>"
+                                 data-estado="<?= $estado ?>"
+                                 data-foto="<?= !empty($h['foto']) ? base_url('uploads/habitaciones/' . $h['foto']) : base_url('uploads/habitaciones/simple.jpg') ?>"
+                                 data-caracteristicas="<?= htmlspecialchars($h['caracteristicas'] ?? 'Wi-Fi, TV Cable, Baño Privado') ?>"
+                                 data-huesped="<?= htmlspecialchars($est['huesped_nombre'] ?? '') ?>"
+                                 data-doc="<?= htmlspecialchars($est['numero_documento'] ?? '') ?>"
+                                 data-tel="<?= htmlspecialchars($est['telefono'] ?? '') ?>"
+                                 data-codigo="<?= htmlspecialchars($est['codigo_reserva'] ?? '') ?>"
+                                 data-entrada="<?= !empty($est['fecha_entrada']) ? fecha_es($est['fecha_entrada']) : '' ?>"
+                                 data-salida="<?= !empty($est['fecha_salida']) ? fecha_es($est['fecha_salida']) : '' ?>"
+                                 data-saldo="<?= dinero($est['reserva_saldo'] ?? 0) ?>"
+                                 data-saldo-raw="<?= (float)($est['reserva_saldo'] ?? 0) ?>"
+                                 data-estancia-id="<?= $est['id'] ?? '' ?>"
+                                 data-reserva-id="<?= $est['reserva_id'] ?? '' ?>"
+                                 title="Clic para inspeccionar habitación">
                                 <span class="badge bg-dark bg-opacity-75 text-white position-absolute top-0 end-0 m-2" style="font-size: 0.65rem; border-radius: 6px;">
                                     Piso <?= htmlspecialchars($h['piso']) ?>
                                 </span>
@@ -190,16 +196,16 @@ $porcentajeOcupacion = round(($ocupadas / $totalHab) * 100);
                                     <i class="bi <?= $icon ?>"></i>
                                 </div>
                                 <h4 class="fw-bold mb-0">Hab. <?= htmlspecialchars($h['numero']) ?></h4>
-                                <small class="text-muted text-truncate d-block fw-semibold" style="font-size: 0.78rem;"><?= htmlspecialchars($h['tipo_nombre']) ?></small>
-                                <div class="mt-2 small fw-bold text-body-emphasis"><?= dinero($h['precio_diario']) ?><span class="text-muted fw-normal" style="font-size: 0.72rem;">/noc</span></div>
+                                <small class="text-sm text-muted text-truncate d-block fw-semibold"><?= htmlspecialchars($h['tipo_nombre']) ?></small>
+                                <div class="mt-2 small fw-bold text-body-emphasis"><?= dinero($h['precio_diario']) ?><span class="text-xs text-muted fw-normal">/noc</span></div>
                                 
                                 <div class="mt-2 pt-2 border-top border-light-subtle">
-                                    <span class="badge badge-soft-<?= match($estado) {
+                                    <span class="text-2xs badge badge-soft-<?= match($estado) {
                                         'disponible' => 'success',
                                         'ocupada' => 'danger',
                                         'limpieza' => 'warning',
                                         default => 'secondary'
-                                    } ?> text-uppercase w-100 justify-content-center" style="font-size: 0.68rem;">
+                                    } ?> text-uppercase w-100 justify-content-center">
                                         <span class="pulse-dot pulse-dot-<?= $estado ?>"></span>
                                         <?= htmlspecialchars($estado) ?>
                                     </span>
@@ -277,13 +283,13 @@ $porcentajeOcupacion = round(($ocupadas / $totalHab) * 100);
                                                 <td>
                                                     <div class="fw-bold text-body-emphasis"><?= dinero($r['total']) ?></div>
                                                     <?php if ((float)$r['saldo'] > 0): ?>
-                                                        <small class="badge badge-soft-danger py-0 px-1" style="font-size: 0.68rem;">Resta: <?= dinero($r['saldo']) ?></small>
+                                                        <small class="text-2xs badge badge-soft-danger py-0 px-1">Resta: <?= dinero($r['saldo']) ?></small>
                                                     <?php else: ?>
-                                                        <small class="badge badge-soft-success py-0 px-1" style="font-size: 0.68rem;"><i class="bi bi-check2"></i> Pagado</small>
+                                                        <small class="text-2xs badge badge-soft-success py-0 px-1"><i class="bi bi-check2"></i> Pagado</small>
                                                     <?php endif; ?>
                                                 </td>
                                                 <td class="text-end">
-                                                    <a href="<?= url('reservas/editar/' . $r['id']) ?>" class="btn btn-sm btn-light border shadow-sm" title="Ver detalles">
+                                                    <a href="<?= url('reservas/editar/' . $r['id']) ?>" class="btn btn-icon btn-outline-secondary border" title="Ver detalles">
                                                         <i class="bi bi-eye text-primary"></i>
                                                     </a>
                                                 </td>
@@ -331,9 +337,9 @@ $porcentajeOcupacion = round(($ocupadas / $totalHab) * 100);
                                                     Check-in: <?= fecha_es($est['fecha_checkin'], true) ?> &bull; Doc: <?= htmlspecialchars($est['numero_documento']) ?>
                                                 </small>
                                                 <?php if ((float)$est['reserva_saldo'] > 0): ?>
-                                                    <span class="badge badge-soft-danger py-0 px-1 mt-1" style="font-size: 0.7rem;">Saldo: <?= dinero($est['reserva_saldo']) ?></span>
+                                                    <span class="text-xs badge badge-soft-danger py-0 px-1 mt-1">Saldo: <?= dinero($est['reserva_saldo']) ?></span>
                                                 <?php else: ?>
-                                                    <span class="badge badge-soft-success py-0 px-1 mt-1" style="font-size: 0.7rem;"><i class="bi bi-check-circle me-1"></i>Cuenta al día</span>
+                                                    <span class="text-xs badge badge-soft-success py-0 px-1 mt-1"><i class="bi bi-check-circle me-1"></i>Cuenta al día</span>
                                                 <?php endif; ?>
                                             </div>
                                         </div>
@@ -348,7 +354,7 @@ $porcentajeOcupacion = round(($ocupadas / $totalHab) * 100);
                         </ul>
                     </div>
                     <div class="card-footer text-center">
-                        <a href="<?= url('recepcion/estadias') ?>" class="btn btn-link text-decoration-none btn-sm fw-semibold">
+                        <a href="<?= url('recepcion/estadias') ?>" class="btn btn-link text-decoration-none btn-sm">
                             Ver monitoreo completo de estadías <i class="bi bi-arrow-right ms-1"></i>
                         </a>
                     </div>
@@ -359,3 +365,308 @@ $porcentajeOcupacion = round(($ocupadas / $totalHab) * 100);
     </div>
 </div>
 <!--end::App Content-->
+
+<!-- Modal de Inspección Rápida y Centro de Mando de Habitación -->
+<div class="modal fade" id="modalDetalleHabitacion" tabindex="-1" aria-labelledby="modalDetalleHabitacionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-bottom-0 pb-0">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="avatar-circle avatar-primary flex-shrink-0" id="mHabIconWrapper" style="width: 44px; height: 44px; font-size: 1.25rem;">
+                        <i class="bi bi-door-closed" id="mHabIcon"></i>
+                    </div>
+                    <div>
+                        <h5 class="modal-title fw-bold mb-0" id="mHabNumeroTitulo">Habitación ---</h5>
+                        <div class="d-flex align-items-center gap-2 mt-1">
+                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle" id="mHabTipo">Tipo</span>
+                            <span class="badge" id="mHabEstadoBadge">Estado</span>
+                            <span class="text-muted small" id="mHabPiso">Piso -</span>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body pt-3">
+                
+                <!-- Fotografía Banner de la Habitación -->
+                <div class="mb-3 position-relative rounded-3 overflow-hidden border shadow-xs" style="height: 150px;">
+                    <img id="mHabFotoBanner" src="<?= base_url('uploads/habitaciones/simple.jpg') ?>" alt="Foto de la Habitación" class="w-100 h-100" style="object-fit: cover;">
+                </div>
+
+                <!-- Sección para Habitación Disponible -->
+                <div id="mSeccionDisponible" class="d-none">
+                    <div class="p-3 bg-light rounded-3 mb-3 border">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-muted d-block">Tarifa por Noche</small>
+                                <h4 class="fw-bold text-success mb-0" id="mHabPrecio">$0.00</h4>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge badge-soft-success"><i class="bi bi-check-circle me-1"></i>Lista para Asignar</span>
+                            </div>
+                        </div>
+                        <div class="mt-2 pt-2 border-top small text-muted">
+                            <i class="bi bi-info-circle me-1"></i> <span id="mHabCaracteristicas">Wi-Fi, TV por cable, Baño Privado</span>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <a href="#" id="mBtnCrearReserva" class="btn btn-primary">
+                            <i class="bi bi-calendar-plus me-1"></i> Asignar / Registrar Reserva Directa
+                        </a>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-warning w-100" id="mBtnEnviarLimpieza">
+                                <i class="bi bi-stars me-1"></i> Pasar a Limpieza
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary w-100" id="mBtnEnviarMantenimiento">
+                                <i class="bi bi-wrench-adjustable me-1"></i> Mantenimiento
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección para Habitación Ocupada -->
+                <div id="mSeccionOcupada" class="d-none">
+                    <div class="p-3 bg-light rounded-3 mb-3 border">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="avatar-circle avatar-danger flex-shrink-0" style="width: 44px; height: 44px; font-size: 1.1rem;">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div>
+                                <small class="text-muted d-block">Huésped Titular</small>
+                                <h6 class="fw-bold mb-0" id="mHuespedNombre">---</h6>
+                                <small class="text-muted" id="mHuespedDoc">Doc: ---</small>
+                            </div>
+                        </div>
+                        <div class="row g-2 pt-2 border-top small">
+                            <div class="col-6">
+                                <span class="text-muted d-block">Check-in:</span>
+                                <strong id="mFechaEntrada">--/--/----</strong>
+                            </div>
+                            <div class="col-6">
+                                <span class="text-muted d-block">Check-out previsto:</span>
+                                <strong id="mFechaSalida">--/--/----</strong>
+                            </div>
+                            <div class="col-6 mt-2">
+                                <span class="text-muted d-block">Código Reserva:</span>
+                                <span class="badge bg-light text-dark border" id="mCodigoReserva">---</span>
+                            </div>
+                            <div class="col-6 mt-2">
+                                <span class="text-muted d-block">Saldo Pendiente:</span>
+                                <strong id="mSaldoPendiente" class="text-danger">$0.00</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <a href="#" id="mBtnProcesarCheckout" class="btn btn-danger">
+                            <i class="bi bi-box-arrow-right me-1"></i> Procesar Check-out & Cobro
+                        </a>
+                        <div class="d-flex gap-2">
+                            <a href="<?= url('recepcion/estadias') ?>" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-cart-plus me-1"></i> Cargar Consumo
+                            </a>
+                            <a href="<?= url('recepcion/estadias') ?>" class="btn btn-outline-secondary w-100">
+                                <i class="bi bi-eye me-1"></i> Ficha de Estadía
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección para Habitación en Limpieza -->
+                <div id="mSeccionLimpieza" class="d-none">
+                    <div class="p-3 bg-warning-subtle rounded-3 mb-3 border border-warning-subtle text-center">
+                        <div class="fs-1 text-warning mb-2"><i class="bi bi-stars"></i></div>
+                        <h6 class="fw-bold mb-1">Habitación en Limpieza</h6>
+                        <p class="small text-muted mb-0">Esta habitación se encuentra desinfectándose y ordenándose para el próximo huésped.</p>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-success" id="mBtnLiberarLimpieza">
+                            <i class="bi bi-check2-circle me-1"></i> Finalizar Limpieza (Marcar Disponible)
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" id="mBtnMantenimientoDesdeLimpieza">
+                            <i class="bi bi-wrench-adjustable me-1"></i> Reportar Falla Técnica (Mantenimiento)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sección para Habitación en Mantenimiento -->
+                <div id="mSeccionMantenimiento" class="d-none">
+                    <div class="p-3 bg-secondary-subtle rounded-3 mb-3 border border-secondary-subtle text-center">
+                        <div class="fs-1 text-secondary mb-2"><i class="bi bi-wrench-adjustable-circle-fill"></i></div>
+                        <h6 class="fw-bold mb-1">Habitación Fuera de Servicio</h6>
+                        <p class="small text-muted mb-0">Se encuentra en mantenimiento técnico o reparación de averías.</p>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-success" id="mBtnLiberarMantenimiento">
+                            <i class="bi bi-check2-circle me-1"></i> Concluir Reparación (Marcar Disponible)
+                        </button>
+                        <button type="button" class="btn btn-outline-warning" id="mBtnLimpiezaDesdeMantenimiento">
+                            <i class="bi bi-stars me-1"></i> Pasar a Limpieza
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer border-top-0 pt-0">
+                <button type="button" class="btn btn-light btn-sm w-100" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Filtrado instantáneo de tarjetas de habitaciones en Dashboard
+    const botonesFiltro = document.querySelectorAll('#filtroHabitacionesDashboard .btn-filtro-dash');
+    const itemsHabitacion = document.querySelectorAll('.item-hab-card');
+
+    botonesFiltro.forEach(btn => {
+        btn.addEventListener('click', function() {
+            botonesFiltro.forEach(b => {
+                b.classList.remove('active', 'btn-primary', 'btn-success', 'btn-danger', 'btn-warning', 'btn-secondary');
+                const f = b.dataset.filtro;
+                if (f === 'todos') b.classList.add('btn-outline-primary');
+                else if (f === 'disponible') b.classList.add('btn-outline-success');
+                else if (f === 'ocupada') b.classList.add('btn-outline-danger');
+                else if (f === 'limpieza') b.classList.add('btn-outline-warning');
+                else if (f === 'mantenimiento') b.classList.add('btn-outline-secondary');
+            });
+
+            this.classList.add('active');
+            const filtro = this.dataset.filtro;
+            if (filtro === 'todos') {
+                this.classList.remove('btn-outline-primary');
+                this.classList.add('btn-primary');
+            } else if (filtro === 'disponible') {
+                this.classList.remove('btn-outline-success');
+                this.classList.add('btn-success');
+            } else if (filtro === 'ocupada') {
+                this.classList.remove('btn-outline-danger');
+                this.classList.add('btn-danger');
+            } else if (filtro === 'limpieza') {
+                this.classList.remove('btn-outline-warning');
+                this.classList.add('btn-warning');
+            } else if (filtro === 'mantenimiento') {
+                this.classList.remove('btn-outline-secondary');
+                this.classList.add('btn-secondary');
+            }
+
+            itemsHabitacion.forEach(card => {
+                if (filtro === 'todos' || card.dataset.estado === filtro) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
+
+    // 2. Apertura del Modal Interactivo de Habitación
+    let habActivaId = null;
+    const modalEl = document.getElementById('modalDetalleHabitacion');
+    const modalHab = new bootstrap.Modal(modalEl);
+
+    document.querySelectorAll('.room-card-interactive').forEach(card => {
+        card.addEventListener('click', function() {
+            habActivaId = this.dataset.id;
+            const num = this.dataset.numero;
+            const tipo = this.dataset.tipo;
+            const piso = this.dataset.piso;
+            const precio = this.dataset.precio;
+            const estado = this.dataset.estado;
+            const carac = this.dataset.caracteristicas;
+            const huesped = this.dataset.huesped;
+            const doc = this.dataset.doc;
+            const entrada = this.dataset.entrada;
+            const salida = this.dataset.salida;
+            const codigo = this.dataset.codigo;
+            const saldo = this.dataset.saldo;
+            const estanciaId = this.dataset.estanciaId;
+
+            document.getElementById('mHabNumeroTitulo').textContent = 'Habitación ' + num;
+            document.getElementById('mHabTipo').textContent = tipo;
+            document.getElementById('mHabPiso').textContent = 'Piso ' + piso;
+            document.getElementById('mHabPrecio').textContent = precio;
+            document.getElementById('mHabCaracteristicas').textContent = carac || 'Wi-Fi, TV por cable, Baño Privado';
+            document.getElementById('mHabFotoBanner').src = this.dataset.foto || '<?= base_url("uploads/habitaciones/simple.jpg") ?>';
+
+            const badge = document.getElementById('mHabEstadoBadge');
+            badge.className = 'badge text-uppercase';
+            badge.textContent = estado;
+            if (estado === 'disponible') badge.classList.add('bg-success');
+            else if (estado === 'ocupada') badge.classList.add('bg-danger');
+            else if (estado === 'limpieza') badge.classList.add('bg-warning', 'text-dark');
+            else badge.classList.add('bg-secondary');
+
+            // Ocultar todas las secciones
+            document.getElementById('mSeccionDisponible').classList.add('d-none');
+            document.getElementById('mSeccionOcupada').classList.add('d-none');
+            document.getElementById('mSeccionLimpieza').classList.add('d-none');
+            document.getElementById('mSeccionMantenimiento').classList.add('d-none');
+
+            if (estado === 'disponible') {
+                document.getElementById('mSeccionDisponible').classList.remove('d-none');
+                document.getElementById('mBtnCrearReserva').href = '<?= url("reservas/crear") ?>&habitacion_id=' + habActivaId;
+            } else if (estado === 'ocupada') {
+                document.getElementById('mSeccionOcupada').classList.remove('d-none');
+                document.getElementById('mHuespedNombre').textContent = huesped || 'Huésped registrado';
+                document.getElementById('mHuespedDoc').textContent = 'Doc: ' + (doc || 'No registrado');
+                document.getElementById('mFechaEntrada').textContent = entrada || '--/--/----';
+                document.getElementById('mFechaSalida').textContent = salida || '--/--/----';
+                document.getElementById('mCodigoReserva').textContent = codigo || 'N/A';
+                document.getElementById('mSaldoPendiente').textContent = saldo || '$0.00';
+                document.getElementById('mBtnProcesarCheckout').href = '<?= url("recepcion/checkout") ?>' + (estanciaId ? '&id=' + estanciaId : '');
+            } else if (estado === 'limpieza') {
+                document.getElementById('mSeccionLimpieza').classList.remove('d-none');
+            } else if (estado === 'mantenimiento') {
+                document.getElementById('mSeccionMantenimiento').classList.remove('d-none');
+            }
+
+            modalHab.show();
+        });
+    });
+
+    // 3. Cambio de estado directo via AJAX desde el Modal
+    function actualizarEstado(nuevoEstado) {
+        if (!habActivaId) return;
+
+        const fd = new FormData();
+        fd.append('id', habActivaId);
+        fd.append('estado', nuevoEstado);
+        fd.append('ajax', '1');
+
+        fetch('<?= url("habitaciones/cambiarEstado") ?>', {
+            method: 'POST',
+            body: fd
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                modalHab.hide();
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: 'Estado actualizado a ' + nuevoEstado,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
+            } else {
+                Swal.fire('Error', 'No se pudo cambiar el estado de la habitación', 'error');
+            }
+        })
+        .catch(() => {
+            Swal.fire('Error', 'Hubo un error de conexión al servidor', 'error');
+        });
+    }
+
+    document.getElementById('mBtnEnviarLimpieza')?.addEventListener('click', () => actualizarEstado('limpieza'));
+    document.getElementById('mBtnEnviarMantenimiento')?.addEventListener('click', () => actualizarEstado('mantenimiento'));
+    document.getElementById('mBtnLiberarLimpieza')?.addEventListener('click', () => actualizarEstado('disponible'));
+    document.getElementById('mBtnMantenimientoDesdeLimpieza')?.addEventListener('click', () => actualizarEstado('mantenimiento'));
+    document.getElementById('mBtnLiberarMantenimiento')?.addEventListener('click', () => actualizarEstado('disponible'));
+    document.getElementById('mBtnLimpiezaDesdeMantenimiento')?.addEventListener('click', () => actualizarEstado('limpieza'));
+});
+</script>

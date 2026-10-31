@@ -173,7 +173,7 @@ class HuespedController extends Controller
         if (!empty($doc)) {
             $resultado = $this->huespedModel->buscarPorDocumento($doc);
             if (!$resultado) {
-                // Intentar búsqueda general
+                // Intentar búsqueda general por nombre o documento
                 $varios = $this->huespedModel->listarTodos($doc);
                 if (!empty($varios)) {
                     $resultado = $varios[0];
@@ -181,10 +181,15 @@ class HuespedController extends Controller
             }
         }
 
+        $frecuentes = $this->huespedModel->listarFrecuentes(6);
+        $totalHuespedes = $this->huespedModel->contarTotal();
+
         $this->render('huespedes/buscar', [
-            'documento' => $doc,
-            'huesped'   => $resultado
-        ], 'Búsqueda de Huéspedes por Documento');
+            'documento'      => $doc,
+            'huesped'        => $resultado,
+            'frecuentes'     => $frecuentes,
+            'totalHuespedes' => $totalHuespedes
+        ], 'Terminal de Recepción - Consulta de Huéspedes');
     }
 
     /**

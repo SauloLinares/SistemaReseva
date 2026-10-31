@@ -1,34 +1,18 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-person-fill-gear text-primary me-2"></i>Gestión de Usuarios</h3>
-                <p class="text-muted mb-0 small">Administración de credenciales de acceso para el personal del hotel</p>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <button type="button" class="btn btn-primary btn-sm shadow-sm" data-bs-toggle="modal" data-bs-target="#modalUsuario">
-                    <i class="bi bi-person-plus me-1"></i> Nuevo Usuario
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Gestión de Usuarios',
+    'icono'     => 'bi-person-fill-gear',
+    'subtitulo' => 'Administración de credenciales de acceso para el personal del hotel',
+    'acciones'  => [
+        ['texto' => 'Nuevo Usuario', 'modal' => '#modalUsuario', 'icono' => 'bi-person-plus'],
+    ],
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
-        <?php if (!empty($_SESSION['flash'])): ?>
-            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['tipo']) ?> alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>
-                <?= htmlspecialchars($_SESSION['flash']['mensaje']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <?php unset($_SESSION['flash']); ?>
-        <?php endif; ?>
-
-        <div class="card shadow-sm">
-            <div class="card-header bg-body-tertiary">
-                <h5 class="card-title mb-0 fw-bold"><i class="bi bi-people me-2"></i>Usuarios Registrados</h5>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-people me-2"></i>Usuarios Registrados</h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -52,16 +36,16 @@
                                     <td><?= htmlspecialchars($u['email']) ?></td>
                                     <td><span class="badge text-bg-primary"><?= htmlspecialchars($u['rol'] ?: 'Administrador') ?></span></td>
                                     <td>
-                                        <?= $u['estado'] ? '<span class="badge text-bg-success">Activo</span>' : '<span class="badge text-bg-secondary">Inactivo</span>' ?>
+                                        <?= $u['estado'] ? '<span class="badge badge-status-switch active">Activo</span>' : '<span class="badge badge-status-switch inactive">Inactivo</span>' ?>
                                     </td>
                                     <td><small class="text-muted"><?= fecha_es($u['ultimo_login'], true) ?></small></td>
                                     <td class="text-end pe-3">
-                                        <div class="btn-group btn-group-sm">
-                                            <button type="button" class="btn btn-outline-primary" onclick='editarUsuario(<?= json_encode($u, JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>
+                                        <div class="table-actions">
+                                            <button type="button" class="btn btn-icon btn-outline-primary" title="Editar" onclick='editarUsuario(<?= json_encode($u, JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>
                                                 <i class="bi bi-pencil-square"></i>
                                             </button>
                                             <?php if ($u['id'] !== 1 && $u['id'] !== (int)auth_user('id')): ?>
-                                                <a href="<?= url('seguridad/eliminarUsuario/' . $u['id']) ?>" class="btn btn-outline-danger" onclick="return confirm('¿Eliminar usuario?');">
+                                                <a href="<?= url('seguridad/eliminarUsuario/' . $u['id']) ?>" class="btn btn-icon btn-outline-danger" title="Eliminar" data-confirm="¿Eliminar usuario?">
                                                     <i class="bi bi-trash"></i>
                                                 </a>
                                             <?php endif; ?>
@@ -89,21 +73,21 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Nombre Completo <span class="text-danger">*</span></label>
+                    <label class="form-label">Nombre Completo <span class="text-danger">*</span></label>
                     <input type="text" name="nombre" id="userNombre" class="form-control" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Correo Electrónico <span class="text-danger">*</span></label>
+                    <label class="form-label">Correo Electrónico <span class="text-danger">*</span></label>
                     <input type="email" name="email" id="userEmail" class="form-control" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Contraseña</label>
+                    <label class="form-label">Contraseña</label>
                     <input type="password" name="password" id="userPassword" class="form-control" placeholder="Dejar en blanco si no se desea modificar">
                     <div class="form-text">Mínimo 6 caracteres con números y letras recomendados.</div>
                 </div>
                 <div class="row g-2 mb-3">
                     <div class="col-6">
-                        <label class="form-label fw-semibold">Rol Asignado</label>
+                        <label class="form-label">Rol Asignado</label>
                         <select name="rol" id="userRol" class="form-select">
                             <?php foreach ($roles as $r): ?>
                                 <option value="<?= htmlspecialchars($r['nombre']) ?>"><?= htmlspecialchars($r['nombre']) ?></option>
@@ -111,7 +95,7 @@
                         </select>
                     </div>
                     <div class="col-6">
-                        <label class="form-label fw-semibold">Estado</label>
+                        <label class="form-label">Estado</label>
                         <select name="estado" id="userEstado" class="form-select">
                             <option value="1">Activo</option>
                             <option value="0">Inactivo</option>

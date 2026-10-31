@@ -17,6 +17,19 @@ class Configuracion extends Model
         return $config;
     }
 
+    /**
+     * Datos institucionales del hotel (claves hotel_*) para vouchers y comprobantes
+     */
+    public function obtenerDatosHotel(): array
+    {
+        $filas = $this->db->query("SELECT clave, valor FROM configuracion WHERE clave LIKE 'hotel\\_%'")->fetchAll();
+        $hotel = [];
+        foreach ($filas as $f) {
+            $hotel[$f['clave']] = $f['valor'];
+        }
+        return $hotel;
+    }
+
     public function obtenerTodosDetalle(): array
     {
         return $this->db->query("SELECT * FROM configuracion ORDER BY grupo ASC, id ASC")->fetchAll();

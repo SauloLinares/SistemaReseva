@@ -1,42 +1,26 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-box-arrow-right text-danger me-2"></i>Recepción: Check-out</h3>
-                <p class="text-muted mb-0 small">Liquidación de cuenta, cobro de saldo y liberación de habitación</p>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <a href="<?= url('recepcion/estadias') ?>" class="btn btn-outline-secondary btn-sm shadow-sm me-1">
-                    <i class="bi bi-journal-bookmark me-1"></i> Control de Estadías
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Recepción: Check-out',
+    'icono'     => 'bi-box-arrow-right',
+    'subtitulo' => 'Liquidación de cuenta, cobro de saldo y liberación de habitación',
+    'acciones'  => [
+        ['texto' => 'Control de Estadías', 'url' => 'recepcion/estadias', 'icono' => 'bi-journal-bookmark', 'variante' => 'outline-secondary'],
+    ],
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
-        <?php if (!empty($_SESSION['flash'])): ?>
-            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['tipo']) ?> alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>
-                <?= htmlspecialchars($_SESSION['flash']['mensaje']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <?php unset($_SESSION['flash']); ?>
-        <?php endif; ?>
-
         <div class="row g-4">
             <!-- Formulario de Check-out -->
             <div class="col-12 col-lg-6">
-                <div class="card shadow-sm border-top border-4 border-danger">
-                    <div class="card-header bg-body-tertiary">
-                        <h5 class="card-title mb-0 fw-bold"><i class="bi bi-door-closed text-danger me-2"></i>Procesar Salida de Habitación</h5>
+                <div class="card border-top border-4 border-danger">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0"><i class="bi bi-door-closed text-danger me-2"></i>Procesar Salida de Habitación</h5>
                     </div>
                     <div class="card-body">
                         <form method="POST" action="<?= url('recepcion/procesarCheckout') ?>">
                             <div class="mb-3">
-                                <label class="form-label fw-semibold">Seleccionar Huésped / Habitación Alojada <span class="text-danger">*</span></label>
+                                <label class="form-label">Seleccionar Huésped / Habitación Alojada <span class="text-danger">*</span></label>
                                 <select name="estancia_id" class="form-select select-search" required onchange="cambiarEstancia(this.value)" placeholder="Escribe el número de habitación, nombre de huésped o código...">
                                     <option value="">-- Seleccionar huésped alojado --</option>
                                     <?php foreach ($activas as $act): ?>
@@ -55,7 +39,7 @@
                                             <span class="fs-4 fw-bold"><?= dinero($estanciaSeleccionada['reserva_saldo']) ?></span>
                                         </div>
                                         <div class="d-flex gap-2">
-                                            <button type="button" class="btn btn-sm btn-danger fw-bold shadow-xs" data-bs-toggle="modal" data-bs-target="#modalCobroRapido">
+                                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modalCobroRapido">
                                                 <i class="bi bi-cash-coin me-1"></i> Cobrar Ahora en Caja
                                             </button>
                                             <div class="form-check align-self-center ms-2">
@@ -75,7 +59,7 @@
                             <?php endif; ?>
 
                             <div class="mb-3">
-                                <label class="form-label fw-semibold">Observaciones de Salida / Estado de la Habitación</label>
+                                <label class="form-label">Observaciones de Salida / Estado de la Habitación</label>
                                 <textarea name="observaciones" class="form-control" rows="3" placeholder="Ej: Se recibieron todas las llaves, toallas completas, sin desperfectos..."></textarea>
                             </div>
 
@@ -85,7 +69,7 @@
                             </div>
 
                             <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-danger btn-lg fw-bold shadow-sm">
+                                <button type="submit" class="btn btn-danger btn-lg">
                                     <i class="bi bi-box-arrow-right me-2"></i>Finalizar Estadía y Liberar Habitación
                                 </button>
                             </div>
@@ -97,9 +81,9 @@
             <!-- Ficha Resumen -->
             <div class="col-12 col-lg-6">
                 <?php if ($estanciaSeleccionada): ?>
-                    <div class="card shadow-sm border-danger">
+                    <div class="card border-danger">
                         <div class="card-header bg-danger text-white">
-                            <h5 class="card-title mb-0 fw-bold">
+                            <h5 class="card-title mb-0">
                                 <i class="bi bi-door-open me-2"></i>Habitación <?= htmlspecialchars($estanciaSeleccionada['habitacion_numero']) ?> (Piso <?= $estanciaSeleccionada['piso'] ?>)
                             </h5>
                         </div>
@@ -148,7 +132,7 @@
                         </div>
                     </div>
                 <?php else: ?>
-                    <div class="card shadow-sm border-dashed text-center p-5 text-muted">
+                    <div class="card border-dashed text-center p-5 text-muted">
                         <i class="bi bi-box-arrow-right display-3 mb-3 text-secondary"></i>
                         <h5>Selecciona un huésped o habitación para realizar el Check-out</h5>
                         <p class="small">El formulario cargará el saldo pendiente y el tiempo de estadía transcurrido.</p>
@@ -193,7 +177,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-semibold small">Monto a Cobrar (S/.) <span class="text-danger">*</span></label>
+                        <label class="form-label">Monto a Cobrar (S/.) <span class="text-danger">*</span></label>
                         <div class="input-group input-group-lg">
                             <span class="input-group-text fw-bold text-success">S/.</span>
                             <input type="number" step="0.01" name="monto" id="inputMontoCobro" class="form-control fw-bold fs-4 text-success" value="<?= $estanciaSeleccionada['reserva_saldo'] ?>" required>
@@ -203,7 +187,7 @@
 
                     <div class="row g-2 mb-3">
                         <div class="col-6">
-                            <label class="form-label fw-semibold small">Método de Pago <span class="text-danger">*</span></label>
+                            <label class="form-label">Método de Pago <span class="text-danger">*</span></label>
                             <select name="metodo_pago" class="form-select" required>
                                 <option value="Efectivo" selected>Efectivo</option>
                                 <option value="Yape">Yape</option>
@@ -213,7 +197,7 @@
                             </select>
                         </div>
                         <div class="col-6">
-                            <label class="form-label fw-semibold small">Comprobante <span class="text-danger">*</span></label>
+                            <label class="form-label">Comprobante <span class="text-danger">*</span></label>
                             <select name="comprobante_tipo" class="form-select" required>
                                 <option value="Boleta" selected>Boleta de Venta</option>
                                 <option value="Factura">Factura</option>
@@ -223,7 +207,7 @@
                     </div>
 
                     <div class="mb-2">
-                        <label class="form-label fw-semibold small">Notas / Observación</label>
+                        <label class="form-label">Notas / Observación</label>
                         <input type="text" name="notas" class="form-control" placeholder="Ej: Liquidación total en Check-out">
                     </div>
                 </div>
@@ -231,7 +215,7 @@
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         Cancelar
                     </button>
-                    <button type="submit" class="btn btn-success fw-bold" id="btnGuardarCobroModal">
+                    <button type="submit" class="btn btn-success" id="btnGuardarCobroModal">
                         <i class="bi bi-check-circle-fill me-1"></i> Cobrar e Imprimir
                     </button>
                 </div>

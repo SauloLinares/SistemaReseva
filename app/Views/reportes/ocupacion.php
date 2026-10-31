@@ -1,26 +1,19 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-pie-chart text-success me-2"></i>Reporte de Ocupación</h3>
-                <p class="text-muted mb-0 small">Porcentajes de ocupación por período y habitaciones más demandadas</p>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <form method="GET" action="<?= url('reportes/ocupacion') ?>" class="d-inline-flex gap-2">
-                    <input type="month" name="mes" class="form-control form-control-sm" value="<?= htmlspecialchars($mes) ?>" onchange="this.form.submit()">
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Reporte de Ocupación',
+    'icono'     => 'bi-pie-chart',
+    'subtitulo' => 'Porcentajes de ocupación por período y habitaciones más demandadas',
+    'extra'     => '<form method="GET" action="' . e(url('reportes/ocupacion')) . '" class="d-inline-flex gap-2">'
+                 . '<input type="month" name="mes" class="form-control form-control-sm" aria-label="Mes del reporte" value="' . e($mes) . '" onchange="this.form.submit()">'
+                 . '</form>',
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
         <!-- Gráfico / Tabla de Ocupación Diaria del Mes -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-body-tertiary">
-                <h5 class="card-title mb-0 fw-bold">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
                     <i class="bi bi-bar-chart-line text-primary me-2"></i>Ocupación Diaria del Mes (<?= htmlspecialchars($mes) ?>)
                 </h5>
             </div>
@@ -61,9 +54,9 @@
         </div>
 
         <!-- Habitaciones más solicitadas -->
-        <div class="card shadow-sm">
-            <div class="card-header bg-body-tertiary">
-                <h5 class="card-title mb-0 fw-bold"><i class="bi bi-trophy text-warning me-2"></i>Habitaciones Más Solicitadas (Ranking)</h5>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-trophy text-warning me-2"></i>Habitaciones Más Solicitadas (Ranking)</h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">

@@ -1,37 +1,21 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-key text-warning me-2"></i>Matriz de Permisos</h3>
-                <p class="text-muted mb-0 small">Configura el acceso granular por módulo para cada perfil</p>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <a href="<?= url('seguridad/roles') ?>" class="btn btn-outline-secondary btn-sm shadow-sm">
-                    <i class="bi bi-arrow-left me-1"></i> Volver a Roles
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Matriz de Permisos',
+    'icono'     => 'bi-key',
+    'subtitulo' => 'Configura el acceso granular por módulo para cada perfil',
+    'acciones'  => [
+        ['texto' => 'Volver a Roles', 'url' => 'seguridad/roles', 'icono' => 'bi-arrow-left', 'variante' => 'outline-secondary'],
+    ],
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
-        <?php if (!empty($_SESSION['flash'])): ?>
-            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['tipo']) ?> alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>
-                <?= htmlspecialchars($_SESSION['flash']['mensaje']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <?php unset($_SESSION['flash']); ?>
-        <?php endif; ?>
-
         <!-- Selector de Rol -->
-        <div class="card shadow-sm mb-4">
+        <div class="card mb-4">
             <div class="card-body py-2">
                 <div class="row align-items-center">
                     <div class="col-12 col-md-3">
-                        <label class="form-label fw-bold mb-0">Seleccionar Rol a Configurar:</label>
+                        <label class="form-label mb-0">Seleccionar Rol a Configurar:</label>
                     </div>
                     <div class="col-12 col-md-5">
                         <select class="form-select" onchange="window.location.href='<?= url("seguridad/permisos?rol_id=") ?>' + this.value">
@@ -61,9 +45,9 @@
         <form method="POST" action="<?= url('seguridad/guardarPermisos') ?>">
             <input type="hidden" name="rol_id" value="<?= $rolSeleccionadoId ?>">
 
-            <div class="card shadow-sm">
-                <div class="card-header bg-body-tertiary d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0 fw-bold"><i class="bi bi-shield-lock me-2"></i>Módulos y Acciones Permitidas</h5>
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0"><i class="bi bi-shield-lock me-2"></i>Módulos y Acciones Permitidas</h5>
                     <button type="submit" class="btn btn-primary btn-sm">
                         <i class="bi bi-save me-1"></i> Guardar Permisos
                     </button>
@@ -113,8 +97,8 @@
                         </table>
                     </div>
                 </div>
-                <div class="card-footer bg-body-tertiary text-end">
-                    <button type="submit" class="btn btn-primary fw-semibold">
+                <div class="card-footer text-end">
+                    <button type="submit" class="btn btn-primary">
                         <i class="bi bi-save me-1"></i> Guardar Configuración de Permisos
                     </button>
                 </div>

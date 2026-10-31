@@ -38,6 +38,28 @@ if (!function_exists('url')) {
     }
 }
 
+if (!function_exists('e')) {
+    /**
+     * Escapa un texto para imprimirlo de forma segura en HTML
+     */
+    function e(mixed $valor): string
+    {
+        return htmlspecialchars((string)($valor ?? ''), ENT_QUOTES, 'UTF-8');
+    }
+}
+
+if (!function_exists('partial')) {
+    /**
+     * Incluye un fragmento reutilizable de app/Views/partials (ver docs/GUIA_UI.md)
+     */
+    function partial(string $nombre, array $datos = []): void
+    {
+        $__ruta = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Views' . DIRECTORY_SEPARATOR . 'partials' . DIRECTORY_SEPARATOR . $nombre . '.php';
+        extract($datos, EXTR_SKIP);
+        require $__ruta;
+    }
+}
+
 if (!function_exists('redirect')) {
     function redirect(string $route = ''): void
     {

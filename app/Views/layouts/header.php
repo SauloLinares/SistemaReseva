@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><?= htmlspecialchars($pageTitle ?? 'Sistema de Reserva') ?> | AdminLTE</title>
 
-    <!-- Script de inicialización de tema claro/oscuro (AdminLTE v4) -->
+    <!-- Script de inicialización de tema claro/oscuro & estado del sidebar (AdminLTE v4) -->
     <script>
       (() => {
         'use strict';
@@ -21,6 +21,15 @@
         const authored = root.getAttribute('data-bs-theme');
         let resolved = stored || authored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
         root.setAttribute('data-bs-theme', resolved);
+
+        // Prevenir parpadeo del sidebar si fue colapsado por el usuario
+        try {
+          if (localStorage.getItem('lte.sidebar.state') === 'collapsed' && window.innerWidth >= 992) {
+            document.addEventListener('DOMContentLoaded', () => {
+              document.body.classList.add('sidebar-collapse');
+            });
+          }
+        } catch {}
       })();
     </script>
 

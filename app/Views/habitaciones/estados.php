@@ -1,40 +1,15 @@
-<div class="app-content-header py-3">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <div class="d-flex align-items-center">
-                    <div class="rounded-3 bg-primary bg-opacity-10 text-primary p-2 me-3 d-flex align-items-center justify-content-center" style="width: 44px; height: 44px;">
-                        <i class="bi bi-layout-text-window fs-4"></i>
-                    </div>
-                    <div>
-                        <h3 class="mb-0 fw-bold">Estado de Habitaciones</h3>
-                        <p class="text-muted mb-0 small">Control operativo de housekeeping, recepción y disponibilidad</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <a href="<?= url('habitaciones/mantenimiento') ?>" class="btn btn-outline-secondary btn-sm shadow-sm me-1">
-                    <i class="bi bi-tools me-1"></i> Mantenimiento
-                </a>
-                <a href="<?= url('habitaciones') ?>" class="btn btn-outline-secondary btn-sm shadow-sm">
-                    <i class="bi bi-arrow-left me-1"></i> Lista
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Estado de Habitaciones',
+    'icono'     => 'bi-layout-text-window',
+    'subtitulo' => 'Control operativo de housekeeping, recepción y disponibilidad',
+    'acciones'  => [
+        ['texto' => 'Mantenimiento', 'url' => 'habitaciones/mantenimiento', 'icono' => 'bi-tools', 'variante' => 'outline-secondary'],
+        ['texto' => 'Lista', 'url' => 'habitaciones', 'icono' => 'bi-arrow-left', 'variante' => 'outline-secondary'],
+    ],
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
-
-        <?php if (!empty($_SESSION['flash'])): ?>
-            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['tipo']) ?> alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>
-                <?= htmlspecialchars($_SESSION['flash']['mensaje']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <?php unset($_SESSION['flash']); ?>
-        <?php endif; ?>
 
         <!-- Resumen de Estados (Píldoras Métricas) -->
         <div class="row g-3 mb-4">
@@ -107,7 +82,7 @@
 
                         <form method="POST" action="<?= url('habitaciones/cambiarEstado') ?>" class="mt-auto pt-2 border-top border-light-subtle">
                             <input type="hidden" name="id" value="<?= $h['id'] ?>">
-                            <label class="form-label small fw-semibold text-muted mb-1">Cambiar a:</label>
+                            <label class="form-label mb-1">Cambiar a:</label>
                             <div class="input-group input-group-sm">
                                 <select name="estado" class="form-select form-select-sm">
                                     <option value="disponible" <?= ($estado === 'disponible') ? 'selected' : '' ?>>Disponible</option>
@@ -115,7 +90,7 @@
                                     <option value="limpieza" <?= ($estado === 'limpieza') ? 'selected' : '' ?>>Limpieza</option>
                                     <option value="mantenimiento" <?= ($estado === 'mantenimiento') ? 'selected' : '' ?>>Mantenimiento</option>
                                 </select>
-                                <button class="btn btn-primary btn-sm px-3" type="submit" title="Actualizar">
+                                <button class="btn btn-primary btn-sm" type="submit" title="Actualizar">
                                     <i class="bi bi-check2"></i>
                                 </button>
                             </div>

@@ -60,6 +60,22 @@ class ConfiguracionController extends Controller
             }
         }
 
+        // Procesar subida del logotipo del hotel
+        if (!empty($_FILES['hotel_logo']['name']) && $_FILES['hotel_logo']['error'] === UPLOAD_ERR_OK) {
+            $ext = strtolower(pathinfo($_FILES['hotel_logo']['name'], PATHINFO_EXTENSION));
+            $permitidas = ['png', 'jpg', 'jpeg', 'webp', 'svg'];
+            if (in_array($ext, $permitidas)) {
+                $dirUploads = __DIR__ . '/../../../public/uploads/hotel/';
+                if (!is_dir($dirUploads)) {
+                    mkdir($dirUploads, 0777, true);
+                }
+                $nombreArchivo = 'logo_' . time() . '.' . $ext;
+                if (move_uploaded_file($_FILES['hotel_logo']['tmp_name'], $dirUploads . $nombreArchivo)) {
+                    $this->configModel->guardar('hotel_logo', $nombreArchivo, 'general', 'Logotipo oficial del establecimiento');
+                }
+            }
+        }
+
         $this->auditoriaModel->registrar('Configuración', 'Datos Hotel', 'Actualización de datos generales del hotel');
         $this->setFlash('success', 'Datos del hotel actualizados correctamente.');
         redirect('configuracion/hotel');

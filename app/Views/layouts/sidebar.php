@@ -12,17 +12,27 @@ $esActivo = function(string $prefijo) use ($rutaActual): bool {
     if ($prefijo !== '' && str_starts_with($rutaActual, $prefijo)) return true;
     return false;
 };
+
+$configApp = (new \App\Models\Configuracion())->obtenerTodos();
+$logoArchivo = $configApp['hotel_logo'] ?? '';
+$nombreEmpresa = $configApp['hotel_nombre'] ?? 'Hotel Manager';
 ?>
 <!--begin::Sidebar-->
 <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
     <!--begin::Sidebar Brand-->
     <div class="sidebar-brand">
         <a href="<?= url() ?>" class="brand-link">
-            <div class="brand-logo-icon">
-                <i class="bi bi-buildings-fill"></i>
-            </div>
+            <?php if (!empty($logoArchivo) && file_exists(__DIR__ . '/../../../public/uploads/hotel/' . $logoArchivo)): ?>
+                <div class="brand-logo-icon bg-white p-1 d-flex align-items-center justify-content-center shadow-xs">
+                    <img src="<?= base_url('uploads/hotel/' . $logoArchivo) ?>" alt="Logo" style="max-height: 28px; max-width: 28px; object-fit: contain;">
+                </div>
+            <?php else: ?>
+                <div class="brand-logo-icon">
+                    <i class="bi bi-buildings-fill"></i>
+                </div>
+            <?php endif; ?>
             <div class="brand-info">
-                <span class="brand-title">Hotel Manager</span>
+                <span class="brand-title text-truncate" style="max-width: 170px;" title="<?= htmlspecialchars($nombreEmpresa) ?>"><?= htmlspecialchars($nombreEmpresa) ?></span>
                 <span class="brand-subtitle">Gestión Hotelera</span>
             </div>
         </a>
@@ -244,6 +254,31 @@ $esActivo = function(string $prefijo) use ($rutaActual): bool {
                             <a href="<?= url('pagos') ?>" class="nav-link <?= $rutaActual === 'pagos' ? 'active' : '' ?>">
                                 <i class="nav-icon bi bi-clock-history"></i>
                                 <p>Historial de pagos</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <!-- 6.1. Gestión de Caja y Turnos -->
+                <li class="nav-item <?= $esActivo('caja') ? 'menu-open' : '' ?>">
+                    <a href="#" class="nav-link <?= $esActivo('caja') ? 'active' : '' ?>">
+                        <i class="nav-icon bi bi-cash-stack text-success"></i>
+                        <p>
+                            Caja y Turnos
+                            <i class="nav-arrow bi bi-chevron-right"></i>
+                        </p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="<?= url('caja') ?>" class="nav-link <?= $rutaActual === 'caja' ? 'active' : '' ?>">
+                                <i class="nav-icon bi bi-calculator"></i>
+                                <p>Caja actual / Turno</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?= url('caja/historial') ?>" class="nav-link <?= $rutaActual === 'caja/historial' ? 'active' : '' ?>">
+                                <i class="nav-icon bi bi-archive"></i>
+                                <p>Historial de cierres</p>
                             </a>
                         </li>
                     </ul>

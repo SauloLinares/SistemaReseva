@@ -1,35 +1,19 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-shield-check text-primary me-2"></i>Roles de Usuario</h3>
-                <p class="text-muted mb-0 small">Perfiles de acceso y responsabilidades en el sistema</p>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <button type="button" class="btn btn-primary btn-sm shadow-sm" data-bs-toggle="modal" data-bs-target="#modalRol">
-                    <i class="bi bi-plus-circle me-1"></i> Nuevo Rol
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Roles de Usuario',
+    'icono'     => 'bi-shield-check',
+    'subtitulo' => 'Perfiles de acceso y responsabilidades en el sistema',
+    'acciones'  => [
+        ['texto' => 'Nuevo Rol', 'modal' => '#modalRol', 'icono' => 'bi-plus-circle'],
+    ],
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
-        <?php if (!empty($_SESSION['flash'])): ?>
-            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['tipo']) ?> alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>
-                <?= htmlspecialchars($_SESSION['flash']['mensaje']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <?php unset($_SESSION['flash']); ?>
-        <?php endif; ?>
-
         <div class="row g-4">
             <?php foreach ($roles as $r): ?>
                 <div class="col-12 col-md-4">
-                    <div class="card h-100 shadow-sm border-top border-4 border-primary">
+                    <div class="card h-100 border-top border-4 border-primary">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <h5 class="fw-bold mb-0 text-primary"><?= htmlspecialchars($r['nombre']) ?></h5>
@@ -40,7 +24,7 @@
                                 <a href="<?= url('seguridad/permisos?rol_id=' . $r['id']) ?>" class="btn btn-sm btn-outline-primary">
                                     <i class="bi bi-key me-1"></i> Matriz de Permisos
                                 </a>
-                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick='editarRol(<?= json_encode($r, JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>
+                                <button type="button" class="btn btn-icon btn-outline-primary" onclick='editarRol(<?= json_encode($r, JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
                             </div>
@@ -64,11 +48,11 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Nombre del Rol <span class="text-danger">*</span></label>
+                    <label class="form-label">Nombre del Rol <span class="text-danger">*</span></label>
                     <input type="text" name="nombre" id="rolNombre" class="form-control" placeholder="Ej: Auditor, Cajero, Recepcionista" required>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Descripción</label>
+                    <label class="form-label">Descripción</label>
                     <textarea name="descripcion" id="rolDescripcion" class="form-control" rows="3" placeholder="Funciones y alcance del rol..."></textarea>
                 </div>
             </div>

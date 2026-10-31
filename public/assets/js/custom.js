@@ -11,23 +11,250 @@ document.addEventListener('DOMContentLoaded', function () {
     // ---------------------------------------------------------------
     // 1. INICIALIZACIÓN DE SELECTS AUTOCOMPLETABLES (TOMSELECT)
     // ---------------------------------------------------------------
-    const selectElements = document.querySelectorAll('.select-search, select#huesped_id, select[name="huesped_id"], select#habitacion_id');
-    selectElements.forEach(function (el) {
-        if (typeof TomSelect !== 'undefined' && !el.classList.contains('tomselected')) {
-            new TomSelect(el, {
-                create: false,
-                allowEmptyOption: true,
-                maxOptions: 500,
-                sortField: { field: "text", direction: "asc" },
-                placeholder: el.getAttribute('placeholder') || '-- Escribe para buscar por nombre o documento --',
-                plugins: ['clear_button'],
-                render: {
-                    no_results: function () {
-                        return '<div class="no-results p-2 text-muted small">No se encontraron coincidencias.</div>';
+
+    // Suite Ejecutiva para Selectores de Huéspedes con Ficha Visual
+    window.initTomSelectHuesped = function (el) {
+        if (!el || typeof TomSelect === 'undefined' || el.classList.contains('tomselected')) {
+            return el?.tomselect || null;
+        }
+
+        // Extraer opciones con metadatos ricos de los data attributes o data-data del <select>
+        const initialOptions = [];
+        Array.from(el.options).forEach(function (opt) {
+            if (!opt.value) return;
+            let meta = {};
+            if (opt.dataset.data) {
+                try {
+                    meta = JSON.parse(opt.dataset.data);
+                } catch (e) {
+                    meta = {};
+                }
+            }
+
+            const rawText = opt.text || '';
+            let nombres = meta.nombres || opt.dataset.nombres || '';
+            let doc = meta.doc || opt.dataset.doc || '';
+            let tipoDoc = meta.tipoDoc || opt.dataset.tipoDoc || 'DNI';
+            let telefono = meta.telefono || opt.dataset.telefono || '';
+            let correo = meta.correo || opt.dataset.correo || '';
+            let nacionalidad = meta.nacionalidad || opt.dataset.nacionalidad || '';
+            let totalReservas = parseInt(meta.totalReservas !== undefined ? meta.totalReservas : (opt.dataset.totalReservas || 0), 10);
+
+            // Si no se pasaron data attributes específicos, inferir desde el texto "Nombre (Doc: XXXXX - Tel: YYYY)"
+            if (!nombres && rawText) {
+                const matchDoc = rawText.match(/^(.*?)\s*\((?:Doc:\s*)?([^\–\-]+)(?:[\–\-]\s*Tel:\s*([^\)]+))?\)/i);
+                if (matchDoc) {
+                    nombres = matchDoc[1].trim();
+                    doc = matchDoc[2].trim();
+                    if (matchDoc[3]) telefono = matchDoc[3].trim();
+                } else {
+                    const matchSimple = rawText.match(/^(.*?)\s*\(([^\)]+)\)/);
+                    if (matchSimple) {
+                        nombres = matchSimple[1].trim();
+                        doc = matchSimple[2].trim();
+                    } else {
+                        nombres = rawText.trim();
                     }
                 }
+            }
+
+            initialOptions.push({
+                value: String(opt.value),
+                text: rawText,
+                nombres: nombres,
+                doc: doc,
+                tipoDoc: tipoDoc,
+                telefono: telefono,
+                correo: correo,
+                nacionalidad: nacionalidad,
+                totalReservas: totalReservas
             });
+        });
+
+        const tsInstance = new TomSelect(el, {
+            options: initialOptions,
+            valueField: 'value',
+            labelField: 'nombres',
+            searchField: ['nombres', 'doc', 'telefono', 'correo', 'text'],
+            create: false,
+            allowEmptyOption: true,
+            maxOptions: 50,
+            sortField: { field: "nombres", direction: "asc" },
+            placeholder: el.getAttribute('placeholder') || '-- Escribe el nombre, DNI o teléfono del huésped --',
+            plugins: ['clear_button'],
+            render: {
+                option: function (data, escape) {
+                    if (!data.value) {
+                        return '<div class="p-2 text-muted fst-italic small">' + escape(data.text || '-- Seleccionar huésped --') + '</div>';
+                    }
+
+                    const nombres = data.nombres || data.text || '';
+                    const doc = data.doc || '';
+                    const tipoDoc = data.tipoDoc || 'DOC';
+                    const tel = (data.telefono && data.telefono !== 'No registrado' && data.telefono !== 'S/N') ? data.telefono : '';
+                    const nac = (data.nacionalidad && data.nacionalidad !== 'No especificada') ? data.nacionalidad : '';
+                    const totalReservas = parseInt(data.totalReservas || 0, 10);
+
+                    // Iniciales para avatar
+                    const partes = nombres.trim().split(/\s+/).filter(Boolean);
+                    let iniciales = '';
+                    if (partes.length >= 2) {
+                        iniciales = (partes[0][0] + partes[1][0]).toUpperCase();
+                    } else if (partes.length === 1 && partes[0].length >= 2) {
+                        iniciales = partes[0].substring(0, 2).toUpperCase();
+                    } else if (partes.length === 1) {
+                        iniciales = partes[0][0].toUpperCase();
+                    } else {
+                        iniciales = '<i class="bi bi-person"></i>';
+                    }
+
+                    // Insignia según fidelidad
+                    let vipBadge = '';
+                    let avatarBg = 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)';
+
+                    if (totalReservas >= 2) {
+                        vipBadge = '<span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2 py-0.5 rounded-pill"><i class="bi bi-star-fill text-warning me-1"></i>VIP (' + totalReservas + ' estancias)</span>';
+                        avatarBg = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+                    } else if (totalReservas === 1) {
+                        vipBadge = '<span class="badge bg-info-subtle text-info-emphasis border border-info-subtle px-2 py-0.5 rounded-pill"><i class="bi bi-person-check me-1"></i>Cliente Registrado</span>';
+                        avatarBg = 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)';
+                    } else {
+                        vipBadge = '<span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-0.5 rounded-pill"><i class="bi bi-sparkles me-1"></i>Nuevo Huésped</span>';
+                        avatarBg = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                    }
+
+                    return '<div class="ts-guest-option py-2 px-3">' +
+                        '<div class="d-flex align-items-center justify-content-between gap-3">' +
+                            '<div class="d-flex align-items-center gap-3 min-w-0">' +
+                                '<div class="ts-guest-avatar rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-xs flex-shrink-0" style="background: ' + avatarBg + ';">' +
+                                    iniciales +
+                                '</div>' +
+                                '<div class="ts-guest-info min-w-0">' +
+                                    '<div class="d-flex align-items-center gap-2 flex-wrap mb-1">' +
+                                        '<span class="ts-guest-name fw-bold text-truncate">' + escape(nombres) + '</span>' +
+                                        vipBadge +
+                                    '</div>' +
+                                    '<div class="ts-guest-meta d-flex align-items-center gap-2 flex-wrap text-muted small">' +
+                                        (doc ? '<span class="badge bg-body-secondary text-body border px-2 py-0.5 font-monospace"><i class="bi bi-card-heading me-1 text-primary"></i>' + escape(tipoDoc) + ': ' + escape(doc) + '</span>' : '') +
+                                        (tel ? '<span class="d-inline-flex align-items-center"><i class="bi bi-telephone text-primary me-1"></i>' + escape(tel) + '</span>' : '') +
+                                        (nac ? '<span class="d-inline-flex align-items-center"><i class="bi bi-geo-alt text-info me-1"></i>' + escape(nac) + '</span>' : '') +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="ts-guest-action flex-shrink-0 text-muted small d-none d-md-block">' +
+                                '<span class="badge bg-body-secondary text-secondary border">Elegir <i class="bi bi-chevron-right ms-1"></i></span>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
+                },
+                item: function (data, escape) {
+                    if (!data.value) {
+                        return '<span class="text-muted">' + escape(data.text || '-- Seleccionar huésped --') + '</span>';
+                    }
+                    const nombres = data.nombres || data.text || '';
+                    const doc = data.doc || '';
+                    const tipoDoc = data.tipoDoc || 'DOC';
+                    const totalReservas = parseInt(data.totalReservas || 0, 10);
+                    const isVip = totalReservas >= 2;
+
+                    const partes = nombres.trim().split(/\s+/).filter(Boolean);
+                    let iniciales = '';
+                    if (partes.length >= 2) {
+                        iniciales = (partes[0][0] + partes[1][0]).toUpperCase();
+                    } else if (partes.length === 1 && partes[0].length >= 2) {
+                        iniciales = partes[0].substring(0, 2).toUpperCase();
+                    } else if (partes.length === 1) {
+                        iniciales = partes[0][0].toUpperCase();
+                    } else {
+                        iniciales = '<i class="bi bi-person"></i>';
+                    }
+
+                    const avatarBg = isVip
+                        ? 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'
+                        : 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)';
+
+                    return '<div class="ts-guest-selected-item d-flex align-items-center gap-2 py-0.5">' +
+                        '<div class="ts-guest-avatar-sm rounded-circle d-flex align-items-center justify-content-center text-white fw-bold shadow-xs flex-shrink-0" style="background: ' + avatarBg + '; width: 26px; height: 26px; font-size: 0.72rem;">' +
+                            iniciales +
+                        '</div>' +
+                        '<span class="fw-bold text-body text-truncate">' + escape(nombres) + '</span>' +
+                        (doc ? '<span class="badge bg-body-secondary text-body border px-2 py-0.5 font-monospace ms-1" style="font-size: 0.75rem;">' + escape(tipoDoc) + ': ' + escape(doc) + '</span>' : '') +
+                        (isVip ? '<span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle ms-1" style="font-size: 0.72rem;"><i class="bi bi-star-fill text-warning me-1"></i>VIP</span>' : '') +
+                    '</div>';
+                },
+                no_results: function (data, escape) {
+                    return '<div class="p-3 text-center">' +
+                        '<div class="mb-2 text-muted"><i class="bi bi-person-x fs-2"></i></div>' +
+                        '<div class="fw-semibold text-body mb-1">No se encontró al huésped "' + escape(data.input) + '"</div>' +
+                        '<p class="text-muted small mb-2">Puedes registrarlo en el sistema con un solo clic.</p>' +
+                        '<button type="button" class="btn btn-sm btn-primary shadow-xs" onclick="const modalBtn = document.querySelector(\'[data-bs-target=\\\'#modalNuevoHuesped\\\']\'); if(modalBtn) modalBtn.click();">' +
+                            '<i class="bi bi-person-plus me-1"></i> + Registrar Nuevo Huésped' +
+                        '</button>' +
+                    '</div>';
+                }
+            }
+        });
+
+        // Garantizar que la tarjeta contenedora no tape ni corte el menú desplegable
+        tsInstance.on('dropdown_open', function () {
+            const card = el.closest('.card');
+            if (card) {
+                card.style.zIndex = '1050';
+                card.style.position = 'relative';
+                card.style.overflow = 'visible';
+            }
+        });
+        tsInstance.on('dropdown_close', function () {
+            const card = el.closest('.card');
+            if (card) {
+                card.style.zIndex = '';
+            }
+        });
+
+        return tsInstance;
+    };
+
+    const selectElements = document.querySelectorAll('.select-search, select#huesped_id, select[name="huesped_id"], select#habitacion_id, .select-huesped');
+    selectElements.forEach(function (el) {
+        if (typeof TomSelect === 'undefined' || el.classList.contains('tomselected')) {
+            return;
         }
+
+        // Si es el selector de huéspedes, aplicar la suite ejecutiva
+        if (el.id === 'huesped_id' || el.name === 'huesped_id' || el.classList.contains('select-huesped')) {
+            window.initTomSelectHuesped(el);
+            return;
+        }
+
+        // Selects regulares
+        const regularTs = new TomSelect(el, {
+            create: false,
+            allowEmptyOption: true,
+            maxOptions: 500,
+            sortField: { field: "text", direction: "asc" },
+            placeholder: el.getAttribute('placeholder') || '-- Escribe para buscar --',
+            plugins: ['clear_button'],
+            render: {
+                no_results: function () {
+                    return '<div class="no-results p-2 text-muted small">No se encontraron coincidencias.</div>';
+                }
+            }
+        });
+
+        regularTs.on('dropdown_open', function () {
+            const card = el.closest('.card');
+            if (card) {
+                card.style.zIndex = '1050';
+                card.style.position = 'relative';
+                card.style.overflow = 'visible';
+            }
+        });
+        regularTs.on('dropdown_close', function () {
+            const card = el.closest('.card');
+            if (card) {
+                card.style.zIndex = '';
+            }
+        });
     });
 
     // ---------------------------------------------------------------
@@ -42,10 +269,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 perPage: 10,
                 perPageSelect: [10, 25, 50, 100],
                 labels: {
-                    placeholder: "Buscar en la tabla...",
-                    perPage: "por página",
+                    placeholder: "",
+                    perPage: "registros",
                     noRows: "No se encontraron registros para mostrar",
-                    info: "Mostrando {start} a {end} de {rows} registros",
+                    info: "Mostrando registros del {start} al {end} de un total de {rows}",
                     noResults: "Ningún resultado coincide con la búsqueda"
                 }
             });
@@ -186,6 +413,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 window.location.href = btnReserva.href;
             }
         }
+        // F3 -> Ir a Consulta Rápida de Huésped por DNI en mostrador
+        if (e.key === 'F3') {
+            e.preventDefault();
+            const btnBuscar = document.querySelector('a[href*="huespedes/buscar"]');
+            if (btnBuscar) {
+                window.location.href = btnBuscar.href;
+            } else {
+                window.location.href = 'index.php?url=huespedes/buscar';
+            }
+        }
         // F4 -> Ir a Check-in rápido
         if (e.key === 'F4') {
             e.preventDefault();
@@ -195,4 +432,51 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     });
+
+    // ---------------------------------------------------------------
+    // 7. PERSISTENCIA Y SINCRONIZACIÓN DEL ESTADO DEL SIDEBAR
+    // ---------------------------------------------------------------
+    const toggleSidebarBtn = document.querySelector('[data-lte-toggle="sidebar"]');
+    if (toggleSidebarBtn) {
+        toggleSidebarBtn.addEventListener('click', function () {
+            // Guardar preferencia tras el toggle de AdminLTE
+            setTimeout(function () {
+                try {
+                    if (document.body.classList.contains('sidebar-collapse')) {
+                        localStorage.setItem('lte.sidebar.state', 'collapsed');
+                    } else {
+                        localStorage.setItem('lte.sidebar.state', 'expanded');
+                    }
+                } catch (e) {}
+            }, 60);
+        });
+    }
+
+    // Restaurar preferencia guardada al recargar o cambiar de página
+    try {
+        const savedSidebarState = localStorage.getItem('lte.sidebar.state');
+        if (savedSidebarState === 'collapsed' && window.innerWidth >= 992) {
+            document.body.classList.add('sidebar-collapse');
+        }
+    } catch (e) {}
+
+    // ---------------------------------------------------------------
+    // 8. INTERRUPTOR TIC-TAC DE TEMA CLARO / OSCURO (SWITCH DIRECTO)
+    // ---------------------------------------------------------------
+    const btnThemeToggle = document.getElementById('btnThemeToggle');
+    if (btnThemeToggle) {
+        btnThemeToggle.addEventListener('click', function (e) {
+            e.preventDefault();
+            const root = document.documentElement;
+            const currentTheme = root.getAttribute('data-bs-theme') || 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+
+            root.setAttribute('data-bs-theme', newTheme);
+            try {
+                localStorage.setItem('lte-theme', newTheme);
+            } catch (err) {}
+
+            window.dispatchEvent(new CustomEvent('themeChanged', { detail: { theme: newTheme } }));
+        });
+    }
 });

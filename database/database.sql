@@ -127,6 +127,8 @@ CREATE TABLE IF NOT EXISTS reservas (
     ninos INT NOT NULL DEFAULT 0,
     estado ENUM('pendiente', 'confirmada', 'en_estadia', 'finalizada', 'cancelada') DEFAULT 'confirmada',
     total DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    descuento DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    motivo_descuento VARCHAR(255) NULL,
     anticipo DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     saldo DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
     metodo_pago VARCHAR(50) DEFAULT 'Efectivo',
@@ -211,10 +213,49 @@ CREATE TABLE IF NOT EXISTS pagos (
     fecha_pago DATETIME NOT NULL,
     notas TEXT NULL,
     usuario_id INT NULL,
+    turno_caja_id INT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (reserva_id) REFERENCES reservas(id) ON DELETE CASCADE,
     FOREIGN KEY (huesped_id) REFERENCES huespedes(id) ON DELETE RESTRICT,
-    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE SET NULL,
+    FOREIGN KEY (turno_caja_id) REFERENCES turnos_caja(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- 12.1. TURNOS Y SESIONES DE CAJA
+CREATE TABLE IF NOT EXISTS turnos_caja (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT NOT NULL,
+    fecha_apertura DATETIME NOT NULL,
+    monto_inicial DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    fecha_cierre DATETIME NULL,
+    monto_esperado_efectivo DECIMAL(10, 2) NULL DEFAULT 0.00,
+    monto_real_efectivo DECIMAL(10, 2) NULL DEFAULT 0.00,
+    diferencia DECIMAL(10, 2) NULL DEFAULT 0.00,
+    total_ventas_efectivo DECIMAL(10, 2) NULL DEFAULT 0.00,
+    total_ventas_digital DECIMAL(10, 2) NULL DEFAULT 0.00,
+    total_ingresos_extra DECIMAL(10, 2) NULL DEFAULT 0.00,
+    total_egresos DECIMAL(10, 2) NULL DEFAULT 0.00,
+    estado ENUM('abierta', 'cerrada') DEFAULT 'abierta',
+    observaciones_apertura TEXT NULL,
+    observaciones_cierre TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE RESTRICT
+) ENGINE=InnoDB;
+
+-- 12.2. MOVIMIENTOS Y GASTOS DE CAJA CHICA (INGRESOS Y EGRESOS)
+CREATE TABLE IF NOT EXISTS caja_movimientos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    turno_caja_id INT NOT NULL,
+    usuario_id INT NOT NULL,
+    tipo ENUM('ingreso', 'egreso') NOT NULL,
+    concepto VARCHAR(255) NOT NULL,
+    categoria VARCHAR(100) DEFAULT 'General',
+    monto DECIMAL(10, 2) NOT NULL DEFAULT 0.00,
+    metodo_pago ENUM('Efectivo', 'Tarjeta de Crédito', 'Tarjeta de Débito', 'Transferencia Bancaria', 'Yape/Plin') DEFAULT 'Efectivo',
+    comprobante VARCHAR(100) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (turno_caja_id) REFERENCES turnos_caja(id) ON DELETE CASCADE,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB;
 
 -- 13. CONFIGURACIÓN DEL SISTEMA
@@ -288,7 +329,9 @@ INSERT INTO tipos_habitacion (id, nombre, descripcion, capacidad, precio_base, c
 (1, 'Simple', 'Habitación acogedora con 1 cama individual, baño privado y escritorio.', 1, 80.00, 'Wi-Fi 5G, TV LED 40", Ducha española, Escritorio', 1),
 (2, 'Doble Estándar', 'Habitación espaciosa con 2 camas individuales, ideal para amigos o compañeros.', 2, 130.00, 'Wi-Fi 5G, TV LED 50", Climatizador, Frigobar', 1),
 (3, 'Matrimonial', 'Habitación romántica y cómoda con cama King Size y excelente vista.', 2, 160.00, 'Cama King, Smart TV 55", Balcón, Frigobar, Tina', 1),
-(4, 'Suite Presidencial', 'Lujo total con sala de estar, jacuzzi privado, vista panorámica y amenities vip.', 4, 300.00, 'Jacuzzi, Cama Super King, Sala de estar, Smart TV 65", Desayuno incluido', 1)
+(4, 'Suite Presidencial', 'Lujo total con sala de estar, jacuzzi privado, vista panorámica y amenities vip.', 4, 300.00, 'Jacuzzi, Cama Super King, Sala de estar, Smart TV 65", Desayuno incluido', 1),
+(5, 'Junior Suite', 'Espacio elegante con sala de estar integrada, balcón privado y amenidades ejecutivas.', 3, 220.00, 'Cama King, Sofá cama, Smart TV 55", Balcón privado, Minibar, Climatizador', 1),
+(6, 'Familiar Deluxe', 'Amplitud y confort para familias o grupos, con dos ambientes y múltiples camas.', 5, 260.00, '1 Cama Queen + 3 Camas individuales, 2 Baños, Smart TV 65", Frigobar, Wi-Fi 5G', 1)
 ON DUPLICATE KEY UPDATE nombre=VALUES(nombre), precio_base=VALUES(precio_base);
 
 -- Habitaciones
@@ -300,7 +343,27 @@ INSERT INTO habitaciones (id, numero, tipo_id, piso, precio_diario, estado, desc
 (5, '301', 3, '3', 160.00, 'ocupada', 'Matrimonial de lujo con cama King Size y balcón privado'),
 (6, '302', 3, '3', 160.00, 'limpieza', 'Matrimonial en tercer piso lista para limpieza rápida'),
 (7, '401', 4, '4', 300.00, 'mantenimiento', 'Suite Presidencial con jacuzzi (en revisión de grifería)'),
-(8, '402', 4, '4', 300.00, 'disponible', 'Suite con vista panorámica a la ciudad y sala privada')
+(8, '402', 4, '4', 300.00, 'disponible', 'Suite con vista panorámica a la ciudad y sala privada'),
+(9, '103', 1, '1', 80.00, 'disponible', 'Habitación individual cerca del jardín interior con escritorio de trabajo y baño privado.'),
+(10, '104', 1, '1', 85.00, 'disponible', 'Habitación individual ejecutiva con Wi-Fi 5G de alta velocidad y vista al patio.'),
+(11, '105', 2, '1', 130.00, 'disponible', 'Doble en planta baja con dos camas individuales y acceso facilitado.'),
+(12, '106', 6, '1', 260.00, 'disponible', 'Habitación familiar amplia en primer piso, ideal para familias con niños.'),
+(13, '203', 2, '2', 135.00, 'disponible', 'Habitación doble con balcón y dos camas individuales confortables.'),
+(14, '204', 2, '2', 130.00, 'limpieza', 'Doble con aire acondicionado y vista a la piscina interior.'),
+(15, '205', 1, '2', 80.00, 'disponible', 'Habitación individual acogedora con baño privado y Smart TV.'),
+(16, '206', 6, '2', 270.00, 'disponible', 'Suite familiar espaciosa de dos ambientes con dos baños privados.'),
+(17, '303', 3, '3', 165.00, 'disponible', 'Habitación matrimonial con cama King Size, frigobar y vista exterior.'),
+(18, '304', 3, '3', 160.00, 'disponible', 'Matrimonial con cama Queen, Smart TV 55 pulgadas y tina de hidromasaje.'),
+(19, '305', 2, '3', 140.00, 'disponible', 'Doble superior con vista panorámica a la ciudad y dos camas.'),
+(20, '306', 5, '3', 220.00, 'disponible', 'Junior Suite con sala de estar integrada y balcón exterior privado.'),
+(21, '403', 5, '4', 225.00, 'disponible', 'Junior Suite ejecutiva con escritorio de trabajo y minibar premium.'),
+(22, '404', 3, '4', 170.00, 'limpieza', 'Matrimonial deluxe con cama King, iluminación ambiental y tina.'),
+(23, '405', 4, '4', 320.00, 'disponible', 'Suite presidencial de lujo con terraza privada y jacuzzi de hidromasaje.'),
+(24, '406', 5, '4', 220.00, 'disponible', 'Junior Suite espaciosa con cama King y sofá cama de diseño.'),
+(25, '501', 5, '5', 230.00, 'disponible', 'Junior Suite en piso alto con vista panorámica hacia la bahía.'),
+(26, '502', 3, '5', 175.00, 'disponible', 'Matrimonial superior con finos acabados y balcón con vista al atardecer.'),
+(27, '503', 4, '5', 350.00, 'disponible', 'Suite presidencial VIP con vista 360°, jacuzzi privado y sala de estar lounge.'),
+(28, '504', 6, '5', 280.00, 'disponible', 'Penthouse familiar con terraza privada, dos dormitorios y dos baños completos.')
 ON DUPLICATE KEY UPDATE numero=VALUES(numero), estado=VALUES(estado);
 
 -- Huéspedes

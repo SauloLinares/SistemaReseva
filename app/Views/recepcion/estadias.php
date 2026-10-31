@@ -1,41 +1,21 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-journal-bookmark text-primary me-2"></i>Control de Estadías</h3>
-                <p class="text-muted mb-0 small">Supervisión en vivo de huéspedes alojados en el hotel</p>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <a href="<?= url('recepcion/checkin') ?>" class="btn btn-success btn-sm shadow-sm me-1">
-                    <i class="bi bi-box-arrow-in-right me-1"></i> Check-in
-                </a>
-                <a href="<?= url('recepcion/checkout') ?>" class="btn btn-outline-danger btn-sm shadow-sm me-1">
-                    <i class="bi bi-box-arrow-right me-1"></i> Check-out
-                </a>
-                <a href="<?= url('recepcion/asignacion') ?>" class="btn btn-outline-primary btn-sm shadow-sm">
-                    <i class="bi bi-arrow-left-right me-1"></i> Cambiar Habitación
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Control de Estadías',
+    'icono'     => 'bi-journal-bookmark',
+    'subtitulo' => 'Supervisión en vivo de huéspedes alojados en el hotel',
+    'acciones'  => [
+        ['texto' => 'Check-in', 'url' => 'recepcion/checkin', 'icono' => 'bi-box-arrow-in-right', 'variante' => 'success'],
+        ['texto' => 'Check-out', 'url' => 'recepcion/checkout', 'icono' => 'bi-box-arrow-right', 'variante' => 'outline-danger'],
+        ['texto' => 'Cambiar Habitación', 'url' => 'recepcion/asignacion', 'icono' => 'bi-arrow-left-right', 'variante' => 'outline-primary'],
+    ],
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
-        <?php if (!empty($_SESSION['flash'])): ?>
-            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['tipo']) ?> alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>
-                <?= htmlspecialchars($_SESSION['flash']['mensaje']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <?php unset($_SESSION['flash']); ?>
-        <?php endif; ?>
-
         <!-- Estadías Activas -->
-        <div class="card shadow-sm mb-4">
+        <div class="card mb-4">
             <div class="card-header bg-success-subtle text-success-emphasis d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0 fw-bold">
+                <h5 class="card-title mb-0">
                     <i class="bi bi-door-open-fill me-2"></i>Huéspedes Alojados Actualmente (<?= count($activas) ?>)
                 </h5>
                 <span class="badge text-bg-success px-3 py-2">En Casa / En Estadía</span>
@@ -81,7 +61,7 @@
                                         </td>
                                         <td><small class="text-muted"><?= htmlspecialchars($act['observaciones'] ?: '-') ?></small></td>
                                         <td class="text-end pe-3">
-                                            <div class="btn-group btn-group-sm">
+                                            <div class="table-actions">
                                                 <a href="<?= url('recepcion/checkout?id=' . $act['id']) ?>" class="btn btn-outline-danger" title="Realizar Check-out">
                                                     <i class="bi bi-box-arrow-right me-1"></i> Check-out
                                                 </a>
@@ -94,7 +74,7 @@
                                                         title="Cargar Consumo / Room Service">
                                                     <i class="bi bi-cart-plus me-1"></i> Consumo
                                                 </button>
-                                                <a href="<?= url('reservas/editar/' . $act['reserva_id']) ?>" class="btn btn-outline-secondary" title="Ver Cuenta">
+                                                <a href="<?= url('reservas/editar/' . $act['reserva_id']) ?>" class="btn btn-icon btn-outline-secondary" title="Ver Cuenta">
                                                     <i class="bi bi-card-text"></i>
                                                 </a>
                                             </div>
@@ -109,9 +89,9 @@
         </div>
 
         <!-- Historial de Estadías Pasadas -->
-        <div class="card shadow-sm">
-            <div class="card-header bg-body-tertiary">
-                <h6 class="card-title mb-0 fw-bold"><i class="bi bi-clock-history me-2"></i>Historial de Salidas / Estadías Finalizadas</h6>
+        <div class="card">
+            <div class="card-header">
+                <h6 class="card-title mb-0"><i class="bi bi-clock-history me-2"></i>Historial de Salidas / Estadías Finalizadas</h6>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -180,7 +160,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-semibold small">Seleccionar Producto o Servicio <span class="text-danger">*</span></label>
+                        <label class="form-label">Seleccionar Producto o Servicio <span class="text-danger">*</span></label>
                         <select name="servicio_id" id="modalSelectServicio" class="form-select" required>
                             <option value="">-- Elige un producto o servicio --</option>
                             <?php if (!empty($servicios)): ?>
@@ -195,11 +175,11 @@
 
                     <div class="row g-2 mb-3">
                         <div class="col-6">
-                            <label class="form-label fw-semibold small">Cantidad <span class="text-danger">*</span></label>
+                            <label class="form-label">Cantidad <span class="text-danger">*</span></label>
                             <input type="number" name="cantidad" id="modalConsumoCantidad" class="form-control" value="1" min="1" max="100" required>
                         </div>
                         <div class="col-6">
-                            <label class="form-label fw-semibold small">Precio Unitario (S/.) <span class="text-danger">*</span></label>
+                            <label class="form-label">Precio Unitario (S/.) <span class="text-danger">*</span></label>
                             <input type="number" step="0.01" name="precio_unitario" id="modalConsumoPrecio" class="form-control" placeholder="0.00" required>
                         </div>
                     </div>
@@ -217,7 +197,7 @@
                     </div>
 
                     <div class="mb-2">
-                        <label class="form-label fw-semibold small">Observaciones / Notas</label>
+                        <label class="form-label">Observaciones / Notas</label>
                         <input type="text" name="notas" class="form-control" placeholder="Ej: Solicitado por teléfono, entregado por mozo">
                     </div>
                 </div>
@@ -225,7 +205,7 @@
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         Cancelar
                     </button>
-                    <button type="submit" class="btn btn-primary fw-semibold" id="btnGuardarConsumoModal">
+                    <button type="submit" class="btn btn-primary" id="btnGuardarConsumoModal">
                         <i class="bi bi-cart-check me-1"></i> Cargar a la Cuenta
                     </button>
                 </div>

@@ -8,6 +8,8 @@ use App\Models\Habitacion;
 use App\Models\TipoHabitacion;
 use App\Models\Huesped;
 use App\Models\Pago;
+use App\Models\Servicio;
+use App\Models\Configuracion;
 
 class ReservaController extends Controller
 {
@@ -15,6 +17,8 @@ class ReservaController extends Controller
     private Habitacion $habModel;
     private TipoHabitacion $tipoModel;
     private Huesped $huespedModel;
+    private Servicio $servicioModel;
+    private Configuracion $configModel;
 
     public function __construct()
     {
@@ -23,6 +27,8 @@ class ReservaController extends Controller
         $this->habModel = new Habitacion();
         $this->tipoModel = new TipoHabitacion();
         $this->huespedModel = new Huesped();
+        $this->servicioModel = new Servicio();
+        $this->configModel = new Configuracion();
     }
 
     /**
@@ -52,12 +58,39 @@ class ReservaController extends Controller
         $huespedes = $this->huespedModel->listarTodos();
         $tipos = $this->tipoModel->listarActivos();
         $habitaciones = $this->habModel->listarTodos();
+        $servicios = $this->servicioModel->listarActivos();
 
         $this->render('reservas/crear', [
             'huespedes'    => $huespedes,
             'tipos'        => $tipos,
-            'habitaciones' => $habitaciones
+            'habitaciones' => $habitaciones,
+            'servicios'    => $servicios
         ], 'Registrar Nueva Reserva - Hotel Manager');
+    }
+
+    /**
+     * API JSON: Comprueba disponibilidad de habitaciones en tiempo real
+     */
+    public function apiDisponibilidad(): void
+    {
+        header('Content-Type: application/json');
+        $entrada = $_GET['entrada'] ?? date('Y-m-d');
+        $salida = $_GET['salida'] ?? date('Y-m-d', strtotime('+1 day'));
+
+        if (empty($entrada) || empty($salida) || $salida <= $entrada) {
+            echo json_encode(['success' => false, 'error' => 'Fechas no válidas']);
+            exit;
+        }
+
+        $disponibles = $this->reservaModel->obtenerHabitacionesDisponibles($entrada, $salida);
+        $disponiblesIds = array_map('intval', array_column($disponibles, 'id'));
+
+        echo json_encode([
+            'success'         => true,
+            'disponibles_ids' => $disponiblesIds,
+            'total'           => count($disponiblesIds)
+        ]);
+        exit;
     }
 
     /**
@@ -87,12 +120,34 @@ class ReservaController extends Controller
         $id = $this->reservaModel->crear($_POST, $habitacionesIds);
 
         if ($id) {
-            $this->setFlash('success', '¡Reserva registrada con éxito!');
-            redirect('reservas/editar/' . $id);
+            $this->setFlash('success', '¡Reserva confirmada exitosamente! Aquí tienes el voucher oficial de confirmación.');
+            redirect('reservas/voucher/' . $id . '?nuevo=1');
         } else {
             $this->setFlash('danger', 'Error al registrar: Una o más habitaciones seleccionadas ya están ocupadas o reservadas en ese rango de fechas.');
             redirect('reservas/crear');
         }
+    }
+
+    /**
+     * Voucher oficial de reserva (para imprimir y enviar por WhatsApp)
+     */
+    public function voucher(?string $id = null): void
+    {
+        $id = (int)$id;
+        $reserva = $this->reservaModel->obtenerPorId($id);
+
+        if (!$reserva) {
+            $this->setFlash('danger', 'La reserva no fue encontrada.');
+            redirect('reservas');
+        }
+
+        $hotel = $this->configModel->obtenerDatosHotel();
+
+        $this->render('reservas/voucher', [
+            'reserva' => $reserva,
+            'hotel'   => $hotel,
+            'esNuevo' => isset($_GET['nuevo'])
+        ], 'Voucher de Reserva ' . $reserva['codigo_reserva']);
     }
 
     /**
@@ -187,23 +242,6 @@ class ReservaController extends Controller
             'habitacionesDisponibles' => $habitacionesDisponibles,
             'totalHabitaciones'       => count($todasHabitaciones)
         ], 'Consultar Disponibilidad de Habitaciones');
-    }
-
-    /**
-     * Endpoint JSON para disponibilidad en formularios dinámicos
-     */
-    public function apiDisponibilidad(): void
-    {
-        $entrada = $_GET['entrada'] ?? '';
-        $salida = $_GET['salida'] ?? '';
-        $ignorarId = !empty($_GET['ignorar_id']) ? (int)$_GET['ignorar_id'] : null;
-
-        if (empty($entrada) || empty($salida)) {
-            $this->json(['error' => 'Fechas inválidas'], 400);
-        }
-
-        $disponibles = $this->reservaModel->obtenerHabitacionesDisponibles($entrada, $salida, null, $ignorarId);
-        $this->json($disponibles);
     }
 
     /**

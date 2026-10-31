@@ -54,8 +54,8 @@ class Habitacion extends Model
 
     public function crear(array $datos): bool
     {
-        $sql = "INSERT INTO habitaciones (numero, tipo_id, piso, precio_diario, estado, descripcion)
-                VALUES (:numero, :tipo_id, :piso, :precio_diario, :estado, :descripcion)";
+        $sql = "INSERT INTO habitaciones (numero, tipo_id, piso, precio_diario, estado, descripcion, foto)
+                VALUES (:numero, :tipo_id, :piso, :precio_diario, :estado, :descripcion, :foto)";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
             ':numero'        => trim($datos['numero'] ?? ''),
@@ -63,7 +63,8 @@ class Habitacion extends Model
             ':piso'          => trim($datos['piso'] ?? '1'),
             ':precio_diario' => (float)($datos['precio_diario'] ?? 0),
             ':estado'        => $datos['estado'] ?? 'disponible',
-            ':descripcion'   => trim($datos['descripcion'] ?? '')
+            ':descripcion'   => trim($datos['descripcion'] ?? ''),
+            ':foto'          => !empty($datos['foto']) ? trim($datos['foto']) : null
         ]);
     }
 
@@ -75,7 +76,8 @@ class Habitacion extends Model
                     piso = :piso, 
                     precio_diario = :precio_diario, 
                     estado = :estado, 
-                    descripcion = :descripcion 
+                    descripcion = :descripcion,
+                    foto = :foto
                 WHERE id = :id";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
@@ -85,7 +87,8 @@ class Habitacion extends Model
             ':piso'          => trim($datos['piso'] ?? '1'),
             ':precio_diario' => (float)($datos['precio_diario'] ?? 0),
             ':estado'        => $datos['estado'] ?? 'disponible',
-            ':descripcion'   => trim($datos['descripcion'] ?? '')
+            ':descripcion'   => trim($datos['descripcion'] ?? ''),
+            ':foto'          => !empty($datos['foto']) ? trim($datos['foto']) : null
         ]);
     }
 

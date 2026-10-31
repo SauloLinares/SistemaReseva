@@ -1,32 +1,25 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-cash-stack text-success me-2"></i>Reporte de Ingresos</h3>
-                <p class="text-muted mb-0 small">Control financiero, flujo de cobros y distribución por métodos de pago</p>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <button type="button" class="btn btn-outline-secondary btn-sm shadow-sm" onclick="window.print()">
-                    <i class="bi bi-printer me-1"></i> Imprimir Reporte
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Reporte de Ingresos',
+    'icono'     => 'bi-cash-stack',
+    'subtitulo' => 'Control financiero, flujo de cobros y distribución por métodos de pago',
+    'acciones'  => [
+        ['texto' => 'Imprimir Reporte', 'imprimir' => true, 'icono' => 'bi-printer', 'variante' => 'outline-secondary'],
+    ],
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
         <!-- Filtro de Fechas -->
-        <div class="card shadow-sm mb-4 d-print-none">
+        <div class="card mb-4 d-print-none">
             <div class="card-body py-2">
                 <form method="GET" action="<?= url('reportes/ingresos') ?>" class="row g-2 align-items-end">
                     <div class="col-12 col-md-4">
-                        <label class="form-label small fw-semibold">Fecha Inicial</label>
+                        <label class="form-label">Fecha Inicial</label>
                         <input type="date" name="desde" class="form-control form-control-sm" value="<?= htmlspecialchars($desde) ?>">
                     </div>
                     <div class="col-12 col-md-4">
-                        <label class="form-label small fw-semibold">Fecha Final</label>
+                        <label class="form-label">Fecha Final</label>
                         <input type="date" name="hasta" class="form-control form-control-sm" value="<?= htmlspecialchars($hasta) ?>">
                     </div>
                     <div class="col-12 col-md-4 d-flex gap-2">
@@ -47,9 +40,9 @@
                 </div>
             </div>
             <div class="col-12 col-md-8">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header bg-body-tertiary py-2">
-                        <h6 class="card-title mb-0 fw-bold small text-uppercase">Distribución por Método de Pago</h6>
+                <div class="card h-100">
+                    <div class="card-header py-2">
+                        <h6 class="card-title mb-0 small text-uppercase">Distribución por Método de Pago</h6>
                     </div>
                     <div class="card-body p-2">
                         <div class="row g-2">
@@ -68,9 +61,9 @@
         </div>
 
         <!-- Tabla de Cobros -->
-        <div class="card shadow-sm">
-            <div class="card-header bg-body-tertiary">
-                <h5 class="card-title mb-0 fw-bold"><i class="bi bi-receipt me-2"></i>Detalle de Cobros en el Período</h5>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-receipt me-2"></i>Detalle de Cobros en el Período</h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">

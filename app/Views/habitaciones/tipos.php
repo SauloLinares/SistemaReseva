@@ -1,35 +1,19 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-tags text-primary me-2"></i>Tipos de Habitación</h3>
-                <p class="text-muted mb-0 small">Categorías, capacidades y precios base estándar</p>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <button type="button" class="btn btn-primary btn-sm shadow-sm" data-bs-toggle="modal" data-bs-target="#modalTipo">
-                    <i class="bi bi-plus-circle me-1"></i> Nuevo Tipo
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Tipos de Habitación',
+    'icono'     => 'bi-tags',
+    'subtitulo' => 'Categorías, capacidades y precios base estándar',
+    'acciones'  => [
+        ['texto' => 'Nuevo Tipo', 'modal' => '#modalTipo', 'icono' => 'bi-plus-circle'],
+    ],
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
-        <?php if (!empty($_SESSION['flash'])): ?>
-            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['tipo']) ?> alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>
-                <?= htmlspecialchars($_SESSION['flash']['mensaje']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <?php unset($_SESSION['flash']); ?>
-        <?php endif; ?>
-
         <div class="row g-4">
             <?php foreach ($tipos as $t): ?>
                 <div class="col-12 col-md-6 col-xl-3">
-                    <div class="card h-100 shadow-sm border-top border-4 border-primary">
+                    <div class="card h-100 border-top border-4 border-primary">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-2">
                                 <h5 class="fw-bold mb-0 text-primary"><?= htmlspecialchars($t['nombre']) ?></h5>
@@ -47,13 +31,13 @@
                                     <small class="text-muted d-block">Precio Base:</small>
                                     <span class="fs-5 fw-bold text-success"><?= dinero($t['precio_base']) ?></span>
                                 </div>
-                                <div class="btn-group btn-group-sm">
-                                    <button type="button" class="btn btn-outline-primary" 
+                                <div class="table-actions">
+                                    <button type="button" class="btn btn-icon btn-outline-primary" 
                                             onclick='editarTipo(<?= json_encode($t, JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
                                     <?php if ($t['total_habitaciones'] == 0): ?>
-                                        <a href="<?= url('habitaciones/eliminarTipo/' . $t['id']) ?>" class="btn btn-outline-danger" onclick="return confirm('¿Eliminar tipo?');">
+                                        <a href="<?= url('habitaciones/eliminarTipo/' . $t['id']) ?>" class="btn btn-icon btn-outline-danger" title="Eliminar" data-confirm="¿Eliminar tipo?">
                                             <i class="bi bi-trash"></i>
                                         </a>
                                     <?php endif; ?>
@@ -79,25 +63,25 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Nombre de la Categoría <span class="text-danger">*</span></label>
+                    <label class="form-label">Nombre de la Categoría <span class="text-danger">*</span></label>
                     <input type="text" name="nombre" id="tipoNombre" class="form-control" placeholder="Ej: Simple, Matrimonial, Suite Deluxe" required>
                 </div>
                 <div class="row g-2 mb-3">
                     <div class="col-6">
-                        <label class="form-label fw-semibold">Capacidad (Personas) <span class="text-danger">*</span></label>
+                        <label class="form-label">Capacidad (Personas) <span class="text-danger">*</span></label>
                         <input type="number" name="capacidad" id="tipoCapacidad" class="form-control" value="1" min="1" max="10" required>
                     </div>
                     <div class="col-6">
-                        <label class="form-label fw-semibold">Precio Base por Noche <span class="text-danger">*</span></label>
+                        <label class="form-label">Precio Base por Noche <span class="text-danger">*</span></label>
                         <input type="number" step="0.01" name="precio_base" id="tipoPrecioBase" class="form-control" value="0.00" required>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Características y Amenidades</label>
+                    <label class="form-label">Características y Amenidades</label>
                     <input type="text" name="caracteristicas" id="tipoCaracteristicas" class="form-control" placeholder="Ej: Wi-Fi 5G, Smart TV 55', Tina, Vista al jardín">
                 </div>
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Descripción</label>
+                    <label class="form-label">Descripción</label>
                     <textarea name="descripcion" id="tipoDescripcion" class="form-control" rows="2" placeholder="Detalles de la categoría..."></textarea>
                 </div>
             </div>

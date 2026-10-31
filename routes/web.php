@@ -29,6 +29,8 @@ return [
     'reservas/actualizar'            => 'ReservaController@actualizar',
     'reservas/cancelar'              => 'ReservaController@cancelar',
     'reservas/disponibilidad'        => 'ReservaController@disponibilidad',
+    'reservas/apiDisponibilidad'     => 'ReservaController@apiDisponibilidad',
+    'reservas/voucher'               => 'ReservaController@voucher',
     'reservas/calendario'            => 'ReservaController@calendario',
     'reservas/eventosJson'           => 'ReservaController@eventosJson',
     'disponibilidad'                 => 'ReservaController@disponibilidad',
@@ -83,6 +85,15 @@ return [
     'pagos/comprobantes'             => 'PagoController@comprobantes',
     'pagos/comprobante'              => 'PagoController@comprobante',
     'pagos/devolucion'               => 'PagoController@devolucion',
+
+    // 6.1. Módulo Gestión de Caja y Turnos
+    'caja'                           => 'CajaController@index',
+    'caja/abrir'                     => 'CajaController@abrir',
+    'caja/guardarMovimiento'         => 'CajaController@guardarMovimiento',
+    'caja/eliminarMovimiento'        => 'CajaController@eliminarMovimiento',
+    'caja/cerrar'                    => 'CajaController@cerrar',
+    'caja/cierre'                    => 'CajaController@cierre',
+    'caja/historial'                 => 'CajaController@historial',
 
     // 7. Módulo Servicios Adicionales
     'servicios'                      => 'ServicioController@index',

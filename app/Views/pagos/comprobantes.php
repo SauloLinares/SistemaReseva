@@ -1,25 +1,18 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-receipt text-primary me-2"></i>Comprobantes de Pago</h3>
-                <p class="text-muted mb-0 small">Catálogo de boletas, facturas y recibos emitidos</p>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <a href="<?= url('pagos/crear') ?>" class="btn btn-success btn-sm shadow-sm">
-                    <i class="bi bi-plus-circle me-1"></i> Emitir Comprobante
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Comprobantes de Pago',
+    'icono'     => 'bi-receipt',
+    'subtitulo' => 'Catálogo de boletas, facturas y recibos emitidos',
+    'acciones'  => [
+        ['texto' => 'Emitir Comprobante', 'url' => 'pagos/crear', 'icono' => 'bi-plus-circle', 'variante' => 'success'],
+    ],
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
-        <div class="card shadow-sm">
-            <div class="card-header bg-body-tertiary">
-                <h5 class="card-title mb-0 fw-bold"><i class="bi bi-printer me-2"></i>Documentos Emitidos</h5>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-printer me-2"></i>Documentos Emitidos</h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">

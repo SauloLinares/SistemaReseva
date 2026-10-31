@@ -1,25 +1,18 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-x-octagon text-danger me-2"></i>Reporte de Cancelaciones</h3>
-                <p class="text-muted mb-0 small">Auditoría y análisis de reservas canceladas y motivos</p>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <button type="button" class="btn btn-outline-secondary btn-sm shadow-sm" onclick="window.print()">
-                    <i class="bi bi-printer me-1"></i> Imprimir Reporte
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Reporte de Cancelaciones',
+    'icono'     => 'bi-x-octagon',
+    'subtitulo' => 'Auditoría y análisis de reservas canceladas y motivos',
+    'acciones'  => [
+        ['texto' => 'Imprimir Reporte', 'imprimir' => true, 'icono' => 'bi-printer', 'variante' => 'outline-secondary'],
+    ],
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
-        <div class="card shadow-sm border-danger">
+        <div class="card border-danger">
             <div class="card-header bg-danger-subtle text-danger-emphasis d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0 fw-bold"><i class="bi bi-calendar-x me-2"></i>Reservas Canceladas (<?= count($cancelaciones) ?>)</h5>
+                <h5 class="card-title mb-0"><i class="bi bi-calendar-x me-2"></i>Reservas Canceladas (<?= count($cancelaciones) ?>)</h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">

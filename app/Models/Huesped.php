@@ -142,4 +142,20 @@ class Huesped extends Model
     {
         return (int)$this->db->query("SELECT COUNT(*) FROM huespedes")->fetchColumn();
     }
+
+    public function listarFrecuentes(int $limite = 6): array
+    {
+        $sql = "SELECT h.*, 
+                COUNT(r.id) as total_reservas,
+                MAX(r.fecha_entrada) as ultima_estadia
+                FROM huespedes h
+                LEFT JOIN reservas r ON r.huesped_id = h.id
+                GROUP BY h.id
+                ORDER BY total_reservas DESC, h.id DESC
+                LIMIT :limite";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':limite', $limite, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }

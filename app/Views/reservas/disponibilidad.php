@@ -1,38 +1,29 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-calendar-range text-info me-2"></i>Consultar Disponibilidad</h3>
-                <p class="text-muted mb-0 small">Verificación de disponibilidad de habitaciones sin superposición de fechas</p>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <a href="<?= url('reservas/crear') ?>" class="btn btn-primary btn-sm shadow-sm me-1">
-                    <i class="bi bi-plus-circle me-1"></i> Nueva Reserva
-                </a>
-                <a href="<?= url('reservas/calendario') ?>" class="btn btn-outline-secondary btn-sm shadow-sm">
-                    <i class="bi bi-calendar3 me-1"></i> Ver Calendario
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Consultar Disponibilidad',
+    'icono'     => 'bi-calendar-range',
+    'subtitulo' => 'Verificación de disponibilidad de habitaciones sin superposición de fechas',
+    'acciones'  => [
+        ['texto' => 'Nueva Reserva', 'url' => 'reservas/crear', 'icono' => 'bi-plus-circle'],
+        ['texto' => 'Ver Calendario', 'url' => 'reservas/calendario', 'icono' => 'bi-calendar3', 'variante' => 'outline-secondary'],
+    ],
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
         <!-- Formulario de Consulta -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-body-tertiary d-flex flex-wrap justify-content-between align-items-center gap-2">
-                <h5 class="card-title mb-0 fw-bold"><i class="bi bi-search me-2"></i>Parámetros de Búsqueda</h5>
+        <div class="card mb-4">
+            <div class="card-header d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <h5 class="card-title mb-0"><i class="bi bi-search me-2"></i>Parámetros de Búsqueda</h5>
                 <div class="d-flex flex-wrap gap-1 align-items-center">
                     <span class="text-muted small me-1"><i class="bi bi-lightning-charge text-warning"></i> Atajos:</span>
-                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill px-2 py-1 small" style="font-size: 0.78rem;" onclick="aplicarRangoFecha(1)">
+                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill small" onclick="aplicarRangoFecha(1)">
                         Hoy a Mañana (1 n.)
                     </button>
-                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill px-2 py-1 small" style="font-size: 0.78rem;" onclick="aplicarRangoFecha('finde')">
+                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill small" onclick="aplicarRangoFecha('finde')">
                         Fin de Semana
                     </button>
-                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill px-2 py-1 small" style="font-size: 0.78rem;" onclick="aplicarRangoFecha(7)">
+                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill small" onclick="aplicarRangoFecha(7)">
                         Semana (7 d.)
                     </button>
                 </div>
@@ -40,15 +31,15 @@
             <div class="card-body">
                 <form method="GET" action="<?= url('reservas/disponibilidad') ?>" class="row g-3 align-items-end" id="formDisponibilidad">
                     <div class="col-12 col-md-3">
-                        <label class="form-label fw-semibold">Fecha de Entrada</label>
+                        <label class="form-label">Fecha de Entrada</label>
                         <input type="date" name="entrada" class="form-control" value="<?= htmlspecialchars($entrada) ?>" required>
                     </div>
                     <div class="col-12 col-md-3">
-                        <label class="form-label fw-semibold">Fecha de Salida</label>
+                        <label class="form-label">Fecha de Salida</label>
                         <input type="date" name="salida" class="form-control" value="<?= htmlspecialchars($salida) ?>" required>
                     </div>
                     <div class="col-12 col-md-4">
-                        <label class="form-label fw-semibold">Tipo de Habitación (Opcional)</label>
+                        <label class="form-label">Tipo de Habitación (Opcional)</label>
                         <select name="tipo_id" class="form-select">
                             <option value="">-- Todos los tipos --</option>
                             <?php foreach ($tipos as $t): ?>
@@ -59,7 +50,7 @@
                         </select>
                     </div>
                     <div class="col-12 col-md-2">
-                        <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                        <button type="submit" class="btn btn-primary w-100">
                             <i class="bi bi-search me-1"></i> Consultar
                         </button>
                     </div>
@@ -77,9 +68,9 @@
         </div>
 
         <!-- Resultados de la Disponibilidad -->
-        <div class="card shadow-sm">
-            <div class="card-header bg-body-tertiary d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0 fw-bold">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">
                     <i class="bi bi-door-open-fill text-success me-2"></i>Habitaciones Disponibles: <?= count($habitacionesDisponibles) ?> de <?= $totalHabitaciones ?>
                 </h5>
                 <span class="badge badge-soft-success px-3 py-2 fw-semibold">
@@ -101,7 +92,7 @@
                         <?php foreach ($habitacionesDisponibles as $h): ?>
                             <div class="col-12 col-sm-6 col-md-4 col-lg-3">
                                 <div class="card h-100 border shadow-xs room-card-modern is-available">
-                                    <div class="card-header bg-body-tertiary d-flex justify-content-between align-items-center py-2 border-bottom">
+                                    <div class="card-header d-flex justify-content-between align-items-center py-2 border-bottom">
                                         <div class="d-flex align-items-center gap-2">
                                             <span class="pulse-dot pulse-dot-disponible"></span>
                                             <span class="fw-bold fs-5 text-body-emphasis">Hab. <?= htmlspecialchars($h['numero']) ?></span>
@@ -112,7 +103,7 @@
                                     </div>
                                     <div class="card-body d-flex flex-column justify-content-between">
                                         <div>
-                                            <h6 class="card-title fw-bold text-body-emphasis mb-1"><?= htmlspecialchars($h['tipo_nombre']) ?></h6>
+                                            <h6 class="card-title text-body-emphasis mb-1"><?= htmlspecialchars($h['tipo_nombre']) ?></h6>
                                             <div class="text-muted small mb-2">
                                                 <i class="bi bi-people me-1 text-primary"></i>Hasta <?= $h['capacidad'] ?> personas
                                             </div>
@@ -124,7 +115,7 @@
                                             <div class="fs-4 fw-bold text-success mb-2">
                                                 <?= dinero($h['precio_diario']) ?> <small class="fs-6 text-muted fw-normal">/ noche</small>
                                             </div>
-                                            <a href="<?= url('reservas/crear?hab_id=' . $h['id'] . '&entrada=' . $entrada . '&salida=' . $salida) ?>" class="btn btn-primary btn-sm w-100 fw-semibold shadow-xs">
+                                            <a href="<?= url('reservas/crear?hab_id=' . $h['id'] . '&entrada=' . $entrada . '&salida=' . $salida) ?>" class="btn btn-primary btn-sm w-100">
                                                 <i class="bi bi-calendar-plus me-1"></i> Reservar Habitación
                                             </a>
                                         </div>

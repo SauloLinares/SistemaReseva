@@ -47,8 +47,18 @@ class Pago extends Model
             $comprobanteTipo = $datos['comprobante_tipo'] ?? 'Boleta';
             $comprobanteNumero = !empty($datos['comprobante_numero']) ? trim($datos['comprobante_numero']) : $this->generarNumeroComprobante($comprobanteTipo);
 
-            $sql = "INSERT INTO pagos (reserva_id, huesped_id, tipo, metodo_pago, monto, comprobante_tipo, comprobante_numero, fecha_pago, notas, usuario_id)
-                    VALUES (:reserva_id, :huesped_id, :tipo, :metodo_pago, :monto, :comprobante_tipo, :comprobante_numero, :fecha_pago, :notas, :usuario_id)";
+            // Asociar automáticamente al turno de caja abierto actual si existe
+            $turnoCajaId = !empty($datos['turno_caja_id']) ? (int)$datos['turno_caja_id'] : null;
+            if (!$turnoCajaId) {
+                $cajaModel = new Caja();
+                $turnoActivo = $cajaModel->obtenerTurnoActivo();
+                if ($turnoActivo) {
+                    $turnoCajaId = (int)$turnoActivo['id'];
+                }
+            }
+
+            $sql = "INSERT INTO pagos (reserva_id, huesped_id, tipo, metodo_pago, monto, comprobante_tipo, comprobante_numero, fecha_pago, notas, usuario_id, turno_caja_id)
+                    VALUES (:reserva_id, :huesped_id, :tipo, :metodo_pago, :monto, :comprobante_tipo, :comprobante_numero, :fecha_pago, :notas, :usuario_id, :turno_caja_id)";
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
                 ':reserva_id'          => $reservaId,
@@ -60,7 +70,8 @@ class Pago extends Model
                 ':comprobante_numero'  => $comprobanteNumero,
                 ':fecha_pago'          => !empty($datos['fecha_pago']) ? $datos['fecha_pago'] : date('Y-m-d H:i:s'),
                 ':notas'               => trim($datos['notas'] ?? ''),
-                ':usuario_id'          => auth_user('id') ?: 1
+                ':usuario_id'          => auth_user('id') ?: 1,
+                ':turno_caja_id'       => $turnoCajaId
             ]);
 
             $pagoId = (int)$this->db->lastInsertId();

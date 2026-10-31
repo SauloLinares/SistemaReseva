@@ -1,36 +1,16 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-credit-card-2-front text-info me-2"></i>Pagos y Facturación</h3>
-                <p class="text-muted mb-0 small">Historial de pagos, ingresos de caja y comprobantes tributarios</p>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <a href="<?= url('pagos/crear') ?>" class="btn btn-success btn-sm shadow-sm me-1">
-                    <i class="bi bi-cash-coin me-1"></i> Registrar Pago
-                </a>
-                <a href="<?= url('pagos/pendientes') ?>" class="btn btn-outline-danger btn-sm shadow-sm me-1">
-                    <i class="bi bi-exclamation-circle me-1"></i> Saldos Pendientes
-                </a>
-                <a href="<?= url('pagos/anticipos') ?>" class="btn btn-outline-primary btn-sm shadow-sm">
-                    <i class="bi bi-wallet2 me-1"></i> Anticipos
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Pagos y Facturación',
+    'icono'     => 'bi-credit-card-2-front',
+    'subtitulo' => 'Historial de pagos, ingresos de caja y comprobantes tributarios',
+    'acciones'  => [
+        ['texto' => 'Registrar Pago', 'url' => 'pagos/crear', 'icono' => 'bi-cash-coin', 'variante' => 'success'],
+        ['texto' => 'Saldos Pendientes', 'url' => 'pagos/pendientes', 'icono' => 'bi-exclamation-circle', 'variante' => 'outline-danger'],
+        ['texto' => 'Anticipos', 'url' => 'pagos/anticipos', 'icono' => 'bi-wallet2', 'variante' => 'outline-primary'],
+    ],
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
-
-        <?php if (!empty($_SESSION['flash'])): ?>
-            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['tipo']) ?> alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>
-                <?= htmlspecialchars($_SESSION['flash']['mensaje']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <?php unset($_SESSION['flash']); ?>
-        <?php endif; ?>
 
         <!-- Tarjetas de Caja -->
         <div class="row g-3 mb-4">
@@ -59,9 +39,9 @@
         </div>
 
         <!-- Tabla de Pagos -->
-        <div class="card shadow-sm">
-            <div class="card-header bg-body-tertiary">
-                <h5 class="card-title mb-0 fw-bold"><i class="bi bi-list-check me-2"></i>Historial de Pagos y Movimientos</h5>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-list-check me-2"></i>Historial de Pagos y Movimientos</h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">

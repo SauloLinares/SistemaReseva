@@ -1,20 +1,15 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-credit-card text-primary me-2"></i>Métodos de Pago</h3>
-                <p class="text-muted mb-0 small">Formas de pago autorizadas en recepción, caja y facturación</p>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Métodos de Pago',
+    'icono'     => 'bi-credit-card',
+    'subtitulo' => 'Formas de pago autorizadas en recepción, caja y facturación',
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
-        <div class="card shadow-sm">
-            <div class="card-header bg-body-tertiary">
-                <h5 class="card-title mb-0 fw-bold"><i class="bi bi-wallet-fill me-2"></i>Canales de Pago Habilitados</h5>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-wallet-fill me-2"></i>Canales de Pago Habilitados</h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">

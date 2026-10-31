@@ -1,44 +1,24 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-cup-hot text-primary me-2"></i>Servicios Adicionales</h3>
-                <p class="text-muted mb-0 small">Catálogo de restaurante, lavandería, bar, spa y traslados</p>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <button type="button" class="btn btn-primary btn-sm shadow-sm me-1" data-bs-toggle="modal" data-bs-target="#modalServicio">
-                    <i class="bi bi-plus-circle me-1"></i> Nuevo Servicio
-                </button>
-                <a href="<?= url('servicios/consumo') ?>" class="btn btn-success btn-sm shadow-sm me-1">
-                    <i class="bi bi-cart-plus me-1"></i> Registrar Consumo
-                </a>
-                <a href="<?= url('servicios/porHuesped') ?>" class="btn btn-outline-secondary btn-sm shadow-sm">
-                    <i class="bi bi-person-lines-fill me-1"></i> Ver Consumos
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Servicios Adicionales',
+    'icono'     => 'bi-cup-hot',
+    'subtitulo' => 'Catálogo de restaurante, lavandería, bar, spa y traslados',
+    'acciones'  => [
+        ['texto' => 'Nuevo Servicio', 'modal' => '#modalServicio', 'icono' => 'bi-plus-circle'],
+        ['texto' => 'Registrar Consumo', 'url' => 'servicios/consumo', 'icono' => 'bi-cart-plus', 'variante' => 'success'],
+        ['texto' => 'Ver Consumos', 'url' => 'servicios/porHuesped', 'icono' => 'bi-person-lines-fill', 'variante' => 'outline-secondary'],
+    ],
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
-        <?php if (!empty($_SESSION['flash'])): ?>
-            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['tipo']) ?> alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>
-                <?= htmlspecialchars($_SESSION['flash']['mensaje']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <?php unset($_SESSION['flash']); ?>
-        <?php endif; ?>
-
-        <div class="card shadow-sm">
-            <div class="card-header bg-body-tertiary">
-                <h5 class="card-title mb-0 fw-bold"><i class="bi bi-list-stars me-2"></i>Catálogo de Servicios Disponibles</h5>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-list-stars me-2"></i>Catálogo de Servicios Disponibles</h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
+                    <table class="table table-hover align-middle mb-0 datatable-init">
                         <thead class="table-light">
                             <tr>
                                 <th>#</th>
@@ -68,11 +48,11 @@
                                         <?= $s['estado'] ? '<span class="badge text-bg-success">Disponible</span>' : '<span class="badge text-bg-secondary">Deshabilitado</span>' ?>
                                     </td>
                                     <td class="text-end pe-3">
-                                        <div class="btn-group btn-group-sm">
-                                            <button type="button" class="btn btn-outline-primary" onclick='editarServicio(<?= json_encode($s, JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>
+                                        <div class="table-actions">
+                                            <button type="button" class="btn btn-icon btn-outline-primary" title="Editar" onclick='editarServicio(<?= json_encode($s, JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>
                                                 <i class="bi bi-pencil-square"></i>
                                             </button>
-                                            <a href="<?= url('servicios/eliminar/' . $s['id']) ?>" class="btn btn-outline-danger" onclick="return confirm('¿Eliminar servicio?');">
+                                            <a href="<?= url('servicios/eliminar/' . $s['id']) ?>" class="btn btn-icon btn-outline-danger" title="Eliminar" data-confirm="¿Eliminar servicio?">
                                                 <i class="bi bi-trash"></i>
                                             </a>
                                         </div>
@@ -99,12 +79,12 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Nombre del Servicio <span class="text-danger">*</span></label>
+                    <label class="form-label">Nombre del Servicio <span class="text-danger">*</span></label>
                     <input type="text" name="nombre" id="servNombre" class="form-control" placeholder="Ej: Desayuno Buffet Americano, Masaje Relajante" required>
                 </div>
                 <div class="row g-2 mb-3">
                     <div class="col-6">
-                        <label class="form-label fw-semibold">Categoría <span class="text-danger">*</span></label>
+                        <label class="form-label">Categoría <span class="text-danger">*</span></label>
                         <select name="categoria" id="servCategoria" class="form-select" required>
                             <option value="Restaurante">Restaurante</option>
                             <option value="Bar">Bar</option>
@@ -116,19 +96,19 @@
                         </select>
                     </div>
                     <div class="col-6">
-                        <label class="form-label fw-semibold">Precio (S/.) <span class="text-danger">*</span></label>
+                        <label class="form-label">Precio (S/.) <span class="text-danger">*</span></label>
                         <input type="number" step="0.01" name="precio" id="servPrecio" class="form-control" value="0.00" required>
                     </div>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Estado</label>
+                    <label class="form-label">Estado</label>
                     <select name="estado" id="servEstado" class="form-select">
                         <option value="1">Activo / Disponible</option>
                         <option value="0">Deshabilitado</option>
                     </select>
                 </div>
                 <div class="mb-3">
-                    <label class="form-label fw-semibold">Descripción</label>
+                    <label class="form-label">Descripción</label>
                     <textarea name="descripcion" id="servDescripcion" class="form-control" rows="2" placeholder="Detalles de lo que incluye..."></textarea>
                 </div>
             </div>

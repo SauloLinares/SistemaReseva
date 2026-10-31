@@ -1,36 +1,16 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-door-open text-warning me-2"></i>Gestión de Habitaciones</h3>
-                <p class="text-muted mb-0 small">Catálogo de habitaciones, pisos, características y estado operativo</p>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <a href="<?= url('habitaciones/crear') ?>" class="btn btn-warning btn-sm shadow-sm me-1 text-dark fw-semibold">
-                    <i class="bi bi-plus-square me-1"></i> Registrar Habitación
-                </a>
-                <a href="<?= url('habitaciones/estados') ?>" class="btn btn-outline-primary btn-sm shadow-sm me-1">
-                    <i class="bi bi-layout-text-window me-1"></i> Panel de Estados
-                </a>
-                <a href="<?= url('habitaciones/tipos') ?>" class="btn btn-outline-secondary btn-sm shadow-sm">
-                    <i class="bi bi-tags me-1"></i> Tipos
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Gestión de Habitaciones',
+    'icono'     => 'bi-door-open',
+    'subtitulo' => 'Catálogo de habitaciones, pisos, características y estado operativo',
+    'acciones'  => [
+        ['texto' => 'Registrar Habitación', 'url' => 'habitaciones/crear', 'icono' => 'bi-plus-square'],
+        ['texto' => 'Panel de Estados', 'url' => 'habitaciones/estados', 'icono' => 'bi-layout-text-window', 'variante' => 'outline-primary'],
+        ['texto' => 'Tipos', 'url' => 'habitaciones/tipos', 'icono' => 'bi-tags', 'variante' => 'outline-secondary'],
+    ],
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
-
-        <?php if (!empty($_SESSION['flash'])): ?>
-            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['tipo']) ?> alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>
-                <?= htmlspecialchars($_SESSION['flash']['mensaje']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <?php unset($_SESSION['flash']); ?>
-        <?php endif; ?>
 
         <!-- Tarjetas de Conteo Rápido -->
         <div class="row g-3 mb-4">
@@ -61,7 +41,7 @@
         </div>
 
         <!-- Filtros -->
-        <div class="card shadow-sm mb-4">
+        <div class="card mb-4">
             <div class="card-body py-2">
                 <form method="GET" action="<?= url('habitaciones') ?>" class="row g-2 align-items-center">
                     <div class="col-12 col-md-4">
@@ -94,9 +74,9 @@
         </div>
 
         <!-- Tabla de Habitaciones -->
-        <div class="card shadow-sm">
-            <div class="card-header bg-body-tertiary">
-                <h5 class="card-title mb-0 fw-bold"><i class="bi bi-grid-3x3 me-2"></i>Habitaciones (<?= count($habitaciones) ?>)</h5>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-grid-3x3 me-2"></i>Habitaciones (<?= count($habitaciones) ?>)</h5>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
@@ -117,20 +97,44 @@
                             <?php foreach ($habitaciones as $h): ?>
                                 <tr>
                                     <td>
-                                        <span class="fs-5 fw-bold text-primary">Hab. <?= htmlspecialchars($h['numero']) ?></span>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <?php 
+                                                $fotoH = $h['foto'] ?? 'simple.jpg';
+                                                $rutaImg = file_exists(__DIR__ . '/../../../public/uploads/habitaciones/' . $fotoH)
+                                                    ? base_url('uploads/habitaciones/' . $fotoH)
+                                                    : base_url('uploads/habitaciones/simple.jpg');
+                                            ?>
+                                            <img src="<?= $rutaImg ?>" alt="Hab. <?= htmlspecialchars($h['numero']) ?>" class="rounded-2 shadow-xs border flex-shrink-0" style="width: 52px; height: 38px; object-fit: cover;">
+                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-6 fw-bold px-2 py-1">
+                                                Hab. <?= htmlspecialchars($h['numero']) ?>
+                                            </span>
+                                        </div>
                                     </td>
-                                    <td><span class="badge text-bg-light border">Piso <?= htmlspecialchars($h['piso']) ?></span></td>
-                                    <td><strong><?= htmlspecialchars($h['tipo_nombre']) ?></strong></td>
-                                    <td><i class="bi bi-person me-1"></i><?= $h['capacidad'] ?> pers.</td>
-                                    <td class="fw-bold text-success"><?= dinero($h['precio_diario']) ?></td>
+                                    <td><span class="badge bg-light text-secondary border fw-semibold">Piso <?= htmlspecialchars($h['piso']) ?></span></td>
+                                    <td>
+                                        <div class="fw-bold text-body-emphasis"><?= htmlspecialchars($h['tipo_nombre']) ?></div>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
+                                            <i class="bi bi-people-fill me-1"></i><?= $h['capacidad'] ?> pers.
+                                        </span>
+                                    </td>
+                                    <td class="fw-bold text-success fs-6"><?= dinero($h['precio_diario']) ?></td>
                                     <td><?= badge_estado_habitacion($h['estado']) ?></td>
-                                    <td><small class="text-muted"><?= htmlspecialchars($h['descripcion'] ?: ($h['caracteristicas'] ?? '-')) ?></small></td>
+                                    <td>
+                                        <div class="d-flex align-items-start gap-2">
+                                            <i class="bi bi-info-circle text-primary opacity-75 mt-0.5 flex-shrink-0"></i>
+                                            <span class="text-body-secondary small lh-sm">
+                                                <?= htmlspecialchars($h['descripcion'] ?: ($h['caracteristicas'] ?? 'Sin descripción adicional')) ?>
+                                            </span>
+                                        </div>
+                                    </td>
                                     <td class="text-end pe-3">
-                                        <div class="btn-group btn-group-sm">
-                                            <a href="<?= url('habitaciones/editar/' . $h['id']) ?>" class="btn btn-outline-primary" title="Modificar">
+                                        <div class="table-actions">
+                                            <a href="<?= url('habitaciones/editar/' . $h['id']) ?>" class="btn btn-icon btn-outline-primary" title="Modificar Habitación">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
-                                            <a href="<?= url('habitaciones/eliminar/' . $h['id']) ?>" class="btn btn-outline-danger" onclick="return confirm('¿Eliminar habitación <?= $h['numero'] ?>?');" title="Eliminar">
+                                            <a href="<?= url('habitaciones/eliminar/' . $h['id']) ?>" class="btn btn-icon btn-outline-danger" data-confirm="¿Eliminar habitación <?= htmlspecialchars($h['numero']) ?>?" title="Eliminar">
                                                 <i class="bi bi-trash"></i>
                                             </a>
                                         </div>

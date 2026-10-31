@@ -1,50 +1,22 @@
-<!--begin::App Content Header-->
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-6">
-                <h3 class="mb-0">Gestión de Clientes</h3>
-            </div>
-            <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-end">
-                    <li class="breadcrumb-item"><a href="<?= url() ?>">Inicio</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Clientes</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-</div>
-<!--end::App Content Header-->
+<?php partial('page_header', [
+    'titulo'   => 'Gestión de Clientes',
+    'icono'    => 'bi-people',
+    'migas'    => ['Clientes' => null],
+    'acciones' => [
+        ['texto' => 'Nuevo Cliente', 'url' => 'clientes/crear', 'icono' => 'bi-person-plus'],
+    ],
+]) ?>
 
 <!--begin::App Content-->
 <div class="app-content">
     <div class="container-fluid">
 
-        <!-- Mensajes Flash de Sesión -->
-        <?php if (!empty($_SESSION['flash'])): ?>
-            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['tipo']) ?> alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>
-                <?= htmlspecialchars($_SESSION['flash']['mensaje']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <?php unset($_SESSION['flash']); ?>
-        <?php endif; ?>
-
         <!-- Tarjeta Principal con Tabla de Clientes -->
-        <div class="card card-outline card-primary shadow-sm">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h3 class="card-title mb-0">
-                    <i class="bi bi-people-fill me-2"></i> Listado de Clientes Registrados
-                </h3>
-                <div class="card-tools ms-auto">
-                    <a href="<?= url('clientes/crear') ?>" class="btn btn-primary btn-sm">
-                        <i class="bi bi-person-plus-fill me-1"></i> Nuevo Cliente
-                    </a>
-                </div>
-            </div>
+        <div class="card">
+            <?php partial('card_header', ['titulo' => 'Listado de Clientes Registrados', 'icono' => 'bi-card-list']) ?>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover align-middle mb-0">
+                    <table class="table table-hover align-middle mb-0 datatable-init">
                         <thead class="table-light">
                             <tr>
                                 <th style="width: 60px;" class="text-center">#</th>
@@ -69,23 +41,17 @@
                                         <td><?= htmlspecialchars($c['telefono'] ?? '-') ?></td>
                                         <td class="text-center">
                                             <?php if ((int)$c['estado'] === 1): ?>
-                                                <span class="badge text-bg-success">Activo</span>
+                                                <span class="badge badge-status-switch active">Activo</span>
                                             <?php else: ?>
-                                                <span class="badge text-bg-secondary">Inactivo</span>
+                                                <span class="badge badge-status-switch inactive">Inactivo</span>
                                             <?php endif; ?>
                                         </td>
                                         <td class="text-center">
-                                            <div class="btn-group btn-group-sm">
-                                                <a href="<?= url('clientes/editar/' . $c['id']) ?>" class="btn btn-outline-warning" title="Editar">
-                                                    <i class="bi bi-pencil-square"></i>
-                                                </a>
-                                                <a href="<?= url('clientes/eliminar/' . $c['id']) ?>" 
-                                                   class="btn btn-outline-danger" 
-                                                   title="Eliminar"
-                                                   onclick="return confirm('¿Está seguro de eliminar al cliente <?= htmlspecialchars($c['nombres']) ?>?');">
-                                                    <i class="bi bi-trash"></i>
-                                                </a>
-                                            </div>
+                                            <?php partial('table_actions', [
+                                                'editar'    => 'clientes/editar/' . $c['id'],
+                                                'eliminar'  => 'clientes/eliminar/' . $c['id'],
+                                                'confirmar' => '¿Está seguro de eliminar al cliente ' . $c['nombres'] . '?',
+                                            ]) ?>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -101,7 +67,7 @@
                     </table>
                 </div>
             </div>
-            <div class="card-footer clearfix bg-body">
+            <div class="card-footer">
                 <span class="text-muted small">
                     Total de registros: <strong><?= count($clientes ?? []) ?></strong>
                 </span>

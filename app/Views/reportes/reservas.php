@@ -1,36 +1,29 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-file-earmark-bar-graph text-primary me-2"></i>Reporte de Reservas</h3>
-                <p class="text-muted mb-0 small">Análisis detallado de reservas por rango de fechas y estado</p>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <button type="button" class="btn btn-outline-secondary btn-sm shadow-sm" onclick="window.print()">
-                    <i class="bi bi-printer me-1"></i> Imprimir Reporte
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Reporte de Reservas',
+    'icono'     => 'bi-file-earmark-bar-graph',
+    'subtitulo' => 'Análisis detallado de reservas por rango de fechas y estado',
+    'acciones'  => [
+        ['texto' => 'Imprimir Reporte', 'imprimir' => true, 'icono' => 'bi-printer', 'variante' => 'outline-secondary'],
+    ],
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
         <!-- Filtros del Reporte -->
-        <div class="card shadow-sm mb-4 d-print-none">
+        <div class="card mb-4 d-print-none">
             <div class="card-body">
                 <form method="GET" action="<?= url('reportes/reservas') ?>" class="row g-2 align-items-end">
                     <div class="col-12 col-md-3">
-                        <label class="form-label small fw-semibold">Desde</label>
+                        <label class="form-label">Desde</label>
                         <input type="date" name="desde" class="form-control form-control-sm" value="<?= htmlspecialchars($desde ?? '') ?>">
                     </div>
                     <div class="col-12 col-md-3">
-                        <label class="form-label small fw-semibold">Hasta</label>
+                        <label class="form-label">Hasta</label>
                         <input type="date" name="hasta" class="form-control form-control-sm" value="<?= htmlspecialchars($hasta ?? '') ?>">
                     </div>
                     <div class="col-12 col-md-3">
-                        <label class="form-label small fw-semibold">Estado</label>
+                        <label class="form-label">Estado</label>
                         <select name="estado" class="form-select form-select-sm">
                             <option value="">-- Todos los estados --</option>
                             <option value="confirmada" <?= ($estado === 'confirmada') ? 'selected' : '' ?>>Confirmada</option>
@@ -49,9 +42,9 @@
         </div>
 
         <!-- Tabla del Reporte -->
-        <div class="card shadow-sm">
-            <div class="card-header bg-body-tertiary d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0 fw-bold">Resultados (<?= count($reservas) ?> reservas encontradas)</h5>
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0">Resultados (<?= count($reservas) ?> reservas encontradas)</h5>
                 <?php
                     $totalMonto = 0;
                     foreach ($reservas as $r) $totalMonto += (float)$r['total'];

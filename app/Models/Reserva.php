@@ -174,7 +174,7 @@ class Reserva extends Model
             $dias = (int)ceil((strtotime($datos['fecha_salida']) - strtotime($datos['fecha_entrada'])) / 86400);
             if ($dias < 1) $dias = 1;
 
-            $total = 0;
+            $totalHabitaciones = 0;
             $detallesHabitaciones = [];
 
             // Calcular monto por cada habitación y validar superposición
@@ -188,7 +188,7 @@ class Reserva extends Model
                 if (!$hab) continue;
                 $precioNoche = (float)$hab['precio_diario'];
                 $subtotal = $precioNoche * $dias;
-                $total += $subtotal;
+                $totalHabitaciones += $subtotal;
                 $detallesHabitaciones[] = [
                     'habitacion_id' => (int)$habId,
                     'precio_noche'  => $precioNoche,
@@ -197,29 +197,70 @@ class Reserva extends Model
                 ];
             }
 
+            // Calcular servicios adicionales si fueron seleccionados
+            $totalServicios = 0;
+            $detallesServicios = [];
+            $serviciosSeleccionados = $datos['servicios'] ?? [];
+            if (!empty($serviciosSeleccionados) && is_array($serviciosSeleccionados)) {
+                $srvModel = new Servicio();
+                foreach ($serviciosSeleccionados as $srvId => $cant) {
+                    $cant = (int)$cant;
+                    if ($cant <= 0) continue;
+                    $srv = $srvModel->obtenerPorId((int)$srvId);
+                    if (!$srv) continue;
+                    $precioUnit = (float)$srv['precio'];
+                    $subtServ = $precioUnit * $cant;
+                    $totalServicios += $subtServ;
+                    $detallesServicios[] = [
+                        'servicio_id'     => (int)$srvId,
+                        'cantidad'        => $cant,
+                        'precio_unitario' => $precioUnit,
+                        'subtotal'        => $subtServ
+                    ];
+                }
+            }
+
+            // Descuentos y totales
+            $descuento = max(0, (float)($datos['descuento'] ?? 0));
+            $motivoDescuento = trim($datos['motivo_descuento'] ?? '');
+
+            $totalBruto = $totalHabitaciones + $totalServicios;
+            $total = max(0, $totalBruto - $descuento);
+
             $anticipo = (float)($datos['anticipo'] ?? 0);
             $saldo = max(0, $total - $anticipo);
 
-            $sql = "INSERT INTO reservas (codigo_reserva, huesped_id, fecha_entrada, fecha_salida, noches, adultos, ninos, estado, total, anticipo, saldo, metodo_pago, origen, notas, usuario_id)
-                    VALUES (:codigo, :huesped_id, :fecha_entrada, :fecha_salida, :noches, :adultos, :ninos, :estado, :total, :anticipo, :saldo, :metodo_pago, :origen, :notas, :usuario_id)";
+            // Preparar notas incluyendo preferencias de llegada si existen
+            $notas = trim($datos['notas'] ?? '');
+            if (!empty($datos['early_checkin'])) {
+                $notas = "[Early Check-in Solicitado] " . $notas;
+            }
+            if (!empty($datos['late_checkout'])) {
+                $notas = "[Late Check-out Solicitado] " . $notas;
+            }
+
+            $sql = "INSERT INTO reservas (codigo_reserva, huesped_id, fecha_entrada, fecha_salida, noches, adultos, ninos, estado, total, descuento, motivo_descuento, anticipo, saldo, metodo_pago, origen, notas, usuario_id)
+                    VALUES (:codigo, :huesped_id, :fecha_entrada, :fecha_salida, :noches, :adultos, :ninos, :estado, :total, :descuento, :motivo_descuento, :anticipo, :saldo, :metodo_pago, :origen, :notas, :usuario_id)";
             
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
-                ':codigo'        => $codigo,
-                ':huesped_id'    => (int)$datos['huesped_id'],
-                ':fecha_entrada' => $datos['fecha_entrada'],
-                ':fecha_salida'  => $datos['fecha_salida'],
-                ':noches'        => $dias,
-                ':adultos'       => (int)($datos['adultos'] ?? 1),
-                ':ninos'         => (int)($datos['ninos'] ?? 0),
-                ':estado'        => $datos['estado'] ?? 'confirmada',
-                ':total'         => $total,
-                ':anticipo'      => $anticipo,
-                ':saldo'         => $saldo,
-                ':metodo_pago'   => $datos['metodo_pago'] ?? 'Efectivo',
-                ':origen'        => $datos['origen'] ?? 'manual',
-                ':notas'         => trim($datos['notas'] ?? ''),
-                ':usuario_id'    => auth_user('id') ?: 1
+                ':codigo'           => $codigo,
+                ':huesped_id'       => (int)$datos['huesped_id'],
+                ':fecha_entrada'    => $datos['fecha_entrada'],
+                ':fecha_salida'     => $datos['fecha_salida'],
+                ':noches'           => $dias,
+                ':adultos'          => (int)($datos['adultos'] ?? 1),
+                ':ninos'            => (int)($datos['ninos'] ?? 0),
+                ':estado'           => $datos['estado'] ?? 'confirmada',
+                ':total'            => $total,
+                ':descuento'        => $descuento,
+                ':motivo_descuento' => $motivoDescuento,
+                ':anticipo'         => $anticipo,
+                ':saldo'            => $saldo,
+                ':metodo_pago'      => $datos['metodo_pago'] ?? 'Efectivo',
+                ':origen'           => $datos['origen'] ?? 'manual',
+                ':notas'            => trim($notas),
+                ':usuario_id'       => auth_user('id') ?: 1
             ]);
 
             $reservaId = (int)$this->db->lastInsertId();
@@ -235,6 +276,22 @@ class Reserva extends Model
                     ':noches'        => $det['noches'],
                     ':subtotal'      => $det['subtotal']
                 ]);
+            }
+
+            // Insertar servicios contratados
+            if (!empty($detallesServicios)) {
+                $stmtSrv = $this->db->prepare("INSERT INTO reserva_servicios (reserva_id, servicio_id, cantidad, precio_unitario, subtotal, fecha_consumo, pagado, notas)
+                                               VALUES (:reserva_id, :servicio_id, :cantidad, :precio_unitario, :subtotal, :fecha_consumo, 0, 'Contratado en reserva')");
+                foreach ($detallesServicios as $sDet) {
+                    $stmtSrv->execute([
+                        ':reserva_id'       => $reservaId,
+                        ':servicio_id'      => $sDet['servicio_id'],
+                        ':cantidad'         => $sDet['cantidad'],
+                        ':precio_unitario'  => $sDet['precio_unitario'],
+                        ':subtotal'         => $sDet['subtotal'],
+                        ':fecha_consumo'    => date('Y-m-d H:i:s')
+                    ]);
+                }
             }
 
             // Si hubo anticipo > 0, registrar el pago automáticamente
@@ -409,13 +466,22 @@ class Reserva extends Model
         $eventos = [];
         foreach ($filas as $f) {
             $eventos[] = [
-                'id'          => $f['id'],
-                'title'       => $f['codigo_reserva'] . ' - ' . $f['huesped'] . ' (Hab: ' . ($f['habitaciones'] ?: 'N/A') . ')',
-                'start'       => $f['fecha_entrada'],
-                'end'         => date('Y-m-d', strtotime($f['fecha_salida'] . ' +1 day')), // FullCalendar exclusive end
-                'color'       => $colores[$f['estado']] ?? '#0dcaf0',
-                'estado'      => $f['estado'],
-                'url'         => url('reservas/editar/' . $f['id'])
+                'id'            => $f['id'],
+                'title'         => $f['codigo_reserva'] . ' - ' . $f['huesped'] . ' (Hab: ' . ($f['habitaciones'] ?: 'N/A') . ')',
+                'start'         => $f['fecha_entrada'],
+                'end'           => date('Y-m-d', strtotime($f['fecha_salida'] . ' +1 day')), // FullCalendar exclusive end
+                'color'         => $colores[$f['estado']] ?? '#0dcaf0',
+                'extendedProps' => [
+                    'codigo'        => $f['codigo_reserva'],
+                    'huesped'       => $f['huesped'],
+                    'habitaciones'  => $f['habitaciones'] ?: 'Sin asignar',
+                    'estado'        => $f['estado'],
+                    'total'         => (float)$f['total'],
+                    'fecha_entrada' => $f['fecha_entrada'],
+                    'fecha_salida'  => $f['fecha_salida'],
+                    'edit_url'      => url('reservas/editar/' . $f['id']),
+                    'checkin_url'   => url('recepcion/checkin?reserva_id=' . $f['id'])
+                ]
             ];
         }
         return $eventos;

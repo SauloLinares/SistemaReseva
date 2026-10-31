@@ -1,37 +1,19 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-person-lines-fill text-primary me-2"></i>Consumos de Servicios por Huésped</h3>
-                <p class="text-muted mb-0 small">Historial de consumos cargados a habitaciones y huéspedes</p>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <a href="<?= url('servicios/consumo') ?>" class="btn btn-success btn-sm shadow-sm me-1">
-                    <i class="bi bi-cart-plus me-1"></i> Registrar Nuevo Consumo
-                </a>
-                <a href="<?= url('servicios') ?>" class="btn btn-outline-secondary btn-sm shadow-sm">
-                    <i class="bi bi-arrow-left me-1"></i> Catálogo de Servicios
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Consumos de Servicios por Huésped',
+    'icono'     => 'bi-person-lines-fill',
+    'subtitulo' => 'Historial de consumos cargados a habitaciones y huéspedes',
+    'acciones'  => [
+        ['texto' => 'Registrar Nuevo Consumo', 'url' => 'servicios/consumo', 'icono' => 'bi-cart-plus', 'variante' => 'success'],
+        ['texto' => 'Catálogo de Servicios', 'url' => 'servicios', 'icono' => 'bi-arrow-left', 'variante' => 'outline-secondary'],
+    ],
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
-        <?php if (!empty($_SESSION['flash'])): ?>
-            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['tipo']) ?> alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>
-                <?= htmlspecialchars($_SESSION['flash']['mensaje']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <?php unset($_SESSION['flash']); ?>
-        <?php endif; ?>
-
-        <div class="card shadow-sm">
-            <div class="card-header bg-body-tertiary d-flex justify-content-between align-items-center">
-                <h5 class="card-title mb-0 fw-bold"><i class="bi bi-list-check me-2"></i>Registro de Consumos (<?= count($consumos) ?>)</h5>
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="card-title mb-0"><i class="bi bi-list-check me-2"></i>Registro de Consumos (<?= count($consumos) ?>)</h5>
                 <?php if ($reservaId): ?>
                     <a href="<?= url('servicios/porHuesped') ?>" class="btn btn-sm btn-outline-secondary">Ver Todos los Huéspedes</a>
                 <?php endif; ?>

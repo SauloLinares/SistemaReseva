@@ -1,46 +1,28 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold">
-                    <i class="bi bi-pencil-square text-primary me-2"></i>Reserva <?= htmlspecialchars($reserva['codigo_reserva']) ?>
-                </h3>
-                <p class="text-muted mb-0 small">Modificación de fechas, gestión de pagos y detalles de la reserva</p>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <a href="<?= url('reservas') ?>" class="btn btn-outline-secondary btn-sm shadow-sm me-1">
-                    <i class="bi bi-arrow-left me-1"></i> Volver a Reservas
-                </a>
-                <?php if ($reserva['estado'] === 'confirmada'): ?>
-                    <a href="<?= url('recepcion/checkin?reserva_id=' . $reserva['id']) ?>" class="btn btn-success btn-sm shadow-sm">
-                        <i class="bi bi-box-arrow-in-right me-1"></i> Realizar Check-in
-                    </a>
-                <?php endif; ?>
-            </div>
-        </div>
-    </div>
-</div>
+<?php
+$accionesReserva = [
+    ['texto' => 'Volver a Reservas', 'url' => 'reservas', 'icono' => 'bi-arrow-left', 'variante' => 'outline-secondary'],
+];
+if ($reserva['estado'] === 'confirmada') {
+    $accionesReserva[] = ['texto' => 'Realizar Check-in', 'url' => 'recepcion/checkin?reserva_id=' . $reserva['id'], 'icono' => 'bi-box-arrow-in-right', 'variante' => 'success'];
+}
+partial('page_header', [
+    'titulo'    => 'Reserva ' . $reserva['codigo_reserva'],
+    'icono'     => 'bi-pencil-square',
+    'subtitulo' => 'Modificación de fechas, gestión de pagos y detalles de la reserva',
+    'acciones'  => $accionesReserva,
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
-        <?php if (!empty($_SESSION['flash'])): ?>
-            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['tipo']) ?> alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>
-                <?= htmlspecialchars($_SESSION['flash']['mensaje']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <?php unset($_SESSION['flash']); ?>
-        <?php endif; ?>
-
         <div class="row g-4">
             <!-- Formulario de Modificación -->
             <div class="col-12 col-lg-8">
-                <form action="<?= url('reservas/actualizar') ?>" method="POST" class="card shadow-sm mb-4">
+                <form action="<?= url('reservas/actualizar') ?>" method="POST" class="card mb-4">
                     <input type="hidden" name="id" value="<?= $reserva['id'] ?>">
 
-                    <div class="card-header bg-body-tertiary d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0 fw-bold">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
                             <i class="bi bi-card-checklist me-2"></i>Información Principal de la Reserva
                         </h5>
                         <?= badge_estado_reserva($reserva['estado']) ?>
@@ -48,17 +30,34 @@
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-12 col-md-6">
-                                <label class="form-label fw-semibold">Huésped Titular</label>
-                                <select name="huesped_id" class="form-select select-search" required>
+                                <label class="form-label">Huésped Titular <span class="text-danger">*</span></label>
+                                <select name="huesped_id" class="form-select select-search select-huesped" required>
                                     <?php foreach ($huespedes as $h): ?>
-                                        <option value="<?= $h['id'] ?>" <?= ($h['id'] == $reserva['huesped_id']) ? 'selected' : '' ?>>
-                                            <?= htmlspecialchars($h['nombres'] . ' ' . $h['apellidos']) ?> (<?= htmlspecialchars($h['numero_documento']) ?>)
+                                        <option value="<?= $h['id'] ?>" <?= ($h['id'] == $reserva['huesped_id']) ? 'selected' : '' ?>
+                                            data-nombres="<?= htmlspecialchars($h['nombres'] . ' ' . $h['apellidos']) ?>"
+                                            data-doc="<?= htmlspecialchars($h['numero_documento']) ?>"
+                                            data-tipo-doc="<?= htmlspecialchars($h['tipo_documento'] ?? 'DNI') ?>"
+                                            data-telefono="<?= htmlspecialchars($h['telefono'] ?? '') ?>"
+                                            data-correo="<?= htmlspecialchars($h['correo'] ?? '') ?>"
+                                            data-nacionalidad="<?= htmlspecialchars($h['nacionalidad'] ?? 'Perú') ?>"
+                                            data-total-reservas="<?= (int)($h['total_reservas'] ?? 0) ?>"
+                                            data-data='<?= json_encode([
+                                                "value" => (string)$h['id'],
+                                                "nombres" => $h['nombres'] . ' ' . $h['apellidos'],
+                                                "doc" => $h['numero_documento'],
+                                                "tipoDoc" => $h['tipo_documento'] ?? 'DNI',
+                                                "telefono" => $h['telefono'] ?? '',
+                                                "correo" => $h['correo'] ?? '',
+                                                "nacionalidad" => $h['nacionalidad'] ?? 'Perú',
+                                                "totalReservas" => (int)($h['total_reservas'] ?? 0)
+                                            ], JSON_HEX_APOS | JSON_HEX_QUOT) ?>'>
+                                            <?= htmlspecialchars($h['nombres'] . ' ' . $h['apellidos']) ?> (Doc: <?= htmlspecialchars($h['numero_documento']) ?>)
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>
                             <div class="col-12 col-md-6">
-                                <label class="form-label fw-semibold">Estado de Reserva</label>
+                                <label class="form-label">Estado de Reserva</label>
                                 <select name="estado" class="form-select">
                                     <option value="confirmada" <?= ($reserva['estado'] === 'confirmada') ? 'selected' : '' ?>>Confirmada</option>
                                     <option value="pendiente" <?= ($reserva['estado'] === 'pendiente') ? 'selected' : '' ?>>Pendiente de Pago</option>
@@ -69,28 +68,28 @@
                             </div>
 
                             <div class="col-12 col-md-4">
-                                <label class="form-label fw-semibold">Fecha de Entrada</label>
+                                <label class="form-label">Fecha de Entrada</label>
                                 <input type="date" name="fecha_entrada" class="form-control" value="<?= htmlspecialchars($reserva['fecha_entrada']) ?>" required>
                             </div>
                             <div class="col-12 col-md-4">
-                                <label class="form-label fw-semibold">Fecha de Salida</label>
+                                <label class="form-label">Fecha de Salida</label>
                                 <input type="date" name="fecha_salida" class="form-control" value="<?= htmlspecialchars($reserva['fecha_salida']) ?>" required>
                             </div>
                             <div class="col-12 col-md-4">
-                                <label class="form-label fw-semibold">Noches</label>
+                                <label class="form-label">Noches</label>
                                 <input type="text" class="form-control bg-light" value="<?= $reserva['noches'] ?> noches" readonly>
                             </div>
 
                             <div class="col-6 col-md-3">
-                                <label class="form-label fw-semibold">Adultos</label>
+                                <label class="form-label">Adultos</label>
                                 <input type="number" name="adultos" class="form-control" value="<?= $reserva['adultos'] ?>" min="1">
                             </div>
                             <div class="col-6 col-md-3">
-                                <label class="form-label fw-semibold">Niños</label>
+                                <label class="form-label">Niños</label>
                                 <input type="number" name="ninos" class="form-control" value="<?= $reserva['ninos'] ?>" min="0">
                             </div>
                             <div class="col-12 col-md-6">
-                                <label class="form-label fw-semibold">Método de Pago Preferido</label>
+                                <label class="form-label">Método de Pago Preferido</label>
                                 <select name="metodo_pago" class="form-select">
                                     <option value="Efectivo" <?= ($reserva['metodo_pago'] === 'Efectivo') ? 'selected' : '' ?>>Efectivo</option>
                                     <option value="Tarjeta de Crédito" <?= ($reserva['metodo_pago'] === 'Tarjeta de Crédito') ? 'selected' : '' ?>>Tarjeta de Crédito</option>
@@ -101,7 +100,7 @@
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label fw-semibold">Notas y Observaciones</label>
+                                <label class="form-label">Notas y Observaciones</label>
                                 <textarea name="notas" class="form-control" rows="2"><?= htmlspecialchars($reserva['notas'] ?? '') ?></textarea>
                             </div>
                         </div>
@@ -135,7 +134,7 @@
                             </table>
                         </div>
                     </div>
-                    <div class="card-footer bg-body-tertiary text-end">
+                    <div class="card-footer text-end">
                         <button type="submit" class="btn btn-primary">
                             <i class="bi bi-save me-1"></i> Guardar Cambios
                         </button>
@@ -143,9 +142,9 @@
                 </form>
 
                 <!-- Consumo de Servicios -->
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-body-tertiary d-flex justify-content-between align-items-center">
-                        <h5 class="card-title mb-0 fw-bold">
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
                             <i class="bi bi-cart-check text-info me-2"></i>Consumos de Servicios Adicionales
                         </h5>
                         <a href="<?= url('servicios/consumo?reserva_id=' . $reserva['id']) ?>" class="btn btn-sm btn-outline-primary">
@@ -193,9 +192,9 @@
 
             <!-- Columna Derecha: Estado Financiero y Pagos -->
             <div class="col-12 col-lg-4">
-                <div class="card shadow-sm mb-4">
+                <div class="card mb-4">
                     <div class="card-header bg-primary text-white">
-                        <h5 class="card-title mb-0 fw-bold">
+                        <h5 class="card-title mb-0">
                             <i class="bi bi-cash-coin me-2"></i>Balance Financiero
                         </h5>
                     </div>
@@ -229,9 +228,9 @@
                 </div>
 
                 <!-- Historial de Pagos de esta Reserva -->
-                <div class="card shadow-sm">
-                    <div class="card-header bg-body-tertiary d-flex justify-content-between align-items-center">
-                        <h6 class="card-title mb-0 fw-bold">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="card-title mb-0">
                             <i class="bi bi-receipt me-1"></i>Comprobantes y Pagos
                         </h6>
                     </div>

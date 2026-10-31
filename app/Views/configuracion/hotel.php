@@ -1,77 +1,113 @@
-<div class="app-content-header">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-building text-primary me-2"></i>Datos del Hotel</h3>
-                <p class="text-muted mb-0 small">Información institucional y comercial para comprobantes y reportes</p>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'    => 'Datos del Hotel',
+    'icono'     => 'bi-building',
+    'subtitulo' => 'Información institucional y comercial para comprobantes y reportes',
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
 
-        <?php if (!empty($_SESSION['flash'])): ?>
-            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash']['tipo']) ?> alert-dismissible fade show shadow-sm" role="alert">
-                <i class="bi bi-info-circle-fill me-2"></i>
-                <?= htmlspecialchars($_SESSION['flash']['mensaje']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            <?php unset($_SESSION['flash']); ?>
-        <?php endif; ?>
-
         <div class="row justify-content-center">
-            <div class="col-12 col-lg-8">
-                <form action="<?= url('configuracion/guardarHotel') ?>" method="POST" class="card shadow-sm border-top border-4 border-primary">
-                    <div class="card-header bg-body-tertiary">
-                        <h5 class="card-title mb-0 fw-bold"><i class="bi bi-sliders me-2"></i>Perfil del Establecimiento</h5>
+            <div class="col-12 col-lg-9">
+                <form action="<?= url('configuracion/guardarHotel') ?>" method="POST" enctype="multipart/form-data" class="card border-top border-4 border-primary">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0"><i class="bi bi-sliders me-2"></i>Perfil y Marca del Establecimiento</h5>
+                        <span class="badge badge-soft-info"><i class="bi bi-shield-check me-1"></i>Configuración Global</span>
                     </div>
                     <div class="card-body">
+                        
+                        <!-- Sección: Logotipo Oficial del Hotel -->
+                        <div class="p-3 bg-light rounded-3 mb-4 border">
+                            <h6 class="fw-bold mb-3 text-primary"><i class="bi bi-image me-2"></i>Logotipo del Establecimiento</h6>
+                            <div class="row align-items-center g-3">
+                                <div class="col-12 col-sm-auto text-center">
+                                    <div class="position-relative d-inline-block">
+                                        <?php 
+                                            $logoActual = $config['hotel_logo'] ?? '';
+                                            $rutaLogo = !empty($logoActual) ? base_url('uploads/hotel/' . $logoActual) : asset('img/logo-placeholder.png');
+                                        ?>
+                                        <div class="bg-white border rounded-3 p-2 shadow-xs d-flex align-items-center justify-content-center" style="width: 110px; height: 110px;">
+                                            <img id="previewLogoHotel" src="<?= $rutaLogo ?>" alt="Logo del Hotel" class="img-fluid rounded" style="max-height: 94px; max-width: 94px; object-fit: contain;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm">
+                                    <label class="form-label mb-1" for="inputLogoHotel">Adjuntar o Actualizar Logotipo</label>
+                                    <input type="file" name="hotel_logo" id="inputLogoHotel" class="form-control" accept="image/png, image/jpeg, image/webp, image/svg+xml">
+                                    <div class="form-text mt-1 text-muted small">
+                                        <i class="bi bi-info-circle me-1"></i>Formatos recomendados: <strong>PNG transparente, WebP, JPG o SVG</strong>. Este logotipo aparecerá en la barra lateral del sistema, en comprobantes impresos y recibos oficiales.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="row g-3">
                             <div class="col-12 col-md-8">
-                                <label class="form-label fw-semibold">Nombre Comercial del Hotel <span class="text-danger">*</span></label>
+                                <label class="form-label">Nombre Comercial del Hotel <span class="text-danger">*</span></label>
                                 <input type="text" name="hotel_nombre" class="form-control form-control-lg" value="<?= htmlspecialchars($config['hotel_nombre'] ?? 'Hotel Manager & Resort Gran Sol') ?>" required>
                             </div>
                             <div class="col-12 col-md-4">
-                                <label class="form-label fw-semibold">RUC / NIF / Identificación Tributaria <span class="text-danger">*</span></label>
+                                <label class="form-label">RUC / NIF / Identificación Tributaria <span class="text-danger">*</span></label>
                                 <input type="text" name="hotel_ruc" class="form-control form-control-lg" value="<?= htmlspecialchars($config['hotel_ruc'] ?? '20491823901') ?>" required>
                             </div>
 
                             <div class="col-12 col-md-6">
-                                <label class="form-label fw-semibold">Teléfonos de Contacto</label>
+                                <label class="form-label">Teléfonos de Contacto</label>
                                 <input type="text" name="hotel_telefono" class="form-control" value="<?= htmlspecialchars($config['hotel_telefono'] ?? '+51 1 450-8900 / +51 987 654 321') ?>">
                             </div>
                             <div class="col-12 col-md-6">
-                                <label class="form-label fw-semibold">Correo Electrónico Oficial</label>
+                                <label class="form-label">Correo Electrónico Oficial</label>
                                 <input type="email" name="hotel_correo" class="form-control" value="<?= htmlspecialchars($config['hotel_correo'] ?? 'reservas@hotelmanager.com') ?>">
                             </div>
 
                             <div class="col-12">
-                                <label class="form-label fw-semibold">Dirección Física del Hotel</label>
+                                <label class="form-label">Dirección Física del Hotel</label>
                                 <input type="text" name="hotel_direccion" class="form-control" value="<?= htmlspecialchars($config['hotel_direccion'] ?? 'Av. Del Sol 1245, Zona Turística, Perú') ?>">
                             </div>
 
                             <div class="col-12 col-md-6">
-                                <label class="form-label fw-semibold">Hora Oficial de Check-in</label>
+                                <label class="form-label">Hora Oficial de Check-in</label>
                                 <input type="time" name="hotel_checkin_hora" class="form-control" value="<?= htmlspecialchars($config['hotel_checkin_hora'] ?? '14:00') ?>">
-                                <div class="form-text">Hora de entrega de llaves.</div>
+                                <div class="form-text">Hora oficial de asignación y entrega de llaves.</div>
                             </div>
                             <div class="col-12 col-md-6">
-                                <label class="form-label fw-semibold">Hora Oficial de Check-out</label>
+                                <label class="form-label">Hora Oficial de Check-out</label>
                                 <input type="time" name="hotel_checkout_hora" class="form-control" value="<?= htmlspecialchars($config['hotel_checkout_hora'] ?? '12:00') ?>">
-                                <div class="form-text">Hora límite de desocupación.</div>
+                                <div class="form-text">Hora límite para recepción de habitaciones.</div>
                             </div>
                         </div>
                     </div>
-                    <div class="card-footer bg-body-tertiary text-end">
-                        <button type="submit" class="btn btn-primary fw-bold">
+                    <div class="card-footer text-end">
+                        <button type="submit" class="btn btn-primary">
                             <i class="bi bi-save me-1"></i> Guardar Datos del Hotel
                         </button>
                     </div>
                 </form>
             </div>
         </div>
+
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const inputLogo = document.getElementById('inputLogoHotel');
+    const previewLogo = document.getElementById('previewLogoHotel');
+
+    if (inputLogo && previewLogo) {
+        inputLogo.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    previewLogo.src = evt.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+</script>
 
     </div>
 </div>

@@ -1,21 +1,13 @@
-<div class="app-content-header d-print-none">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-sm-6">
-                <h3 class="mb-0 fw-bold"><i class="bi bi-printer text-primary me-2"></i>Comprobante de Pago</h3>
-                <p class="text-muted mb-0 small">Visualización oficial para entrega o impresión al cliente</p>
-            </div>
-            <div class="col-sm-6 text-sm-end mt-2 mt-sm-0">
-                <button type="button" class="btn btn-primary btn-sm shadow-sm me-1" onclick="window.print()">
-                    <i class="bi bi-printer-fill me-1"></i> Imprimir Documento
-                </button>
-                <a href="<?= url('pagos') ?>" class="btn btn-outline-secondary btn-sm shadow-sm">
-                    <i class="bi bi-arrow-left me-1"></i> Volver a Pagos
-                </a>
-            </div>
-        </div>
-    </div>
-</div>
+<?php partial('page_header', [
+    'titulo'              => 'Comprobante de Pago',
+    'icono'               => 'bi-printer',
+    'subtitulo'           => 'Visualización oficial para entrega o impresión al cliente',
+    'acciones'            => [
+        ['texto' => 'Imprimir Documento', 'imprimir' => true, 'icono' => 'bi-printer-fill'],
+        ['texto' => 'Volver a Pagos', 'url' => 'pagos', 'icono' => 'bi-arrow-left', 'variante' => 'outline-secondary'],
+    ],
+    'ocultar_al_imprimir' => true,
+]) ?>
 
 <div class="app-content">
     <div class="container-fluid">
