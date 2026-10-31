@@ -102,16 +102,16 @@
                         </div>
                         <div class="card-body">
                             <div class="row g-3">
-                                <div class="col-12 col-md-4">
-                                    <label class="form-label">Fecha de Entrada (Check-in) <span class="text-danger">*</span></label>
+                                <div class="col-6 col-xl-4">
+                                    <label for="fecha_entrada" class="form-label text-nowrap">Check-in <span class="text-danger">*</span></label>
                                     <input type="date" name="fecha_entrada" id="fecha_entrada" class="form-control" value="<?= date('Y-m-d') ?>" min="<?= date('Y-m-d') ?>" required>
                                 </div>
-                                <div class="col-12 col-md-4">
-                                    <label class="form-label">Fecha de Salida (Check-out) <span class="text-danger">*</span></label>
+                                <div class="col-6 col-xl-4">
+                                    <label for="fecha_salida" class="form-label text-nowrap">Check-out <span class="text-danger">*</span></label>
                                     <input type="date" name="fecha_salida" id="fecha_salida" class="form-control" value="<?= date('Y-m-d', strtotime('+1 day')) ?>" min="<?= date('Y-m-d', strtotime('+1 day')) ?>" required>
                                 </div>
-                                <div class="col-12 col-md-4">
-                                    <label class="form-label">Total Noches</label>
+                                <div class="col-12 col-xl-4">
+                                    <label for="total_noches" class="form-label text-nowrap">Total noches</label>
                                     <input type="text" id="total_noches" class="form-control bg-body-secondary fw-bold text-center" value="1 noche" readonly>
                                 </div>
 

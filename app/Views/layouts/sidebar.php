@@ -32,7 +32,7 @@ $nombreEmpresa = $configApp['hotel_nombre'] ?? 'Hotel Manager';
                 </div>
             <?php endif; ?>
             <div class="brand-info">
-                <span class="brand-title text-truncate" style="max-width: 170px;" title="<?= htmlspecialchars($nombreEmpresa) ?>"><?= htmlspecialchars($nombreEmpresa) ?></span>
+                <span class="brand-title" title="<?= htmlspecialchars($nombreEmpresa) ?>"><?= htmlspecialchars($nombreEmpresa) ?></span>
                 <span class="brand-subtitle">Gestión Hotelera</span>
             </div>
         </a>

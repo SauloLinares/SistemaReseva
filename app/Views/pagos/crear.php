@@ -10,7 +10,7 @@
 <div class="app-content">
     <div class="container-fluid">
 
-        <div class="row justify-content-center">
+        <div class="row">
             <div class="col-12 col-lg-8">
                 <form action="<?= url('pagos/guardar') ?>" method="POST" class="card">
                     <div class="card-header">

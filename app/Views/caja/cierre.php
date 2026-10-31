@@ -12,7 +12,7 @@
 <div class="app-content">
     <div class="container-fluid">
 
-        <div class="row justify-content-center">
+        <div class="row">
             <div class="col-12 col-lg-8 col-xl-7">
                 <!-- Hoja de Arqueo Oficial Imprimible -->
                 <div class="card border-0 mb-4" id="imprimible">

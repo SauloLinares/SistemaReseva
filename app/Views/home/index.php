@@ -22,10 +22,10 @@ if (!empty($estadiasActivas)) {
     'titulo'    => 'Panel de Control',
     'icono'     => 'bi-speedometer2',
     'subtitulo' => date('d') . ' de ' . ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'][date('n') - 1] . ' de ' . date('Y') . ' • Estado del Hotel en vivo',
+    // Nueva Reserva y Check-in ya están en la barra superior
     'acciones'  => [
-        ['texto' => 'Nueva Reserva', 'url' => 'reservas/crear', 'icono' => 'bi-plus-circle'],
-        ['texto' => 'Check-in', 'url' => 'recepcion/checkin', 'icono' => 'bi-box-arrow-in-right', 'variante' => 'success'],
         ['texto' => 'Disponibilidad', 'url' => 'reservas/disponibilidad', 'icono' => 'bi-calendar-range', 'variante' => 'outline-secondary'],
+        ['texto' => 'Calendario', 'url' => 'reservas/calendario', 'icono' => 'bi-calendar3', 'variante' => 'outline-secondary'],
     ],
 ]) ?>
 
@@ -41,12 +41,12 @@ if (!empty($estadiasActivas)) {
                     <div class="inner">
                         <h3><?= $conteoHab['total'] ?></h3>
                         <p class="mb-1">Total de Habitaciones</p>
-                        <small class="opacity-75 d-block"><?= count($habitaciones) ?> unidades operativas registradas</small>
+                        <small class="d-block"><?= count($habitaciones) ?> unidades operativas registradas</small>
                     </div>
                     <div class="small-box-icon">
                         <i class="bi bi-building"></i>
                     </div>
-                    <a href="<?= url('habitaciones') ?>" class="small-box-footer link-light link-underline-opacity-0">
+                    <a href="<?= url('habitaciones') ?>" class="small-box-footer">
                         Ver inventario <i class="bi bi-arrow-right-circle ms-1"></i>
                     </a>
                 </div>
@@ -56,17 +56,17 @@ if (!empty($estadiasActivas)) {
             <div class="col-12 col-sm-6 col-xl-3">
                 <div class="small-box text-bg-success h-100">
                     <div class="inner">
-                        <h3><?= $disponibles ?> <span class="fs-6 opacity-75">/ <?= $ocupadas ?> Ocup.</span></h3>
+                        <h3><?= $disponibles ?> <span class="fs-6 fw-semibold text-body-secondary">/ <?= $ocupadas ?> Ocup.</span></h3>
                         <p class="mb-1">Habitaciones Disponibles</p>
                         <div class="d-flex justify-content-between align-items-center mt-1">
-                            <small class="opacity-75">Ocupación: <strong><?= $porcentajeOcupacion ?>%</strong></small>
-                            <small class="opacity-75"><?= $limpieza ?> limpieza &bull; <?= $mantenimiento ?> mant.</small>
+                            <small>Ocupación: <strong><?= $porcentajeOcupacion ?>%</strong></small>
+                            <small><?= $limpieza ?> limpieza &bull; <?= $mantenimiento ?> mant.</small>
                         </div>
                     </div>
                     <div class="small-box-icon">
                         <i class="bi bi-door-open-fill"></i>
                     </div>
-                    <a href="<?= url('habitaciones/estados') ?>" class="small-box-footer link-light link-underline-opacity-0">
+                    <a href="<?= url('habitaciones/estados') ?>" class="small-box-footer">
                         Gestionar estados <i class="bi bi-arrow-right-circle ms-1"></i>
                     </a>
                 </div>
@@ -78,12 +78,12 @@ if (!empty($estadiasActivas)) {
                     <div class="inner">
                         <h3><?= count($reservasHoy) ?></h3>
                         <p class="mb-1">Movimientos de Hoy</p>
-                        <small class="opacity-75 d-block">Entradas y salidas programadas hoy</small>
+                        <small class="d-block">Entradas y salidas programadas hoy</small>
                     </div>
                     <div class="small-box-icon">
                         <i class="bi bi-calendar-event"></i>
                     </div>
-                    <a href="<?= url('reservas') ?>" class="small-box-footer link-dark link-underline-opacity-0">
+                    <a href="<?= url('reservas') ?>" class="small-box-footer">
                         Ver agenda del día <i class="bi bi-arrow-right-circle ms-1"></i>
                     </a>
                 </div>
@@ -95,12 +95,12 @@ if (!empty($estadiasActivas)) {
                     <div class="inner">
                         <h3><?= dinero($ingresosHoy) ?></h3>
                         <p class="mb-1">Ingresos de Hoy</p>
-                        <small class="opacity-75 d-block">Acumulado mes: <strong><?= dinero($ingresosMes) ?></strong></small>
+                        <small class="d-block">Acumulado mes: <strong><?= dinero($ingresosMes) ?></strong></small>
                     </div>
                     <div class="small-box-icon">
                         <i class="bi bi-cash-stack"></i>
                     </div>
-                    <a href="<?= url('pagos') ?>" class="small-box-footer link-light link-underline-opacity-0">
+                    <a href="<?= url('pagos') ?>" class="small-box-footer">
                         Historial de caja <i class="bi bi-arrow-right-circle ms-1"></i>
                     </a>
                 </div>
@@ -117,20 +117,20 @@ if (!empty($estadiasActivas)) {
                     <small class="text-muted">Monitoreo y asignación inmediata por habitación</small>
                 </div>
                 <div class="d-flex gap-1 align-items-center flex-wrap" id="filtroHabitacionesDashboard">
-                    <button type="button" class="btn btn-xs btn-primary rounded-pill btn-filtro-dash active" data-filtro="todos">
-                        Todas (<?= count($habitaciones) ?>)
+                    <button type="button" class="btn btn-xs filter-chip btn-filtro-dash active" data-filtro="todos" aria-pressed="true">
+                        Todas <span class="filter-chip-count"><?= count($habitaciones) ?></span>
                     </button>
-                    <button type="button" class="btn btn-xs btn-outline-success rounded-pill btn-filtro-dash" data-filtro="disponible">
-                        <span class="pulse-dot pulse-dot-disponible"></span> Disponibles (<?= $disponibles ?>)
+                    <button type="button" class="btn btn-xs filter-chip btn-filtro-dash" data-filtro="disponible" aria-pressed="false">
+                        <span class="pulse-dot pulse-dot-disponible"></span>Disponibles <span class="filter-chip-count"><?= $disponibles ?></span>
                     </button>
-                    <button type="button" class="btn btn-xs btn-outline-danger rounded-pill btn-filtro-dash" data-filtro="ocupada">
-                        <span class="pulse-dot pulse-dot-ocupada"></span> Ocupadas (<?= $ocupadas ?>)
+                    <button type="button" class="btn btn-xs filter-chip btn-filtro-dash" data-filtro="ocupada" aria-pressed="false">
+                        <span class="pulse-dot pulse-dot-ocupada"></span>Ocupadas <span class="filter-chip-count"><?= $ocupadas ?></span>
                     </button>
-                    <button type="button" class="btn btn-xs btn-outline-warning rounded-pill btn-filtro-dash" data-filtro="limpieza">
-                        <span class="pulse-dot pulse-dot-limpieza"></span> Limpieza (<?= $limpieza ?>)
+                    <button type="button" class="btn btn-xs filter-chip btn-filtro-dash" data-filtro="limpieza" aria-pressed="false">
+                        <span class="pulse-dot pulse-dot-limpieza"></span>Limpieza <span class="filter-chip-count"><?= $limpieza ?></span>
                     </button>
-                    <button type="button" class="btn btn-xs btn-outline-secondary rounded-pill btn-filtro-dash" data-filtro="mantenimiento">
-                        <span class="pulse-dot pulse-dot-mantenimiento"></span> Mantenimiento (<?= $mantenimiento ?>)
+                    <button type="button" class="btn btn-xs filter-chip btn-filtro-dash" data-filtro="mantenimiento" aria-pressed="false">
+                        <span class="pulse-dot pulse-dot-mantenimiento"></span>Mantenimiento <span class="filter-chip-count"><?= $mantenimiento ?></span>
                     </button>
                 </div>
             </div>
@@ -167,7 +167,7 @@ if (!empty($estadiasActivas)) {
                                 default         => 'bi-door-closed'
                             };
                         ?>
-                        <div class="col-6 col-sm-4 col-md-3 col-lg-2 item-hab-card" data-estado="<?= $estado ?>">
+                        <div class="col-6 col-sm-4 col-md-3 col-xl-2 item-hab-card" data-estado="<?= $estado ?>">
                             <div class="card room-card-modern room-card-interactive <?= $stateClass ?> h-100 text-center p-3"
                                  data-id="<?= $h['id'] ?>"
                                  data-numero="<?= htmlspecialchars($h['numero']) ?>"
@@ -188,19 +188,19 @@ if (!empty($estadiasActivas)) {
                                  data-estancia-id="<?= $est['id'] ?? '' ?>"
                                  data-reserva-id="<?= $est['reserva_id'] ?? '' ?>"
                                  title="Clic para inspeccionar habitación">
-                                <span class="badge bg-dark bg-opacity-75 text-white position-absolute top-0 end-0 m-2" style="font-size: 0.65rem; border-radius: 6px;">
+                                <span class="room-floor-badge position-absolute top-0 end-0 m-2">
                                     Piso <?= htmlspecialchars($h['piso']) ?>
                                 </span>
                                 
                                 <div class="room-icon fs-2 mt-2 mb-1">
                                     <i class="bi <?= $icon ?>"></i>
                                 </div>
-                                <h4 class="fw-bold mb-0">Hab. <?= htmlspecialchars($h['numero']) ?></h4>
-                                <small class="text-sm text-muted text-truncate d-block fw-semibold"><?= htmlspecialchars($h['tipo_nombre']) ?></small>
-                                <div class="mt-2 small fw-bold text-body-emphasis"><?= dinero($h['precio_diario']) ?><span class="text-xs text-muted fw-normal">/noc</span></div>
-                                
+                                <div class="room-card-numero">Hab. <?= e($h['numero']) ?></div>
+                                <small class="text-sm text-body-secondary text-truncate d-block"><?= e($h['tipo_nombre']) ?></small>
+                                <div class="mt-2 text-sm text-nowrap"><strong class="text-body-emphasis"><?= dinero($h['precio_diario']) ?></strong> <span class="text-body-secondary">/ noche</span></div>
+
                                 <div class="mt-2 pt-2 border-top border-light-subtle">
-                                    <span class="text-2xs badge badge-soft-<?= match($estado) {
+                                    <span class="badge badge-soft-<?= match($estado) {
                                         'disponible' => 'success',
                                         'ocupada' => 'danger',
                                         'limpieza' => 'warning',
@@ -522,33 +522,10 @@ document.addEventListener('DOMContentLoaded', function() {
     botonesFiltro.forEach(btn => {
         btn.addEventListener('click', function() {
             botonesFiltro.forEach(b => {
-                b.classList.remove('active', 'btn-primary', 'btn-success', 'btn-danger', 'btn-warning', 'btn-secondary');
-                const f = b.dataset.filtro;
-                if (f === 'todos') b.classList.add('btn-outline-primary');
-                else if (f === 'disponible') b.classList.add('btn-outline-success');
-                else if (f === 'ocupada') b.classList.add('btn-outline-danger');
-                else if (f === 'limpieza') b.classList.add('btn-outline-warning');
-                else if (f === 'mantenimiento') b.classList.add('btn-outline-secondary');
+                b.classList.toggle('active', b === this);
+                b.setAttribute('aria-pressed', b === this ? 'true' : 'false');
             });
-
-            this.classList.add('active');
             const filtro = this.dataset.filtro;
-            if (filtro === 'todos') {
-                this.classList.remove('btn-outline-primary');
-                this.classList.add('btn-primary');
-            } else if (filtro === 'disponible') {
-                this.classList.remove('btn-outline-success');
-                this.classList.add('btn-success');
-            } else if (filtro === 'ocupada') {
-                this.classList.remove('btn-outline-danger');
-                this.classList.add('btn-danger');
-            } else if (filtro === 'limpieza') {
-                this.classList.remove('btn-outline-warning');
-                this.classList.add('btn-warning');
-            } else if (filtro === 'mantenimiento') {
-                this.classList.remove('btn-outline-secondary');
-                this.classList.add('btn-secondary');
-            }
 
             itemsHabitacion.forEach(card => {
                 if (filtro === 'todos' || card.dataset.estado === filtro) {

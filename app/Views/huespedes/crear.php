@@ -8,7 +8,7 @@
 <div class="app-content">
     <div class="container-fluid">
 
-        <div class="row justify-content-center">
+        <div class="row">
             <div class="col-12 col-lg-8">
                 <form action="<?= url('huespedes/guardar') ?>" method="POST" class="card">
                     <?php partial('card_header', ['titulo' => 'Ficha del Huésped', 'icono' => 'bi-person-vcard']) ?>

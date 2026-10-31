@@ -52,20 +52,28 @@ Todos los colores, radios y sombras salen de los tokens de `public/assets/css/cu
 - Campo obligatorio: `required` + `<span class="text-danger">*</span>` en la etiqueta.
 - Tamaño normal de campo. `form-control-sm` / `form-select-sm` solo en barras de filtros.
 - Prefijos con `input-group-text` sin `bg-white` ni `bg-light`.
-- Ancho del formulario: `<div class="row justify-content-center"><div class="col-12 col-lg-8">`.
+- Ancho del formulario: `<div class="row"><div class="col-12 col-lg-8">` alineado a la izquierda, en el mismo eje que el título de la página. Solo los documentos imprimibles (voucher, comprobante) van centrados.
 - Botones del pie: partial `form_actions` (ver abajo).
 
-## 4. Tarjetas
+## 4. Color
+
+- El color comunica **estado** (disponible, ocupada, deuda, pagado) o marca **la acción principal**. No se usa para decorar.
+- Una sola acción principal (`btn-primary`) por zona; el resto `btn-outline-secondary`.
+- Indicadores (KPIs): superficie neutra; el color solo en el icono y el enlace.
+- Importes en tablas: texto alineado a la derecha y `text-nowrap`; el saldo en rojo solo si hay deuda.
+- Tamaño mínimo de texto: `text-2xs` (0.72rem).
+
+## 5. Tarjetas
 
 - `<div class="card">` sin `shadow-sm`, `card-outline` ni `border-*`: el CSS ya aplica sombra y borde.
 - Encabezado: partial `card_header`.
 - Las cabeceras de color (`section-header-blue`, etc.) solo para paneles de resumen del dashboard o la caja.
 
-## 5. Mensajes flash
+## 6. Mensajes flash
 
 Los muestra `layouts/header.php` como toast. **No** agregues bloques `$_SESSION['flash']` en las vistas.
 
-## 6. Partials
+## 7. Partials
 
 Se incluyen con `partial('nombre', [...datos])`. Están en `app/Views/partials/`.
 

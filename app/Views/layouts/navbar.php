@@ -113,33 +113,18 @@ try {
                     <i class="bi bi-list fs-4"></i>
                 </a>
             </li>
-            <li class="nav-item d-none d-md-flex align-items-center">
-                <a href="<?= url() ?>" class="nav-link nav-link-custom fw-semibold">
-                    <i class="bi bi-speedometer2 me-1 text-primary"></i> Dashboard
-                </a>
-            </li>
-            <li class="nav-item d-none d-md-flex align-items-center">
-                <a href="<?= url('reservas/disponibilidad') ?>" class="nav-link nav-link-custom text-body-secondary">
-                    <i class="bi bi-calendar-range me-1"></i> Disponibilidad
-                </a>
-            </li>
-            <li class="nav-item d-none d-lg-flex align-items-center">
-                <a href="<?= url('reservas/calendario') ?>" class="nav-link nav-link-custom text-body-secondary">
-                    <i class="bi bi-calendar3 me-1"></i> Calendario
-                </a>
-            </li>
         </ul>
 
-        <!-- Acciones Rápidas Centrales / Derecha: Botones alineados uniformemente -->
+        <!-- Acciones rápidas: una sola principal (Nueva Reserva); las demás en gris para no competir -->
         <div class="d-none d-md-flex align-items-center gap-2 ms-auto me-3">
+            <a href="<?= url('huespedes/buscar') ?>" class="btn btn-outline-secondary btn-nav-action" title="Atajo: Presiona F3">
+                <i class="bi bi-search me-1"></i> Buscar DNI <kbd class="nav-kbd">F3</kbd>
+            </a>
+            <a href="<?= url('recepcion/checkin') ?>" class="btn btn-outline-secondary btn-nav-action" title="Atajo: Presiona F4">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Check-in <kbd class="nav-kbd">F4</kbd>
+            </a>
             <a href="<?= url('reservas/crear') ?>" class="btn btn-primary btn-nav-action" title="Atajo: Presiona F2 o Ctrl+K">
-                <i class="bi bi-plus-circle me-1"></i> Nueva Reserva <kbd class="nav-kbd bg-white bg-opacity-25 text-white">F2</kbd>
-            </a>
-            <a href="<?= url('huespedes/buscar') ?>" class="btn btn-outline-primary btn-nav-action" title="Atajo: Presiona F3">
-                <i class="bi bi-search me-1"></i> Buscar DNI <kbd class="nav-kbd bg-primary-subtle text-primary">F3</kbd>
-            </a>
-            <a href="<?= url('recepcion/checkin') ?>" class="btn btn-outline-success btn-nav-action" title="Atajo: Presiona F4">
-                <i class="bi bi-box-arrow-in-right me-1"></i> Check-in <kbd class="nav-kbd bg-success-subtle text-success">F4</kbd>
+                <i class="bi bi-plus-lg me-1"></i> Nueva Reserva <kbd class="nav-kbd nav-kbd-on-primary">F2</kbd>
             </a>
         </div>
 

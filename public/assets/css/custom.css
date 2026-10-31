@@ -405,27 +405,31 @@ body {
     align-items: center !important;
     justify-content: center !important;
     padding: 0 1rem !important;
-    border-radius: 50px !important;
+    border-radius: var(--hm-radius-sm) !important;
     font-weight: 600 !important;
     font-size: 0.82rem !important;
     line-height: 1 !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06) !important;
-    transition: all 0.2s ease !important;
+    box-shadow: none !important;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease !important;
     white-space: nowrap !important;
 }
 
-.btn-nav-action:hover {
-    transform: translateY(-1px) !important;
-}
-
 .nav-kbd {
-    font-size: 0.65rem !important;
-    padding: 0.12rem 0.35rem !important;
-    border-radius: 5px !important;
-    border: none !important;
+    font-size: 0.68rem !important;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    padding: 0.15rem 0.35rem !important;
+    border-radius: 4px !important;
+    border: 0 !important;
     margin-left: 0.45rem !important;
     line-height: 1 !important;
     display: inline-block !important;
+    background: var(--hm-addon-bg) !important;
+    color: var(--hm-text-muted) !important;
+}
+.nav-kbd.nav-kbd-on-primary {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
 }
 
 /* ====================================================================
@@ -641,12 +645,19 @@ body {
     line-height: 1.2;
 }
 
+/* Nombre del hotel: hasta 2 líneas en lugar de cortarse con "..." */
 .brand-title {
-    font-size: 1.05rem;
+    font-size: 0.92rem;
     font-weight: 700;
+    line-height: 1.2;
     color: #ffffff;
-    letter-spacing: -0.02em;
-    display: block;
+    letter-spacing: -0.01em;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    white-space: normal;
+    max-width: 190px;
 }
 
 .brand-subtitle {
@@ -748,9 +759,17 @@ body {
     border-left: 1.5px solid rgba(255, 255, 255, 0.12) !important;
     margin-left: 0.85rem !important;
     margin-right: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
+    flex-direction: column;
     gap: 3px !important;
+}
+
+/* Solo se despliega el submenú de la sección actual; el resto lo abre el usuario
+   (AdminLTE aplica display en línea al animar, por eso aquí no va !important) */
+.app-sidebar .nav-item:not(.menu-open) > .nav-treeview {
+    display: none;
+}
+.app-sidebar .nav-item.menu-open > .nav-treeview {
+    display: flex;
 }
 
 .app-sidebar .nav-treeview .nav-link {
@@ -820,9 +839,7 @@ body {
     position: relative;
 }
 
-.card:hover {
-    box-shadow: var(--card-hover-shadow) !important;
-}
+/* Las tarjetas no son clicables: no se elevan al pasar el ratón (solo .room-card-modern) */
 
 .card-header {
     padding: 1rem 1.25rem !important;
@@ -932,168 +949,121 @@ body {
     padding: 0.85rem 1.25rem !important;
 }
 
-/* 5. TARJETAS DE MÉTRICAS KPIS (SMALL BOX PREMIUM) */
+/* 5. TARJETAS DE MÉTRICAS KPIS (SMALL BOX)
+   Superficie neutra: el color de la variante solo tiñe el icono y el enlace,
+   así el número es lo que más destaca y las 4 tarjetas no compiten entre sí. */
 .small-box {
+    --kpi-color: var(--hm-primary);
     border-radius: var(--card-border-radius) !important;
     position: relative;
     overflow: hidden;
-    border: 0 !important;
-    box-shadow: 0 8px 24px -4px rgba(15, 23, 42, 0.12) !important;
-    transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1px solid var(--hm-border) !important;
+    box-shadow: var(--card-shadow) !important;
+    display: flex;
+    flex-direction: column;
 }
+.small-box.text-bg-primary { --kpi-color: var(--hm-primary); }
+.small-box.text-bg-success { --kpi-color: var(--hm-success); }
+.small-box.text-bg-warning { --kpi-color: var(--hm-warning); }
+.small-box.text-bg-info    { --kpi-color: var(--hm-info); }
+.small-box.text-bg-danger  { --kpi-color: var(--hm-danger); }
 
-.small-box:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 16px 32px -4px rgba(15, 23, 42, 0.18) !important;
+.small-box.text-bg-primary,
+.small-box.text-bg-success,
+.small-box.text-bg-warning,
+.small-box.text-bg-info,
+.small-box.text-bg-danger {
+    background: var(--hm-surface) !important;
+    color: var(--hm-text) !important;
 }
 
 .small-box .inner {
-    padding: 1.5rem !important;
+    padding: 1.25rem 1.25rem 1rem !important;
+    padding-right: 4.25rem !important;
     position: relative;
-    z-index: 2;
+    flex: 1;
 }
 
 .small-box .inner h3 {
-    font-size: 2.1rem !important;
-    font-weight: 800 !important;
+    font-size: 2rem !important;
+    font-weight: 700 !important;
     letter-spacing: -0.03em !important;
-    margin-bottom: 0.35rem !important;
+    line-height: 1.1;
+    margin-bottom: 0.25rem !important;
+    color: var(--hm-text);
 }
 
 .small-box .inner p {
-    font-size: 0.95rem !important;
+    font-size: 0.9rem !important;
     font-weight: 600 !important;
-    opacity: 0.95;
+    color: var(--hm-text);
+}
+
+.small-box .inner small {
+    font-size: 0.8rem;
+    color: var(--hm-text-muted);
 }
 
 .small-box .small-box-icon {
     position: absolute;
     top: 1.25rem;
     right: 1.25rem;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.18);
-    backdrop-filter: blur(8px);
+    width: 42px;
+    height: 42px;
+    border-radius: var(--hm-radius);
+    background: color-mix(in srgb, var(--kpi-color) 12%, transparent);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(255, 255, 255, 0.95);
-    font-size: 1.8rem;
-    z-index: 1;
-    transition: all 0.3s ease;
-}
-
-.small-box:hover .small-box-icon {
-    transform: scale(1.1) rotate(5deg);
-    background: rgba(255, 255, 255, 0.25);
+    color: var(--kpi-color);
+    font-size: 1.25rem;
 }
 
 .small-box-footer {
     display: block;
-    padding: 0.65rem 1.25rem !important;
-    background: rgba(0, 0, 0, 0.12) !important;
-    backdrop-filter: blur(4px);
-    text-align: center;
+    padding: 0.6rem 1.25rem !important;
+    border-top: 1px solid var(--hm-border);
+    background: transparent !important;
+    color: var(--kpi-color) !important;
     font-size: 0.8rem;
     font-weight: 600;
-    transition: background 0.2s ease;
-    z-index: 2;
-    position: relative;
+    text-decoration: none;
+    transition: background-color 0.15s ease;
 }
 
 .small-box-footer:hover {
-    background: rgba(0, 0, 0, 0.22) !important;
+    background: color-mix(in srgb, var(--kpi-color) 8%, transparent) !important;
     text-decoration: none !important;
 }
 
-.small-box.text-bg-primary {
-    background: var(--primary-gradient) !important;
-    color: #ffffff !important;
-}
-
-.small-box.text-bg-success {
-    background: var(--success-gradient) !important;
-    color: #ffffff !important;
-}
-
-.small-box.text-bg-warning {
-    background: var(--warning-gradient) !important;
-    color: #ffffff !important;
-}
-
-.small-box.text-bg-info {
-    background: var(--info-gradient) !important;
-    color: #ffffff !important;
-}
-
 /* 6. MAPA VISUAL DE HABITACIONES (ROOM GRID) */
+/* Tarjeta neutra con una franja superior del color del estado: el estado se lee
+   de un vistazo sin teñir toda la grilla. */
 .room-card-modern {
-    border-radius: 14px !important;
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    --room-color: var(--hm-text-muted);
+    border-radius: var(--hm-radius) !important;
+    transition: box-shadow 0.15s ease, border-color 0.15s ease;
     position: relative;
     cursor: pointer;
-    background: #ffffff;
-    border-width: 1.5px !important;
+    background: var(--hm-surface) !important;
+    border: 1px solid var(--hm-border);
+    border-top: 3px solid var(--room-color) !important;
 }
 
 .room-card-modern:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 24px -2px rgba(15, 23, 42, 0.12) !important;
+    border-color: color-mix(in srgb, var(--room-color) 45%, var(--hm-border));
+    box-shadow: var(--hm-shadow-lg) !important;
 }
 
-/* Estados de habitación modernos */
-.room-state-disponible {
-    background: linear-gradient(180deg, rgba(16, 185, 129, 0.06) 0%, rgba(255, 255, 255, 0.9) 100%) !important;
-    border-color: rgba(16, 185, 129, 0.35) !important;
-}
-.room-state-disponible .room-icon {
-    color: var(--hm-emerald-600);
+.room-card-modern .room-icon {
+    color: var(--room-color);
 }
 
-.room-state-ocupada {
-    background: linear-gradient(180deg, rgba(239, 68, 68, 0.06) 0%, rgba(255, 255, 255, 0.9) 100%) !important;
-    border-color: rgba(239, 68, 68, 0.35) !important;
-}
-.room-state-ocupada .room-icon {
-    color: var(--hm-red-600);
-}
-
-.room-state-limpieza {
-    background: linear-gradient(180deg, rgba(245, 158, 11, 0.08) 0%, rgba(255, 255, 255, 0.9) 100%) !important;
-    border-color: rgba(245, 158, 11, 0.4) !important;
-}
-.room-state-limpieza .room-icon {
-    color: var(--hm-amber-600);
-}
-
-.room-state-mantenimiento {
-    background: linear-gradient(180deg, rgba(100, 116, 139, 0.08) 0%, rgba(255, 255, 255, 0.9) 100%) !important;
-    border-color: rgba(100, 116, 139, 0.35) !important;
-}
-.room-state-mantenimiento .room-icon {
-    color: var(--hm-slate-600);
-}
-
-[data-bs-theme="dark"] .room-card-modern {
-    background: var(--hm-slate-800) !important;
-}
-[data-bs-theme="dark"] .room-state-disponible {
-    background: rgba(16, 185, 129, 0.1) !important;
-    border-color: rgba(16, 185, 129, 0.3) !important;
-}
-[data-bs-theme="dark"] .room-state-ocupada {
-    background: rgba(239, 68, 68, 0.1) !important;
-    border-color: rgba(239, 68, 68, 0.3) !important;
-}
-[data-bs-theme="dark"] .room-state-limpieza {
-    background: rgba(245, 158, 11, 0.1) !important;
-    border-color: rgba(245, 158, 11, 0.3) !important;
-}
-[data-bs-theme="dark"] .room-state-mantenimiento {
-    background: rgba(100, 116, 139, 0.15) !important;
-    border-color: rgba(100, 116, 139, 0.3) !important;
-}
+/* Estados de habitación */
+.room-state-disponible    { --room-color: var(--hm-success); }
+.room-state-ocupada       { --room-color: var(--hm-danger); }
+.room-state-limpieza      { --room-color: var(--hm-warning); }
+.room-state-mantenimiento { --room-color: var(--hm-text-muted); }
 
 /* Indicador de pulso de estado */
 .pulse-dot {
@@ -1150,46 +1120,47 @@ body {
     align-items: center;
 }
 
+/* Insignias suaves: solo fondo tenue, sin borde, para no añadir más líneas a la pantalla */
 .badge-soft-primary,
 .badge.text-bg-primary {
-    background-color: rgba(37, 99, 235, 0.12) !important;
-    color: var(--hm-blue-600) !important;
-    border: 1px solid rgba(37, 99, 235, 0.25) !important;
+    background-color: rgba(37, 99, 235, 0.1) !important;
+    color: var(--hm-blue-700) !important;
+    border: 0 !important;
 }
 
 .badge-soft-success,
 .badge.text-bg-success {
     background-color: rgba(16, 185, 129, 0.12) !important;
-    color: var(--hm-emerald-600) !important;
-    border: 1px solid rgba(16, 185, 129, 0.25) !important;
+    color: var(--hm-emerald-700) !important;
+    border: 0 !important;
 }
 
 .badge-soft-warning,
 .badge.text-bg-warning {
     background-color: rgba(245, 158, 11, 0.14) !important;
-    color: var(--hm-amber-700) !important;
-    border: 1px solid rgba(245, 158, 11, 0.25) !important;
+    color: var(--hm-amber-800) !important;
+    border: 0 !important;
 }
 
 .badge-soft-danger,
 .badge.text-bg-danger {
-    background-color: rgba(239, 68, 68, 0.12) !important;
-    color: var(--hm-red-600) !important;
-    border: 1px solid rgba(239, 68, 68, 0.25) !important;
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    color: var(--hm-red-700) !important;
+    border: 0 !important;
 }
 
 .badge-soft-info,
 .badge.text-bg-info {
-    background-color: rgba(6, 182, 212, 0.12) !important;
-    color: var(--hm-cyan-600) !important;
-    border: 1px solid rgba(6, 182, 212, 0.25) !important;
+    background-color: rgba(6, 182, 212, 0.1) !important;
+    color: var(--hm-cyan-700) !important;
+    border: 0 !important;
 }
 
 .badge-soft-secondary,
 .badge.text-bg-secondary {
     background-color: rgba(100, 116, 139, 0.12) !important;
     color: var(--hm-slate-600) !important;
-    border: 1px solid rgba(100, 116, 139, 0.25) !important;
+    border: 0 !important;
 }
 
 [data-bs-theme="dark"] .badge-soft-primary,
@@ -1240,7 +1211,7 @@ body {
     background-color: #ffffff !important;
     border-bottom: 2px solid var(--hm-slate-200) !important;
     border-top: none !important;
-    border-right: 1px solid var(--hm-gray-150) !important;
+    border-right: none !important;
     padding: 0.65rem 0.85rem !important;
     vertical-align: middle !important;
     white-space: nowrap;
@@ -1254,9 +1225,10 @@ body {
     padding: 0.60rem 0.85rem !important;
     vertical-align: middle !important;
     border-bottom: 1px solid var(--hm-gray-150) !important;
-    border-right: 1px solid var(--hm-gray-150) !important;
+    /* Sin divisores verticales: las filas se leen mejor solo con líneas horizontales */
+    border-right: none !important;
     /* Sin !important: así .text-danger, .fs-5, etc. siguen funcionando en las celdas */
-    font-size: 0.85rem;
+    font-size: 0.875rem;
     color: var(--hm-slate-700);
 }
 
@@ -1282,12 +1254,12 @@ body {
     background-color: var(--hm-slate-850) !important;
     color: var(--hm-slate-400) !important;
     border-bottom: 2px solid var(--hm-slate-700) !important;
-    border-right: 1px solid var(--hm-slate-800) !important;
+    border-right: none !important;
 }
 
 [data-bs-theme="dark"] .table td {
     border-bottom: 1px solid var(--hm-slate-800) !important;
-    border-right: 1px solid var(--hm-slate-800) !important;
+    border-right: none !important;
     /* Sin !important: así .text-danger, .text-success, etc. siguen funcionando en las celdas */
     color: var(--hm-slate-200);
 }
@@ -1700,17 +1672,74 @@ body.pos-split-active .page-title {
     font-size: 1.25rem;
 }
 
-/* Tamaños de texto pequeños (reemplazan style="font-size: ..." en las vistas) */
+/* Tamaños de texto pequeños (reemplazan style="font-size: ..." en las vistas).
+   Escala con piso de 0.72rem (≈11.5px): nada más chico que eso, para que se lea bien. */
 .text-sm {
-    font-size: 0.78rem !important;
+    font-size: 0.82rem !important;
 }
 
 .text-xs {
-    font-size: 0.7rem !important;
+    font-size: 0.76rem !important;
 }
 
 .text-2xs {
-    font-size: 0.66rem !important;
+    font-size: 0.72rem !important;
+}
+
+/* El "small" de Bootstrap (0.875em) dentro de textos ya chicos quedaba ilegible */
+.table td small,
+.table td .small,
+.list-group-item small {
+    font-size: 0.8rem;
+}
+
+/* --- Encabezados de tarjeta con subtítulo debajo ---
+   AdminLTE hace flotar .card-title; cuando va dentro de un contenedor con su
+   subtítulo, el subtítulo se pegaba a la derecha del título. */
+.card-header > div > .card-title {
+    float: none;
+}
+
+/* --- Chips de filtro (mapa del panel) --- */
+.filter-chip {
+    --bs-btn-color: var(--hm-text-muted);
+    --bs-btn-bg: transparent;
+    --bs-btn-border-color: var(--hm-border);
+    --bs-btn-hover-color: var(--hm-text);
+    --bs-btn-hover-bg: var(--hm-addon-bg);
+    --bs-btn-hover-border-color: var(--hm-border);
+    --bs-btn-active-color: var(--hm-text);
+    --bs-btn-active-bg: var(--hm-addon-bg);
+    --bs-btn-active-border-color: var(--hm-text-muted);
+    --bs-btn-border-radius: var(--hm-radius-pill);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+.filter-chip .pulse-dot {
+    margin-right: 0;
+}
+.filter-chip-count {
+    font-weight: 700;
+    color: var(--hm-text);
+}
+
+/* --- Mapa de habitaciones --- */
+.room-card-numero {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--hm-text);
+    line-height: 1.2;
+}
+.room-floor-badge {
+    display: inline-block;
+    padding: 0.15rem 0.45rem;
+    border-radius: var(--hm-radius-xs);
+    background: var(--hm-addon-bg);
+    color: var(--hm-text-muted);
+    font-size: 0.72rem;
+    font-weight: 600;
+    line-height: 1.4;
 }
 
 /* 10. AVATARES DE HUÉSPED */
@@ -2981,3 +3010,75 @@ body.pos-split-active .page-title {
 
 
 
+
+/* ====================================================================
+   15. ESTADO DE HABITACIONES: RESUMEN QUE FILTRA LA GRILLA
+   ==================================================================== */
+.estado-stat {
+    --estado-color: var(--hm-text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    color: var(--estado-color);
+    background: color-mix(in srgb, var(--estado-color) 8%, var(--hm-surface));
+    border: 1px solid color-mix(in srgb, var(--estado-color) 25%, transparent);
+    border-left-width: 4px;
+    border-left-color: var(--estado-color);
+    border-radius: var(--hm-radius);
+    transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+.estado-stat:hover {
+    background: color-mix(in srgb, var(--estado-color) 14%, var(--hm-surface));
+    transform: translateY(-1px);
+}
+.estado-stat:focus-visible {
+    outline: 2px solid var(--estado-color);
+    outline-offset: 2px;
+}
+.estado-stat.active {
+    background: color-mix(in srgb, var(--estado-color) 18%, var(--hm-surface));
+    box-shadow: 0 0 0 2px var(--estado-color);
+}
+.estado-stat-numero {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.1;
+}
+.estado-stat-texto {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+.estado-stat-disponible    { --estado-color: var(--hm-success); }
+.estado-stat-ocupada       { --estado-color: var(--hm-danger); }
+.estado-stat-limpieza      { --estado-color: var(--hm-warning); }
+.estado-stat-mantenimiento { --estado-color: var(--hm-text-muted); }
+a.estado-stat {
+    text-decoration: none;
+}
+
+/* ====================================================================
+   16. TABLAS COMPACTAS
+   ==================================================================== */
+/* Miniatura de habitación en listados */
+.room-thumb {
+    width: 48px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: var(--hm-radius-xs);
+    border: 1px solid var(--hm-border);
+    flex-shrink: 0;
+}
+
+/* Textos largos en celdas: máximo 2 líneas, el resto en el title */
+.text-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 280px;
+    font-size: 0.82rem;
+    line-height: 1.35;
+}

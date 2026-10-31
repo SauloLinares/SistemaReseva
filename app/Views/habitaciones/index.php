@@ -12,32 +12,28 @@
 <div class="app-content">
     <div class="container-fluid">
 
-        <!-- Tarjetas de Conteo Rápido -->
-        <div class="row g-3 mb-4">
-            <div class="col-6 col-md-3">
-                <div class="card bg-success-subtle border-success text-success-emphasis p-3 text-center shadow-xs">
-                    <h3 class="fw-bold mb-0"><?= $conteo['disponible'] ?></h3>
-                    <small class="fw-semibold"><i class="bi bi-check-circle me-1"></i>Disponibles</small>
+        <!-- Resumen por estado: cada tarjeta filtra la tabla -->
+        <?php
+        $estadosResumen = [
+            'disponible'    => ['texto' => 'Disponibles',      'icono' => 'bi-check-circle'],
+            'ocupada'       => ['texto' => 'Ocupadas',         'icono' => 'bi-person-fill'],
+            'limpieza'      => ['texto' => 'En Limpieza',      'icono' => 'bi-stars'],
+            'mantenimiento' => ['texto' => 'En Mantenimiento', 'icono' => 'bi-tools'],
+        ];
+        ?>
+        <div class="row g-3 mb-3">
+            <?php foreach ($estadosResumen as $clave => $info): ?>
+                <?php $activo = ($filtroEstado === $clave); ?>
+                <div class="col-6 col-md-3">
+                    <a href="<?= e(url('habitaciones') . ($activo ? '' : '&estado=' . $clave)) ?>"
+                       class="estado-stat estado-stat-<?= $clave ?><?= $activo ? ' active' : '' ?>"
+                       aria-current="<?= $activo ? 'true' : 'false' ?>"
+                       title="<?= $activo ? 'Quitar filtro' : 'Mostrar solo ' . e(mb_strtolower($info['texto'])) ?>">
+                        <span class="estado-stat-numero"><?= (int) ($conteo[$clave] ?? 0) ?></span>
+                        <span class="estado-stat-texto"><i class="bi <?= $info['icono'] ?> me-1"></i><?= e($info['texto']) ?></span>
+                    </a>
                 </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="card bg-danger-subtle border-danger text-danger-emphasis p-3 text-center shadow-xs">
-                    <h3 class="fw-bold mb-0"><?= $conteo['ocupada'] ?></h3>
-                    <small class="fw-semibold"><i class="bi bi-person-fill me-1"></i>Ocupadas</small>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="card bg-warning-subtle border-warning text-warning-emphasis p-3 text-center shadow-xs">
-                    <h3 class="fw-bold mb-0"><?= $conteo['limpieza'] ?></h3>
-                    <small class="fw-semibold"><i class="bi bi-stars me-1"></i>En Limpieza</small>
-                </div>
-            </div>
-            <div class="col-6 col-md-3">
-                <div class="card bg-secondary-subtle border-secondary text-secondary-emphasis p-3 text-center shadow-xs">
-                    <h3 class="fw-bold mb-0"><?= $conteo['mantenimiento'] ?></h3>
-                    <small class="fw-semibold"><i class="bi bi-tools me-1"></i>En Mantenimiento</small>
-                </div>
-            </div>
+            <?php endforeach; ?>
         </div>
 
         <!-- Filtros -->
@@ -85,11 +81,11 @@
                             <tr>
                                 <th>Número</th>
                                 <th>Piso</th>
-                                <th>Tipo de Habitación</th>
+                                <th>Tipo</th>
                                 <th>Capacidad</th>
-                                <th>Precio por Noche</th>
+                                <th class="text-end">Precio / noche</th>
                                 <th>Estado</th>
-                                <th>Descripción / Amenidades</th>
+                                <th>Descripción</th>
                                 <th class="text-end pe-3">Acciones</th>
                             </tr>
                         </thead>
@@ -98,36 +94,24 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <?php 
+                                            <?php
                                                 $fotoH = $h['foto'] ?? 'simple.jpg';
                                                 $rutaImg = file_exists(__DIR__ . '/../../../public/uploads/habitaciones/' . $fotoH)
                                                     ? base_url('uploads/habitaciones/' . $fotoH)
                                                     : base_url('uploads/habitaciones/simple.jpg');
                                             ?>
-                                            <img src="<?= $rutaImg ?>" alt="Hab. <?= htmlspecialchars($h['numero']) ?>" class="rounded-2 shadow-xs border flex-shrink-0" style="width: 52px; height: 38px; object-fit: cover;">
-                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-6 fw-bold px-2 py-1">
-                                                Hab. <?= htmlspecialchars($h['numero']) ?>
-                                            </span>
+                                            <img src="<?= $rutaImg ?>" alt="Hab. <?= e($h['numero']) ?>" class="room-thumb">
+                                            <span class="fw-semibold text-nowrap">Hab. <?= e($h['numero']) ?></span>
                                         </div>
                                     </td>
-                                    <td><span class="badge bg-light text-secondary border fw-semibold">Piso <?= htmlspecialchars($h['piso']) ?></span></td>
-                                    <td>
-                                        <div class="fw-bold text-body-emphasis"><?= htmlspecialchars($h['tipo_nombre']) ?></div>
-                                    </td>
-                                    <td>
-                                        <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
-                                            <i class="bi bi-people-fill me-1"></i><?= $h['capacidad'] ?> pers.
-                                        </span>
-                                    </td>
-                                    <td class="fw-bold text-success fs-6"><?= dinero($h['precio_diario']) ?></td>
+                                    <td class="text-nowrap">Piso <?= e($h['piso']) ?></td>
+                                    <td class="fw-semibold text-nowrap"><?= e($h['tipo_nombre']) ?></td>
+                                    <td class="text-nowrap"><i class="bi bi-people text-body-secondary me-1"></i><?= (int) $h['capacidad'] ?></td>
+                                    <td class="text-end text-nowrap fw-semibold"><?= dinero($h['precio_diario']) ?></td>
                                     <td><?= badge_estado_habitacion($h['estado']) ?></td>
                                     <td>
-                                        <div class="d-flex align-items-start gap-2">
-                                            <i class="bi bi-info-circle text-primary opacity-75 mt-0.5 flex-shrink-0"></i>
-                                            <span class="text-body-secondary small lh-sm">
-                                                <?= htmlspecialchars($h['descripcion'] ?: ($h['caracteristicas'] ?? 'Sin descripción adicional')) ?>
-                                            </span>
-                                        </div>
+                                        <?php $descripcion = $h['descripcion'] ?: ($h['caracteristicas'] ?? 'Sin descripción adicional'); ?>
+                                        <span class="text-body-secondary text-clamp-2" title="<?= e($descripcion) ?>"><?= e($descripcion) ?></span>
                                     </td>
                                     <td class="text-end pe-3">
                                         <div class="table-actions">

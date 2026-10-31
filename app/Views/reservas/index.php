@@ -62,10 +62,10 @@
                                 <th>Código</th>
                                 <th>Huésped</th>
                                 <th>Habitaciones</th>
-                                <th>Fechas (In / Out)</th>
-                                <th>Noches</th>
-                                <th>Total</th>
-                                <th>Saldo</th>
+                                <th>Entrada / Salida</th>
+                                <th class="text-center">Noches</th>
+                                <th class="text-end">Total</th>
+                                <th class="text-end">Saldo</th>
                                 <th>Estado</th>
                                 <th class="text-end pe-3">Acciones</th>
                             </tr>
@@ -80,32 +80,30 @@
                             <?php else: ?>
                                 <?php foreach ($reservas as $r): ?>
                                     <tr>
-                                        <td>
-                                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-bold">
-                                                <?= htmlspecialchars($r['codigo_reserva']) ?>
-                                            </span>
-                                            <small class="d-block text-muted"><?= htmlspecialchars($r['origen']) ?></small>
+                                        <td class="text-nowrap">
+                                            <span class="fw-semibold text-primary font-monospace"><?= e($r['codigo_reserva']) ?></span>
+                                            <small class="d-block text-body-secondary text-capitalize"><?= e($r['origen']) ?></small>
                                         </td>
                                         <td>
-                                            <div class="fw-bold"><?= htmlspecialchars($r['huesped_nombre']) ?></div>
-                                            <small class="text-muted">Doc: <?= htmlspecialchars($r['numero_documento']) ?> | Tel: <?= htmlspecialchars($r['huesped_telefono'] ?: 'N/A') ?></small>
+                                            <div class="fw-semibold text-nowrap"><?= e($r['huesped_nombre']) ?></div>
+                                            <small class="d-block text-body-secondary text-nowrap">
+                                                <?= e($r['numero_documento']) ?><?php if (!empty($r['huesped_telefono'])): ?> · <?= e($r['huesped_telefono']) ?><?php endif; ?>
+                                            </small>
                                         </td>
-                                        <td>
-                                            <span class="badge text-bg-light border shadow-xs">
-                                                <i class="bi bi-door-closed me-1"></i><?= htmlspecialchars($r['habitaciones_asignadas'] ?: 'Sin asignar') ?>
-                                            </span>
+                                        <td class="text-nowrap">
+                                            <i class="bi bi-door-closed text-body-secondary me-1"></i><?= e($r['habitaciones_asignadas'] ?: 'Sin asignar') ?>
                                         </td>
-                                        <td>
-                                            <div class="small text-success fw-semibold"><i class="bi bi-box-arrow-in-right me-1"></i><?= fecha_es($r['fecha_entrada']) ?></div>
-                                            <div class="small text-danger fw-semibold"><i class="bi bi-box-arrow-right me-1"></i><?= fecha_es($r['fecha_salida']) ?></div>
+                                        <td class="text-nowrap">
+                                            <div><i class="bi bi-box-arrow-in-right text-success me-1" title="Entrada"></i><?= fecha_es($r['fecha_entrada']) ?></div>
+                                            <div><i class="bi bi-box-arrow-right text-danger me-1" title="Salida"></i><?= fecha_es($r['fecha_salida']) ?></div>
                                         </td>
-                                        <td><span class="badge text-bg-secondary"><?= $r['noches'] ?> n</span></td>
-                                        <td><strong><?= dinero($r['total']) ?></strong></td>
-                                        <td>
+                                        <td class="text-center"><?= (int) $r['noches'] ?></td>
+                                        <td class="text-end text-nowrap fw-semibold"><?= dinero($r['total']) ?></td>
+                                        <td class="text-end text-nowrap">
                                             <?php if ((float)$r['saldo'] > 0): ?>
-                                                <span class="badge text-bg-danger"><?= dinero($r['saldo']) ?></span>
+                                                <span class="fw-semibold text-danger"><?= dinero($r['saldo']) ?></span>
                                             <?php else: ?>
-                                                <span class="badge text-bg-success"><i class="bi bi-check2"></i> S/. 0.00</span>
+                                                <span class="text-success"><i class="bi bi-check2-circle me-1"></i>Pagado</span>
                                             <?php endif; ?>
                                         </td>
                                         <td><?= badge_estado_reserva($r['estado']) ?></td>
