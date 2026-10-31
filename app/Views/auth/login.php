@@ -36,10 +36,10 @@ $rutaLogo = ($logoArchivo !== '' && file_exists(__DIR__ . '/../../../public/uplo
     </script>
 
     <!-- Fuentes de Google -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" />
+    <link rel="stylesheet" href="<?= asset('vendor/fonts/plus-jakarta-sans/fuente.css') ?>" />
 
     <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="<?= asset('vendor/bootstrap-icons/bootstrap-icons.min.css') ?>" />
 
     <!-- AdminLTE v4 CSS -->
     <link rel="stylesheet" href="<?= asset('adminlte/css/adminlte.min.css') ?>" />
@@ -224,7 +224,7 @@ $rutaLogo = ($logoArchivo !== '' && file_exists(__DIR__ . '/../../../public/uplo
     </div>
 
     <!-- Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= asset('vendor/bootstrap/bootstrap.bundle.min.js') ?>"></script>
 
     <script>
         // Funcionalidad para alternar ver/ocultar contraseña

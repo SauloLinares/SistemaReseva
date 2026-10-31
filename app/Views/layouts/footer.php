@@ -18,11 +18,11 @@
 
     <!--begin::Scripts-->
     <!-- OverlayScrollbars -->
-    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"></script>
+    <script src="<?= asset('vendor/overlayscrollbars/overlayscrollbars.browser.es6.min.js') ?>"></script>
 
     <!-- Popper.js & Bootstrap 5 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.min.js"></script>
+    <script src="<?= asset('vendor/popper/popper.min.js') ?>"></script>
+    <script src="<?= asset('vendor/bootstrap/bootstrap.min.js') ?>"></script>
 
     <!-- AdminLTE v4 JS -->
     <script src="<?= asset('adminlte/js/adminlte.min.js') ?>"></script>
@@ -51,13 +51,13 @@
     </script>
 
     <!-- TomSelect JS (Búsqueda en selects) -->
-    <script data-lib="tomselect" src="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/js/tom-select.complete.min.js"></script>
+    <script data-lib="tomselect" src="<?= asset('vendor/tom-select/tom-select.complete.min.js') ?>"></script>
 
     <!-- SweetAlert2 JS (Modales y confirmaciones modernas) -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.0/dist/sweetalert2.all.min.js"></script>
+    <script src="<?= asset('vendor/sweetalert2/sweetalert2.all.min.js') ?>"></script>
 
     <!-- Simple-DataTables JS (Búsqueda, paginación y ordenación en tablas) -->
-    <script data-lib="datatables" src="https://cdn.jsdelivr.net/npm/simple-datatables@9.2.1/dist/umd/simple-datatables.js"></script>
+    <script data-lib="datatables" src="<?= asset('vendor/simple-datatables/simple-datatables.js') ?>"></script>
 
     <?php if (!empty($_SESSION['form_previo'])): ?>
         <!-- Datos y errores del último envío fallido (Controller::volverConErrores); se usan una sola vez -->

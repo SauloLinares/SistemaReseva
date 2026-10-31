@@ -35,6 +35,28 @@ class ConfiguracionController extends Controller
         ], 'Datos del Hotel - Configuración');
     }
 
+    /** Tipos de imagen aceptados para el logo (constante IMAGETYPE_* => extensión) */
+    private const TIPOS_LOGO = [IMAGETYPE_PNG => 'png', IMAGETYPE_JPEG => 'jpg', IMAGETYPE_WEBP => 'webp'];
+
+    /**
+     * Comprueba que el archivo subido sea una imagen PNG, JPG o WEBP de verdad
+     * (no basta la extensión). Devuelve el mensaje de error o null si es válido.
+     */
+    private function validarLogo(array $archivo): ?string
+    {
+        if ($archivo['error'] !== UPLOAD_ERR_OK) {
+            return 'No se pudo subir el logo (¿pesa demasiado?). Inténtalo con otra imagen.';
+        }
+        if ($archivo['size'] > 2 * 1024 * 1024) {
+            return 'El logo no debe pesar más de 2 MB.';
+        }
+        $info = @getimagesize($archivo['tmp_name']);
+        if ($info === false || !isset(self::TIPOS_LOGO[$info[2]])) {
+            return 'El logo debe ser una imagen PNG, JPG o WEBP.';
+        }
+        return null;
+    }
+
     /**
      * Guardar datos del hotel
      */
@@ -54,25 +76,32 @@ class ConfiguracionController extends Controller
             'hotel_checkout_hora'
         ];
 
+        // El logo se valida antes de guardar nada: solo imágenes PNG, JPG o WEBP reales
+        // (SVG no: puede contener código que se ejecuta si se abre su dirección directamente)
+        $logoSubido = !empty($_FILES['hotel_logo']['name']);
+        if ($logoSubido) {
+            $error = $this->validarLogo($_FILES['hotel_logo']);
+            if ($error !== null) {
+                $this->volverConErrores('configuracion/hotel', ['hotel_logo' => $error]);
+            }
+        }
+
         foreach ($campos as $c) {
             if (isset($_POST[$c])) {
                 $this->configModel->guardar($c, trim($_POST[$c]), 'general');
             }
         }
 
-        // Procesar subida del logotipo del hotel
-        if (!empty($_FILES['hotel_logo']['name']) && $_FILES['hotel_logo']['error'] === UPLOAD_ERR_OK) {
-            $ext = strtolower(pathinfo($_FILES['hotel_logo']['name'], PATHINFO_EXTENSION));
-            $permitidas = ['png', 'jpg', 'jpeg', 'webp', 'svg'];
-            if (in_array($ext, $permitidas)) {
-                $dirUploads = dirname(__DIR__, 2) . '/public/uploads/hotel/';
-                if (!is_dir($dirUploads)) {
-                    mkdir($dirUploads, 0777, true);
-                }
-                $nombreArchivo = 'logo_' . time() . '.' . $ext;
-                if (move_uploaded_file($_FILES['hotel_logo']['tmp_name'], $dirUploads . $nombreArchivo)) {
-                    $this->configModel->guardar('hotel_logo', $nombreArchivo, 'general', 'Logotipo oficial del establecimiento');
-                }
+        // Guardar el logotipo (ya validado arriba); la extensión sale del tipo real de la imagen
+        if ($logoSubido) {
+            $ext = self::TIPOS_LOGO[getimagesize($_FILES['hotel_logo']['tmp_name'])[2]];
+            $dirUploads = dirname(__DIR__, 2) . '/public/uploads/hotel/';
+            if (!is_dir($dirUploads)) {
+                mkdir($dirUploads, 0775, true);
+            }
+            $nombreArchivo = 'logo_' . time() . '.' . $ext;
+            if (move_uploaded_file($_FILES['hotel_logo']['tmp_name'], $dirUploads . $nombreArchivo)) {
+                $this->configModel->guardar('hotel_logo', $nombreArchivo, 'general', 'Logotipo oficial del establecimiento');
             }
         }
 

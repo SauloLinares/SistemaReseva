@@ -35,9 +35,9 @@
                                 </div>
                                 <div class="col-12 col-sm">
                                     <label class="form-label mb-1" for="inputLogoHotel">Adjuntar o Actualizar Logotipo</label>
-                                    <input type="file" name="hotel_logo" id="inputLogoHotel" class="form-control" accept="image/png, image/jpeg, image/webp, image/svg+xml">
+                                    <input type="file" name="hotel_logo" id="inputLogoHotel" class="form-control" accept="image/png, image/jpeg, image/webp">
                                     <div class="form-text mt-1 text-muted small">
-                                        <i class="bi bi-info-circle me-1"></i>Formatos recomendados: <strong>PNG transparente, WebP, JPG o SVG</strong>. Este logotipo aparecerá en la barra lateral del sistema, en comprobantes impresos y recibos oficiales.
+                                        <i class="bi bi-info-circle me-1"></i>Formatos recomendados: <strong>PNG transparente, WebP o JPG</strong> (máx. 2 MB). Este logotipo aparecerá en la barra lateral del sistema, en comprobantes impresos y recibos oficiales.
                                     </div>
                                 </div>
                             </div>

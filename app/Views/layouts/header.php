@@ -52,23 +52,21 @@ $pageTitle = preg_replace('/\s*[-|·]\s*Hotel Manager\s*$/u', '', $pageTitle ?? 
     </script>
 
     <!-- Fuente del sistema: Plus Jakarta Sans (Source Sans 3 de AdminLTE se quitó: ningún elemento la usaba) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= asset('vendor/fonts/plus-jakarta-sans/fuente.css') ?>" />
 
     <!-- OverlayScrollbars -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" />
+    <link rel="stylesheet" href="<?= asset('vendor/overlayscrollbars/overlayscrollbars.min.css') ?>" />
 
     <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="<?= asset('vendor/bootstrap-icons/bootstrap-icons.min.css') ?>" />
 
     <!-- AdminLTE v4 CSS -->
     <link rel="stylesheet" href="<?= asset('adminlte/css/adminlte.min.css') ?>" />
 
     <!-- TomSelect y Simple-DataTables: data-lib permite quitarlos de las páginas que no los usan
          (ver quitar_librerias_sin_uso). SweetAlert2 trae su CSS dentro de sweetalert2.all.min.js. -->
-    <link rel="stylesheet" data-lib="tomselect" href="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/css/tom-select.bootstrap5.min.css" />
-    <link rel="stylesheet" data-lib="datatables" href="https://cdn.jsdelivr.net/npm/simple-datatables@9.2.1/dist/style.css" />
+    <link rel="stylesheet" data-lib="tomselect" href="<?= asset('vendor/tom-select/tom-select.bootstrap5.min.css') ?>" />
+    <link rel="stylesheet" data-lib="datatables" href="<?= asset('vendor/simple-datatables/style.css') ?>" />
 
     <!-- Estilos personalizados con control de caché dinámico -->
     <link rel="stylesheet" href="<?= asset('css/custom.css') ?>?v=<?= file_exists(__DIR__ . '/../../../public/assets/css/custom.css') ? filemtime(__DIR__ . '/../../../public/assets/css/custom.css') : time() ?>" />

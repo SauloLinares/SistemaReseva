@@ -1,6 +1,5 @@
-<!-- FullCalendar CSS & JS desde CDN -->
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<!-- FullCalendar 6 (local): inyecta sus propios estilos, no tiene archivo CSS -->
+<script src="<?= asset('vendor/fullcalendar/index.global.min.js') ?>"></script>
 
 <?php partial('page_header', [
     'titulo'    => 'Calendario de Reservas',
