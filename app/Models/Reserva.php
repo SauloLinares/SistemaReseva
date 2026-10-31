@@ -456,26 +456,32 @@ class Reserva extends Model
                 GROUP BY r.id";
         $filas = $this->db->query($sql)->fetchAll();
 
-        $colores = [
-            'confirmada' => '#0d6efd',
-            'pendiente'  => '#ffc107',
-            'en_estadia' => '#198754',
-            'finalizada' => '#6c757d',
+        $etiquetas = [
+            'confirmada' => 'Confirmada',
+            'pendiente'  => 'Pendiente',
+            'en_estadia' => 'En estadía',
+            'finalizada' => 'Finalizada',
         ];
 
         $eventos = [];
         foreach ($filas as $f) {
+            $habitaciones = $f['habitaciones'] ?: 'Sin asignar';
             $eventos[] = [
                 'id'            => $f['id'],
-                'title'         => $f['codigo_reserva'] . ' - ' . $f['huesped'] . ' (Hab: ' . ($f['habitaciones'] ?: 'N/A') . ')',
+                // Título corto para que quepa en la barra; el código va en el detalle
+                'title'         => ($f['habitaciones'] ? 'Hab. ' . $f['habitaciones'] . ' · ' : '') . $f['huesped'],
                 'start'         => $f['fecha_entrada'],
-                'end'           => date('Y-m-d', strtotime($f['fecha_salida'] . ' +1 day')), // FullCalendar exclusive end
-                'color'         => $colores[$f['estado']] ?? '#0dcaf0',
+                // Fin exclusivo de FullCalendar = día de salida: la barra cubre las noches
+                // ocupadas, así una salida y una llegada el mismo día no se ven superpuestas
+                'end'           => $f['fecha_salida'],
+                // El color lo pone custom.css según la clase (mismos tonos que las insignias)
+                'classNames'    => ['ev-estado-' . $f['estado']],
                 'extendedProps' => [
                     'codigo'        => $f['codigo_reserva'],
                     'huesped'       => $f['huesped'],
-                    'habitaciones'  => $f['habitaciones'] ?: 'Sin asignar',
+                    'habitaciones'  => $habitaciones,
                     'estado'        => $f['estado'],
+                    'estado_texto'  => $etiquetas[$f['estado']] ?? ucfirst($f['estado']),
                     'total'         => (float)$f['total'],
                     'fecha_entrada' => $f['fecha_entrada'],
                     'fecha_salida'  => $f['fecha_salida'],

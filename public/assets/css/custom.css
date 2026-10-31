@@ -3284,22 +3284,8 @@ a.estado-stat {
     position: relative;
     z-index: 25;
 }
-#calendar {
-    min-height: 650px;
-}
 
-/* Leyenda del calendario: mismos colores que los eventos de FullCalendar */
-.legend-dot {
-    display: inline-block;
-    width: 0.85rem;
-    height: 0.85rem;
-    border-radius: 3px;
-    vertical-align: -0.1rem;
-}
-.legend-confirmada { background-color: #0d6efd; }
-.legend-estadia    { background-color: #198754; }
-.legend-pendiente  { background-color: #ffc107; }
-.legend-finalizada { background-color: #6c757d; }
+
 .voucher-logo {
     max-height: 52px;
     object-fit: contain;
@@ -3531,4 +3517,161 @@ input[type="time"]:focus::-webkit-calendar-picker-indicator {
 :root {
     --hm-icono-calendario: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857z'/><path d='M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2'/></svg>");
     --hm-icono-reloj: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71z'/><path d='M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0'/></svg>");
+}
+
+
+/* ====================================================================
+   24. CALENDARIO DE RESERVAS (FullCalendar)
+   Se tematiza con sus variables --fc-* a partir de los tokens, así sigue
+   el modo claro/oscuro sin reglas duplicadas.
+   ==================================================================== */
+.calendario-hotel {
+    --fc-border-color: var(--hm-border);
+    --fc-page-bg-color: var(--hm-surface);
+    --fc-neutral-bg-color: var(--hm-addon-bg);
+    --fc-list-event-hover-bg-color: var(--hm-addon-bg);
+    --fc-today-bg-color: color-mix(in srgb, var(--hm-primary) 8%, transparent);
+    --fc-button-text-color: var(--hm-text);
+    --fc-button-bg-color: transparent;
+    --fc-button-border-color: var(--hm-border);
+    --fc-button-hover-bg-color: var(--hm-addon-bg);
+    --fc-button-hover-border-color: var(--hm-border);
+    --fc-button-active-bg-color: var(--hm-primary);
+    --fc-button-active-border-color: var(--hm-primary);
+    --fc-event-border-color: transparent;
+    font-size: 0.875rem;
+}
+.calendario-hotel .fc-toolbar-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+/* "octubre de 2026" -> "Octubre de 2026" (capitalize pondría "De") */
+.calendario-hotel .fc-toolbar-title::first-letter,
+.calendario-hotel .fc-list-day-text::first-letter {
+    text-transform: uppercase;
+}
+.calendario-hotel .fc-button {
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.4rem 0.75rem;
+    border-radius: var(--hm-radius-sm);
+    box-shadow: none !important;
+    text-transform: capitalize;
+}
+.calendario-hotel .fc-button-primary:not(:disabled).fc-button-active {
+    color: #ffffff;
+}
+.calendario-hotel .fc-button:disabled {
+    opacity: 0.45;
+}
+/* Encabezado de días y números: texto, no enlaces azules */
+.calendario-hotel .fc-col-header-cell-cushion {
+    padding: 0.5rem 0;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--hm-text-muted);
+    text-decoration: none;
+}
+.calendario-hotel .fc-daygrid-day-number {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--hm-text);
+    text-decoration: none;
+}
+.calendario-hotel .fc-day-other .fc-daygrid-day-number {
+    color: var(--hm-text-muted);
+    opacity: 0.5;
+}
+/* Hoy: número dentro de un círculo azul */
+.calendario-hotel .fc-day-today .fc-daygrid-day-number {
+    min-width: 1.75rem;
+    margin: 0.2rem;
+    padding: 0.2rem 0.45rem;
+    border-radius: var(--hm-radius-pill);
+    background: var(--hm-primary);
+    color: #ffffff;
+    text-align: center;
+}
+.calendario-hotel .fc-daygrid-day-frame {
+    min-height: 92px;
+}
+.calendario-hotel .fc-daygrid-more-link {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--hm-primary);
+}
+.calendario-hotel .fc-list-day-cushion {
+    background: var(--hm-addon-bg);
+}
+.calendario-hotel .fc-list-day-text,
+.calendario-hotel .fc-list-day-side-text {
+    display: inline-block;
+    color: var(--hm-text);
+    text-decoration: none;
+}
+
+/* Barras de reserva: fondo suave + franja izquierda del color del estado */
+.calendario-hotel .fc-daygrid-event,
+.ev-chip {
+    --ev-color: var(--hm-text-muted);
+    border: 0;
+    border-left: 3px solid var(--ev-color);
+    border-radius: var(--hm-radius-xs);
+    background: color-mix(in srgb, var(--ev-color) 16%, var(--hm-surface));
+    color: var(--hm-text);
+}
+.calendario-hotel .fc-daygrid-event {
+    margin: 1px 4px 2px;
+    padding: 2px 6px;
+    font-size: 0.76rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+.calendario-hotel .fc-daygrid-event .fc-event-title,
+.calendario-hotel .fc-daygrid-event .fc-event-main {
+    color: var(--hm-text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.calendario-hotel .fc-daygrid-event:hover {
+    background: color-mix(in srgb, var(--ev-color) 28%, var(--hm-surface));
+}
+.calendario-hotel .fc-list-event-dot {
+    border-color: var(--ev-color, var(--hm-primary));
+}
+.calendario-hotel .fc-list-event {
+    --ev-color: var(--hm-text-muted);
+    cursor: pointer;
+}
+/* Misma especificidad que la regla base (.calendario-hotel .fc-daygrid-event), declarada después */
+.calendario-hotel .ev-estado-confirmada, .ev-chip.ev-estado-confirmada { --ev-color: var(--hm-primary); }
+.calendario-hotel .ev-estado-pendiente,  .ev-chip.ev-estado-pendiente  { --ev-color: var(--hm-warning); }
+.calendario-hotel .ev-estado-en_estadia, .ev-chip.ev-estado-en_estadia { --ev-color: var(--hm-success); }
+.calendario-hotel .ev-estado-finalizada, .ev-chip.ev-estado-finalizada { --ev-color: var(--hm-text-muted); }
+
+/* Leyenda */
+.calendario-leyenda {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+}
+.ev-chip {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+@media (max-width: 767.98px) {
+    .calendario-hotel .fc-toolbar {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    .calendario-hotel .fc-toolbar-title {
+        font-size: 1.05rem;
+    }
 }
