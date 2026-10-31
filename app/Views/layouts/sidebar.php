@@ -13,7 +13,8 @@ $esActivo = function(string $prefijo) use ($rutaActual): bool {
     return false;
 };
 
-$configApp = (new \App\Models\Configuracion())->obtenerTodos();
+// header.php ya cargó la configuración del hotel; solo se consulta si no existe
+$configApp = $configApp ?? (new \App\Models\Configuracion())->obtenerTodos();
 $logoArchivo = $configApp['hotel_logo'] ?? '';
 $nombreEmpresa = $configApp['hotel_nombre'] ?? 'Hotel Manager';
 ?>

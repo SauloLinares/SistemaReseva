@@ -3259,8 +3259,14 @@ a.estado-stat {
     flex-shrink: 0;
 }
 .login-logo-img {
-    width: 42px;
-    height: 42px;
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+}
+.login-logo-icono {
+    width: 56px;
+    height: 56px;
+    font-size: 1.6rem;
 }
 .alert-list-container {
     max-height: 380px;

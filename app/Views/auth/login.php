@@ -1,10 +1,23 @@
+<?php
+// Nombre y logo del hotel (la pantalla de acceso no pasa por header.php)
+$configApp = (new \App\Models\Configuracion())->obtenerTodos();
+$nombreEmpresa = $configApp['hotel_nombre'] ?? 'Hotel Manager';
+$logoArchivo = $configApp['hotel_logo'] ?? '';
+$rutaLogo = ($logoArchivo !== '' && file_exists(__DIR__ . '/../../../public/uploads/hotel/' . $logoArchivo))
+    ? base_url('uploads/hotel/' . $logoArchivo) : '';
+?>
 <!doctype html>
 <html lang="es">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title><?= htmlspecialchars($pageTitle ?? 'Iniciar Sesión') ?> | Sistema de Reserva</title>
+    <meta name="description" content="Acceso al sistema de gestión hotelera de <?= e($nombreEmpresa) ?>." />
+    <meta name="theme-color" content="#0b1120" />
+    <title><?= e($pageTitle ?? 'Iniciar Sesión') ?> · <?= e($nombreEmpresa) ?></title>
+    <?php if ($rutaLogo): ?>
+        <link rel="icon" href="<?= e($rutaLogo) ?>" />
+    <?php endif; ?>
 
     <!-- Script de inicialización de tema claro/oscuro (AdminLTE v4) -->
     <script>
@@ -108,11 +121,15 @@
                 <!-- Logo y Nombre del Sistema -->
                 <div class="login-logo text-center mb-3">
                     <a href="<?= url('login') ?>" class="text-decoration-none d-inline-flex align-items-center justify-content-center">
-                        <img src="<?= asset('adminlte/img/AdminLTELogo.png') ?>" alt="Logo" class="rounded me-2 shadow-sm login-logo-img" />
+                        <?php if ($rutaLogo): ?>
+                            <img src="<?= e($rutaLogo) ?>" alt="Logo de <?= e($nombreEmpresa) ?>" class="login-logo-img" width="72" height="72" />
+                        <?php else: ?>
+                            <span class="brand-logo-icon login-logo-icono"><i class="bi bi-buildings-fill"></i></span>
+                        <?php endif; ?>
                     </a>
                 </div>
                 <div class="text-center">
-                    <h4 class="fw-bold text-primary mb-0">Sistema de Reserva</h4>
+                    <h1 class="h4 fw-bold mb-0"><?= e($nombreEmpresa) ?></h1>
                     <small class="text-muted">Inicia sesión para continuar</small>
                 </div>
             </div>

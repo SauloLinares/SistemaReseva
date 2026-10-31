@@ -113,6 +113,58 @@ if (!function_exists('csrf_inyectar')) {
     }
 }
 
+if (!function_exists('foto_habitacion')) {
+    /**
+     * URL de la foto de una habitación. Con $miniatura usa la versión reducida de
+     * uploads/habitaciones/miniaturas/ (para listas y tarjetas) si existe.
+     * Si la foto no existe, devuelve la imagen por defecto.
+     */
+    function foto_habitacion(?string $foto, bool $miniatura = false): string
+    {
+        $dir = dirname(__DIR__, 2) . '/public/uploads/habitaciones/';
+        $foto = basename((string)$foto);
+        if ($foto === '' || !is_file($dir . $foto)) {
+            $foto = 'simple.jpg';
+        }
+        if ($miniatura && is_file($dir . 'miniaturas/' . $foto)) {
+            return base_url('uploads/habitaciones/miniaturas/' . $foto);
+        }
+        return base_url('uploads/habitaciones/' . $foto);
+    }
+}
+
+if (!function_exists('quitar_librerias_sin_uso')) {
+    /**
+     * Quita del HTML final las librerías opcionales (marcadas con data-lib="...")
+     * que la página no usa. Así TomSelect y Simple-DataTables solo se descargan
+     * donde hay un selector con búsqueda o una tabla interactiva.
+     */
+    function quitar_librerias_sin_uso(string $html): string
+    {
+        // Señales de uso en la página (clases o llamadas en el HTML/JS de la vista)
+        $usos = [
+            'tomselect'  => ['select-search', 'select-huesped', 'new TomSelect', 'initTomSelectHuesped'],
+            'datatables' => ['datatable-init', 'table-datatable', 'simpleDatatables'],
+        ];
+
+        foreach ($usos as $lib => $senales) {
+            // Las propias etiquetas data-lib no cuentan como uso
+            $sinEtiquetas = preg_replace('/<(?:script|link)\b[^>]*data-lib="' . $lib . '"[^>]*>(?:<\/script>)?/i', '', $html);
+            $seUsa = false;
+            foreach ($senales as $senal) {
+                if (str_contains($sinEtiquetas, $senal)) {
+                    $seUsa = true;
+                    break;
+                }
+            }
+            if (!$seUsa) {
+                $html = $sinEtiquetas;
+            }
+        }
+        return $html;
+    }
+}
+
 if (!function_exists('redirect')) {
     function redirect(string $route = ''): void
     {

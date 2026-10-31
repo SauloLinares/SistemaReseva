@@ -51,13 +51,13 @@
     </script>
 
     <!-- TomSelect JS (Búsqueda en selects) -->
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/js/tom-select.complete.min.js"></script>
+    <script data-lib="tomselect" src="https://cdn.jsdelivr.net/npm/tom-select@2.4.3/dist/js/tom-select.complete.min.js"></script>
 
     <!-- SweetAlert2 JS (Modales y confirmaciones modernas) -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.14.0/dist/sweetalert2.all.min.js"></script>
 
     <!-- Simple-DataTables JS (Búsqueda, paginación y ordenación en tablas) -->
-    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@9.2.1/dist/umd/simple-datatables.js"></script>
+    <script data-lib="datatables" src="https://cdn.jsdelivr.net/npm/simple-datatables@9.2.1/dist/umd/simple-datatables.js"></script>
 
     <?php if (!empty($_SESSION['form_previo'])): ?>
         <!-- Datos y errores del último envío fallido (Controller::volverConErrores); se usan una sola vez -->

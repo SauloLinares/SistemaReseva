@@ -175,7 +175,7 @@ if (!empty($estadiasActivas)) {
                                  data-piso="<?= $h['piso'] ?>"
                                  data-precio="<?= dinero($h['precio_diario']) ?>"
                                  data-estado="<?= $estado ?>"
-                                 data-foto="<?= !empty($h['foto']) ? base_url('uploads/habitaciones/' . $h['foto']) : base_url('uploads/habitaciones/simple.jpg') ?>"
+                                 data-foto="<?= e(foto_habitacion($h['foto'] ?? null)) ?>"
                                  data-caracteristicas="<?= htmlspecialchars($h['caracteristicas'] ?? 'Wi-Fi, TV Cable, Baño Privado') ?>"
                                  data-huesped="<?= htmlspecialchars($est['huesped_nombre'] ?? '') ?>"
                                  data-doc="<?= htmlspecialchars($est['numero_documento'] ?? '') ?>"

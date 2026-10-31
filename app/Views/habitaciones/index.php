@@ -94,13 +94,7 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <?php
-                                                $fotoH = $h['foto'] ?? 'simple.jpg';
-                                                $rutaImg = file_exists(__DIR__ . '/../../../public/uploads/habitaciones/' . $fotoH)
-                                                    ? base_url('uploads/habitaciones/' . $fotoH)
-                                                    : base_url('uploads/habitaciones/simple.jpg');
-                                            ?>
-                                            <img src="<?= $rutaImg ?>" alt="Hab. <?= e($h['numero']) ?>" class="room-thumb">
+                                            <img src="<?= e(foto_habitacion($h['foto'] ?? null, true)) ?>" alt="Hab. <?= e($h['numero']) ?>" class="room-thumb" width="48" height="36" loading="lazy" decoding="async">
                                             <span class="fw-semibold text-nowrap">Hab. <?= e($h['numero']) ?></span>
                                         </div>
                                     </td>

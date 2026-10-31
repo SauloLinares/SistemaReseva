@@ -302,14 +302,8 @@
                                                 </div>
                                                 
                                                 <!-- Foto de Habitación con Zoom -->
-                                                <?php 
-                                                    $fotoHab = $hab['foto'] ?? 'simple.jpg';
-                                                    $rutaFoto = file_exists(__DIR__ . '/../../../public/uploads/habitaciones/' . $fotoHab)
-                                                        ? base_url('uploads/habitaciones/' . $fotoHab)
-                                                        : base_url('uploads/habitaciones/simple.jpg');
-                                                ?>
                                                 <div class="hab-img-container">
-                                                    <img src="<?= $rutaFoto ?>" alt="Hab. <?= htmlspecialchars($hab['numero']) ?>" class="hab-img-thumb border shadow-xs">
+                                                    <img src="<?= e(foto_habitacion($hab['foto'] ?? null, true)) ?>" alt="Hab. <?= e($hab['numero']) ?>" class="hab-img-thumb border shadow-xs" width="68" height="68" loading="lazy" decoding="async">
                                                 </div>
 
                                                 <!-- Detalles de la Habitación -->

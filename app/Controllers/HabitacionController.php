@@ -142,7 +142,41 @@ class HabitacionController extends Controller
         }
         $nombreArchivo = 'hab_' . preg_replace('/[^A-Za-z0-9_-]/', '', $prefijo) . '_' . time() . '.' . $ext;
 
-        return move_uploaded_file($_FILES['foto']['tmp_name'], $dirUploads . $nombreArchivo) ? $nombreArchivo : null;
+        if (!move_uploaded_file($_FILES['foto']['tmp_name'], $dirUploads . $nombreArchivo)) {
+            return null;
+        }
+        $this->crearMiniatura($dirUploads . $nombreArchivo, $dirUploads . 'miniaturas/' . $nombreArchivo);
+        return $nombreArchivo;
+    }
+
+    /**
+     * Genera la versión de 240 px que usan las listas y el POS (foto_habitacion(..., true)).
+     * Requiere la extensión GD; sin ella no hace nada y se muestra la foto original.
+     */
+    private function crearMiniatura(string $origen, string $destino): void
+    {
+        if (!extension_loaded('gd')) {
+            return;
+        }
+        $ext = strtolower(pathinfo($origen, PATHINFO_EXTENSION));
+        $imagen = match ($ext) {
+            'jpg', 'jpeg' => @imagecreatefromjpeg($origen),
+            'png'         => @imagecreatefrompng($origen),
+            'webp'        => @imagecreatefromwebp($origen),
+            default       => false,
+        };
+        if (!$imagen) {
+            return;
+        }
+        $miniatura = imagescale($imagen, 240);
+        if (!is_dir(dirname($destino))) {
+            mkdir(dirname($destino), 0775, true);
+        }
+        match ($ext) {
+            'jpg', 'jpeg' => imagejpeg($miniatura, $destino, 80),
+            'png'         => imagepng($miniatura, $destino, 8),
+            'webp'        => imagewebp($miniatura, $destino, 80),
+        };
     }
 
     /**
