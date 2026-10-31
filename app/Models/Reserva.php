@@ -493,6 +493,31 @@ class Reserva extends Model
         return $eventos;
     }
 
+    /**
+     * Estadías por habitación que se cruzan con el rango [desde, hasta) — para la planificación.
+     * Devuelve [habitacion_id => [reservas ordenadas por fecha de entrada]].
+     */
+    public function obtenerOcupacionPorHabitacion(string $desde, string $hasta): array
+    {
+        $sql = "SELECT rh.habitacion_id, r.id, r.codigo_reserva, r.fecha_entrada, r.fecha_salida, r.estado,
+                       hu.nombres, hu.apellidos
+                FROM reserva_habitaciones rh
+                INNER JOIN reservas r ON r.id = rh.reserva_id
+                INNER JOIN huespedes hu ON hu.id = r.huesped_id
+                WHERE r.estado <> 'cancelada'
+                  AND r.fecha_entrada < :hasta
+                  AND r.fecha_salida > :desde
+                ORDER BY rh.habitacion_id, r.fecha_entrada";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':desde' => $desde, ':hasta' => $hasta]);
+
+        $porHabitacion = [];
+        foreach ($stmt->fetchAll() as $fila) {
+            $porHabitacion[(int)$fila['habitacion_id']][] = $fila;
+        }
+        return $porHabitacion;
+    }
+
     public function obtenerReservasDeHoy(): array
     {
         $hoy = date('Y-m-d');

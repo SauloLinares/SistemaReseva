@@ -104,11 +104,11 @@
                             <div class="row g-3">
                                 <div class="col-6 col-xl-4">
                                     <label for="fecha_entrada" class="form-label text-nowrap">Check-in <span class="text-danger">*</span></label>
-                                    <input type="date" name="fecha_entrada" id="fecha_entrada" class="form-control" value="<?= date('Y-m-d') ?>" min="<?= date('Y-m-d') ?>" required>
+                                    <input type="date" name="fecha_entrada" id="fecha_entrada" class="form-control" value="<?= e($entradaInicial) ?>" min="<?= date('Y-m-d') ?>" required>
                                 </div>
                                 <div class="col-6 col-xl-4">
                                     <label for="fecha_salida" class="form-label text-nowrap">Check-out <span class="text-danger">*</span></label>
-                                    <input type="date" name="fecha_salida" id="fecha_salida" class="form-control" value="<?= date('Y-m-d', strtotime('+1 day')) ?>" min="<?= date('Y-m-d', strtotime('+1 day')) ?>" required>
+                                    <input type="date" name="fecha_salida" id="fecha_salida" class="form-control" value="<?= e($salidaInicial) ?>" min="<?= date('Y-m-d', strtotime('+1 day')) ?>" required>
                                 </div>
                                 <div class="col-12 col-xl-4">
                                     <label for="total_noches" class="form-label text-nowrap">Total noches</label>
@@ -404,11 +404,11 @@
                             <div class="mb-3 p-2 resumen-fechas-box rounded-3">
                                 <div class="d-flex justify-content-between small mb-1">
                                     <span class="text-muted"><i class="bi bi-box-arrow-in-right text-success me-1"></i>Check-in:</span>
-                                    <strong id="resumenFechaEntrada"><?= date('d/m/Y') ?></strong>
+                                    <strong id="resumenFechaEntrada"><?= fecha_es($entradaInicial) ?></strong>
                                 </div>
                                 <div class="d-flex justify-content-between small">
                                     <span class="text-muted"><i class="bi bi-box-arrow-right text-danger me-1"></i>Check-out:</span>
-                                    <strong id="resumenFechaSalida"><?= date('d/m/Y', strtotime('+1 day')) ?></strong>
+                                    <strong id="resumenFechaSalida"><?= fecha_es($salidaInicial) ?></strong>
                                 </div>
                             </div>
 
@@ -1269,7 +1269,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Preseleccionar habitación si viene por parámetro GET
     const urlParams = new URLSearchParams(window.location.search);
-    const habIdParam = urlParams.get('habitacion_id');
+    // Disponibilidad envía hab_id; Planificación y el panel, habitacion_id
+    const habIdParam = urlParams.get('habitacion_id') || urlParams.get('hab_id');
     if (habIdParam) {
         const checkHab = document.getElementById('hab_' + habIdParam);
         if (checkHab && !checkHab.checked) {

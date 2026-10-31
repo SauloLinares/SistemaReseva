@@ -7,6 +7,7 @@
     'icono'     => 'bi-calendar3',
     'subtitulo' => 'Ocupación por fecha: cada barra cubre las noches de la estadía',
     'acciones'  => [
+        ['texto' => 'Por habitación', 'url' => 'reservas/planificacion', 'icono' => 'bi-grid-3x3', 'variante' => 'outline-secondary'],
         ['texto' => 'Ver Listado', 'url' => 'reservas', 'icono' => 'bi-list-check', 'variante' => 'outline-secondary'],
         ['texto' => 'Nueva Reserva', 'url' => 'reservas/crear', 'icono' => 'bi-plus-lg'],
     ],

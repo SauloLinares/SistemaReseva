@@ -88,6 +88,12 @@ $nombreEmpresa = $configApp['hotel_nombre'] ?? 'Hotel Manager';
                                 <p>Calendario</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="<?= url('reservas/planificacion') ?>" class="nav-link <?= $rutaActual === 'reservas/planificacion' ? 'active' : '' ?>">
+                                <i class="nav-icon bi bi-grid-3x3"></i>
+                                <p>Planificación</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
 

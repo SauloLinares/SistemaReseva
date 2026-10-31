@@ -60,12 +60,51 @@ class ReservaController extends Controller
         $habitaciones = $this->habModel->listarTodos();
         $servicios = $this->servicioModel->listarActivos();
 
+        // Fechas iniciales desde la URL (Disponibilidad, Planificación); si no son válidas, hoy y mañana
+        $hoy = date('Y-m-d');
+        $entrada = $_GET['entrada'] ?? '';
+        $salida = $_GET['salida'] ?? '';
+        $esFecha = fn($f) => (bool) \DateTime::createFromFormat('Y-m-d', $f);
+        if (!$esFecha($entrada) || $entrada < $hoy) {
+            $entrada = $hoy;
+        }
+        if (!$esFecha($salida) || $salida <= $entrada) {
+            $salida = date('Y-m-d', strtotime($entrada . ' +1 day'));
+        }
+
         $this->render('reservas/crear', [
-            'huespedes'    => $huespedes,
-            'tipos'        => $tipos,
-            'habitaciones' => $habitaciones,
-            'servicios'    => $servicios
+            'huespedes'      => $huespedes,
+            'tipos'          => $tipos,
+            'habitaciones'   => $habitaciones,
+            'servicios'      => $servicios,
+            'entradaInicial' => $entrada,
+            'salidaInicial'  => $salida,
         ], 'Registrar Nueva Reserva - Hotel Manager');
+    }
+
+    /**
+     * Planificación: habitaciones (filas) × días (columnas) con las estadías como barras
+     */
+    public function planificacion(): void
+    {
+        $diasPermitidos = [7, 14, 30];
+        $diasPedidos = (int)($_GET['dias'] ?? 14);
+        $dias = in_array($diasPedidos, $diasPermitidos, true) ? $diasPedidos : 14;
+
+        $desde = $_GET['desde'] ?? '';
+        if (!\DateTime::createFromFormat('Y-m-d', $desde)) {
+            // Por defecto empieza ayer, para ver también quién sale hoy
+            $desde = date('Y-m-d', strtotime('-1 day'));
+        }
+        $hasta = date('Y-m-d', strtotime($desde . " +{$dias} days"));
+
+        $this->render('reservas/planificacion', [
+            'desde'        => $desde,
+            'hasta'        => $hasta,
+            'dias'         => $dias,
+            'habitaciones' => $this->habModel->listarTodos(),
+            'ocupacion'    => $this->reservaModel->obtenerOcupacionPorHabitacion($desde, $hasta),
+        ], 'Planificación por Habitación - Hotel Manager');
     }
 
     /**

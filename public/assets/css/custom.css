@@ -3675,3 +3675,179 @@ input[type="time"]:focus::-webkit-calendar-picker-indicator {
         font-size: 1.05rem;
     }
 }
+
+/* ====================================================================
+   25. PLANIFICACIÓN POR HABITACIÓN (reservas/planificacion)
+   Tabla habitaciones × días. No usa .table (sus !important rompen el
+   diseño de celdas fijas). Columna de habitaciones fija al desplazar.
+   ==================================================================== */
+.planning-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--hm-border);
+    border-radius: var(--hm-radius);
+}
+.planning {
+    --plan-hab: 150px;
+    --plan-dia: 46px;
+    width: 100%;
+    min-width: calc(var(--plan-hab) + var(--plan-dia) * 7);
+    border-collapse: separate;
+    border-spacing: 0;
+    table-layout: fixed;
+    font-size: 0.82rem;
+}
+.planning-14 { min-width: calc(var(--plan-hab) + var(--plan-dia) * 14); }
+.planning-30 { --plan-dia: 40px; min-width: calc(var(--plan-hab) + var(--plan-dia) * 30); }
+
+.planning th,
+.planning td {
+    border-right: 1px solid var(--hm-border);
+    border-bottom: 1px solid var(--hm-border);
+    padding: 0;
+    height: 46px;
+    vertical-align: middle;
+}
+.planning thead th {
+    height: auto;
+    padding: 0.4rem 0;
+    background: var(--hm-surface-header);
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+/* Columna de habitaciones fija */
+.planning .planning-hab {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    width: var(--plan-hab);
+    padding: 0.35rem 0.75rem;
+    background: var(--hm-surface);
+    text-align: left;
+    font-weight: normal;
+    border-right: 2px solid var(--hm-border);
+}
+.planning thead .planning-hab {
+    z-index: 3;
+    background: var(--hm-surface-header);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--hm-text-muted);
+}
+.planning-dia-semana {
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--hm-text-muted);
+}
+.planning-dia-num {
+    display: inline-block;
+    min-width: 1.6rem;
+    font-weight: 700;
+    color: var(--hm-text);
+}
+.planning .es-hoy .planning-dia-num {
+    border-radius: var(--hm-radius-pill);
+    background: var(--hm-primary);
+    color: #ffffff;
+}
+.planning .es-finde {
+    background: color-mix(in srgb, var(--hm-text-muted) 6%, transparent);
+}
+.planning td.es-hoy {
+    background: color-mix(in srgb, var(--hm-primary) 8%, transparent);
+}
+.planning-piso th {
+    height: auto;
+    padding: 0.35rem 0.75rem;
+    background: var(--hm-addon-bg);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--hm-text-muted);
+    text-align: left;
+}
+/* La celda del piso ocupa todo el ancho: lo fijo al desplazar es el texto */
+.planning-piso-texto {
+    position: sticky;
+    left: 0.75rem;
+}
+.planning-aviso {
+    position: absolute;
+    top: 0.35rem;
+    right: 0.5rem;
+    color: var(--hm-warning);
+    font-size: 0.85rem;
+}
+
+/* Estadía: barra con los colores de estado del calendario */
+.plan-barra {
+    --ev-color: var(--hm-text-muted);
+    display: block;
+    margin: 0 2px;
+    padding: 0.35rem 0.5rem;
+    border-left: 3px solid var(--ev-color);
+    border-radius: var(--hm-radius-xs);
+    background: color-mix(in srgb, var(--ev-color) 18%, var(--hm-surface));
+    color: var(--hm-text);
+    font-size: 0.76rem;
+    font-weight: 600;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-decoration: none;
+}
+.plan-barra:hover {
+    background: color-mix(in srgb, var(--ev-color) 30%, var(--hm-surface));
+    color: var(--hm-text);
+}
+.plan-barra.ev-estado-confirmada { --ev-color: var(--hm-primary); }
+.plan-barra.ev-estado-pendiente  { --ev-color: var(--hm-warning); }
+.plan-barra.ev-estado-en_estadia { --ev-color: var(--hm-success); }
+.plan-barra.ev-estado-finalizada { --ev-color: var(--hm-text-muted); }
+/* La estadía empezó antes del período visible / termina después */
+.plan-barra.sigue-antes {
+    border-left-style: dashed;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+.plan-barra.sigue-despues {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    -webkit-mask-image: linear-gradient(to right, #000 85%, transparent);
+    mask-image: linear-gradient(to right, #000 85%, transparent);
+}
+
+/* Hueco libre: el "+" aparece al pasar el ratón o con el teclado */
+.plan-libre {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 44px;
+    color: var(--hm-primary);
+    font-size: 1.1rem;
+    text-decoration: none;
+    opacity: 0;
+    transition: opacity 0.12s ease, background-color 0.12s ease;
+}
+.plan-libre:hover,
+.plan-libre:focus-visible {
+    opacity: 1;
+    background: color-mix(in srgb, var(--hm-primary) 10%, transparent);
+}
+
+@media (max-width: 575.98px) {
+    .planning {
+        --plan-hab: 108px;
+    }
+    .planning .planning-hab {
+        padding: 0.35rem 0.5rem;
+    }
+}
