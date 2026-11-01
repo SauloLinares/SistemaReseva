@@ -74,15 +74,18 @@
 
                         <!-- Encabezado del Hotel -->
                         <div class="row align-items-center border-bottom pb-4 mb-4">
-                            <div class="col-sm-7">
-                                <?php if (!empty($hotel['hotel_logo']) && file_exists(__DIR__ . '/../../../public/uploads/hotel/' . $hotel['hotel_logo'])): ?>
-                                    <img src="<?= base_url('uploads/hotel/' . $hotel['hotel_logo']) ?>" alt="Logo Hotel" class="mb-2 voucher-logo">
-                                <?php endif; ?>
-                                <h4 class="fw-bold mb-1 text-uppercase text-dark"><?= htmlspecialchars($hotel['hotel_nombre'] ?? 'Hotel Manager & Suites') ?></h4>
+                            <div class="col-8">
+                                <!-- Logo al costado del nombre; los datos del hotel debajo, a todo el ancho -->
+                                <div class="d-flex align-items-center gap-3 mb-2">
+                                    <?php if (!empty($hotel['hotel_logo']) && file_exists(__DIR__ . '/../../../public/uploads/hotel/' . $hotel['hotel_logo'])): ?>
+                                        <span class="logo-marco voucher-logo-marco"><img src="<?= e(base_url('uploads/hotel/' . $hotel['hotel_logo'])) ?>" alt="Logo de <?= e($hotel['hotel_nombre'] ?? 'el hotel') ?>" class="voucher-logo"></span>
+                                    <?php endif; ?>
+                                    <h4 class="fw-bold mb-0 text-uppercase text-dark"><?= htmlspecialchars($hotel['hotel_nombre'] ?? 'Hotel Manager & Suites') ?></h4>
+                                </div>
                                 <p class="text-muted small mb-0">RUC: <?= htmlspecialchars($hotel['hotel_ruc'] ?? '20601234567') ?> • <?= htmlspecialchars($hotel['hotel_direccion'] ?? 'Av. Principal 123, Miraflores, Lima') ?></p>
                                 <p class="text-muted small mb-0"><i class="bi bi-telephone me-1"></i><?= htmlspecialchars($hotel['hotel_telefono'] ?? '+51 987 654 321') ?> • <i class="bi bi-envelope me-1"></i><?= htmlspecialchars($hotel['hotel_correo'] ?? 'reservas@hotelmanager.com') ?></p>
                             </div>
-                            <div class="col-sm-5 text-sm-end mt-3 mt-sm-0">
+                            <div class="col-4 text-end">
                                 <span class="badge bg-primary text-white px-3 py-1.5 fw-bold fs-6 mb-1 d-inline-block">
                                     RESERVA #<?= htmlspecialchars($reserva['codigo_reserva']) ?>
                                 </span>

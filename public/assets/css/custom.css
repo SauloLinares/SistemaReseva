@@ -3316,9 +3316,27 @@ a.estado-stat {
 }
 
 
-.voucher-logo {
-    max-height: 52px;
-    object-fit: contain;
+/* Logo del voucher: mismo marco y aro naranja que en el menú (.logo-marco, logo.js).
+   El aro va con border y no con sombra: al imprimir, las sombras pueden no salir. */
+.voucher-logo-marco {
+    --logo-tam: 64px;
+    box-shadow: none;
+    border: 2px solid #e2e8f0;
+}
+.voucher-logo-marco.logo-redondo {
+    box-shadow: none;
+    border: 3px solid #f59e0b;
+}
+@media (max-width: 575.98px) {
+    .voucher-logo-marco {
+        --logo-tam: 48px;
+    }
+}
+@media print {
+    .voucher-logo-marco {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
 }
 
 /* ====================================================================
