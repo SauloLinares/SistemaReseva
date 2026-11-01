@@ -9,7 +9,7 @@ class Habitacion extends Model
 {
     public function listarTodos(?string $filtroEstado = null, ?int $filtroTipo = null): array
     {
-        $sql = "SELECT h.*, th.nombre as tipo_nombre, th.capacidad, th.caracteristicas
+        $sql = "SELECT h.*, th.nombre as tipo_nombre, th.capacidad, th.caracteristicas, th.precio_base
                 FROM habitaciones h
                 INNER JOIN tipos_habitacion th ON th.id = h.tipo_id
                 WHERE 1=1";
@@ -108,6 +108,28 @@ class Habitacion extends Model
             ':id'     => $id,
             ':precio' => $nuevaTarifa
         ]);
+    }
+
+    /**
+     * Guarda varias tarifas a la vez ([id => precio]) en una sola transacción: o se guardan
+     * todas o ninguna. Devuelve cuántas cambiaron de verdad.
+     */
+    public function actualizarTarifas(array $tarifas): int
+    {
+        $this->db->beginTransaction();
+        try {
+            $stmt = $this->db->prepare("UPDATE habitaciones SET precio_diario = :precio WHERE id = :id AND precio_diario <> :precio2");
+            $cambiadas = 0;
+            foreach ($tarifas as $id => $precio) {
+                $stmt->execute([':id' => (int)$id, ':precio' => $precio, ':precio2' => $precio]);
+                $cambiadas += $stmt->rowCount();
+            }
+            $this->db->commit();
+            return $cambiadas;
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
     }
 
     public function eliminar(int $id): bool

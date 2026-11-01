@@ -330,19 +330,43 @@ class HabitacionController extends Controller
     }
 
     /**
-     * Actualizar tarifa rápida
+     * Guardar varias tarifas a la vez (pantalla de Tarifas): tarifas[id] = precio por noche
      */
-    public function guardarTarifa(): void
+    public function guardarTarifas(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             redirect('habitaciones/tarifas');
         }
+        $entrada = is_array($_POST['tarifas'] ?? null) ? $_POST['tarifas'] : [];
+        $tarifas = [];
+        $errores = [];
+        foreach ($entrada as $id => $valor) {
+            $valor = trim((string)$valor);
+            if (!is_numeric($valor) || round((float)$valor, 2) <= 0) {
+                $errores["tarifas[{$id}]"] = 'Ingresa un precio mayor a cero.';
+            } elseif ((float)$valor > 99999) {
+                $errores["tarifas[{$id}]"] = 'El precio es demasiado alto.';
+            } else {
+                $tarifas[(int)$id] = round((float)$valor, 2);
+            }
+        }
+        if ($errores) {
+            $this->volverConErrores('habitaciones/tarifas', $errores, 'Revisa las tarifas marcadas en rojo: no se guardó ningún cambio.');
+        }
+        if (!$tarifas) {
+            $this->setFlash('info', 'No había cambios que guardar.');
+            redirect('habitaciones/tarifas');
+        }
 
-        $id = (int)($_POST['id'] ?? 0);
-        $precio = (float)($_POST['precio_diario'] ?? 0);
-
-        $ok = $this->habModel->actualizarTarifa($id, $precio);
-        $this->setFlash($ok ? 'success' : 'danger', $ok ? 'Tarifa actualizada correctamente.' : 'Error al actualizar tarifa.');
+        $cambiadas = $this->habModel->actualizarTarifas($tarifas);
+        if ($cambiadas > 0) {
+            (new \App\Models\Auditoria())->registrar('Habitaciones', 'Tarifas', "Se actualizaron {$cambiadas} tarifas por noche");
+        }
+        $this->setFlash($cambiadas > 0 ? 'success' : 'info', match (true) {
+            $cambiadas === 0 => 'No había cambios que guardar.',
+            $cambiadas === 1 => 'Se actualizó 1 tarifa.',
+            default          => "Se actualizaron {$cambiadas} tarifas.",
+        });
         redirect('habitaciones/tarifas');
     }
 

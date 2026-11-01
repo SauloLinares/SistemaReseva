@@ -109,7 +109,7 @@ $rutaLogo = ($logoArchivo !== '' && file_exists(__DIR__ . '/../../../public/uplo
                 <div class="login-logo text-center mb-3">
                     <a href="<?= url('login') ?>" class="text-decoration-none d-inline-flex align-items-center justify-content-center">
                         <?php if ($rutaLogo): ?>
-                            <img src="<?= e($rutaLogo) ?>" alt="Logo de <?= e($nombreEmpresa) ?>" class="login-logo-img" width="72" height="72" />
+                            <span class="logo-marco login-logo-marco"><img src="<?= e($rutaLogo) ?>" alt="Logo de <?= e($nombreEmpresa) ?>" class="login-logo-img" width="96" height="96" /></span>
                         <?php else: ?>
                             <span class="brand-logo-icon login-logo-icono"><i class="bi bi-buildings-fill"></i></span>
                         <?php endif; ?>
@@ -217,6 +217,7 @@ $rutaLogo = ($logoArchivo !== '' && file_exists(__DIR__ . '/../../../public/uplo
     <script src="<?= asset('vendor/bootstrap/bootstrap.bundle.min.js') ?>"></script>
 
     <?= script_js('login.js') ?>
+    <?= script_js('logo.js') ?>
 </body>
 
 </html>

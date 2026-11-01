@@ -3250,18 +3250,42 @@ a.estado-stat {
     height: 32px;
     object-fit: cover;
 }
-/* Logo propio del hotel en el menú: se muestra tal cual, sin el cuadrado azul
-   que usa el icono genérico cuando no hay logo */
-.app-sidebar .brand-logo-img {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
+/* Logo propio del hotel (menú lateral y login). Sobre fondo oscuro un logo oscuro se perdía, así
+   que va en un marco circular con placa clara y un aro. Si el logo es redondo con margen
+   transparente (logo.js lo detecta: .logo-redondo), se acerca para que el dibujo no quede diminuto. */
+.logo-marco {
+    --logo-tam: 48px;
+    width: var(--logo-tam);
+    height: var(--logo-tam);
     flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 0 0 2px rgb(255 255 255 / 0.9), 0 4px 12px rgb(0 0 0 / 0.45);
 }
-.login-logo-img {
-    width: 72px;
-    height: 72px;
+.logo-marco > img {
+    width: 100%;
+    height: 100%;
+    padding: calc(var(--logo-tam) * 0.06);
     object-fit: contain;
+}
+.logo-marco.logo-redondo {
+    background: var(--hm-slate-950);
+    box-shadow: 0 0 0 2px #f59e0b, 0 0 14px rgb(245 158 11 / 0.4);
+}
+.logo-marco.logo-redondo > img {
+    padding: 0;
+    object-fit: cover;
+    transform: scale(1.4);
+}
+.login-logo-marco {
+    --logo-tam: 96px;
+}
+.login-logo-marco.logo-redondo {
+    box-shadow: 0 0 0 3px #f59e0b, 0 0 22px rgb(245 158 11 / 0.45);
 }
 .login-logo-icono {
     width: 56px;
@@ -4161,4 +4185,116 @@ label .kbd-atajo {
 }
 .interruptor-estado .form-check-input:not(:checked) + label {
     color: var(--bs-secondary-color);
+}
+
+/* ====================================================================
+   31. TABLAS EN MODO CLARO: cabecera azul suave y filas alternas
+   Solo en modo claro (el oscuro ya distingue cabecera y filas). Se excluyen los
+   documentos imprimibles (#imprimible: comprobantes, vouchers), que van en blanco.
+   ==================================================================== */
+[data-bs-theme="light"] .table:not(#imprimible *) > thead > tr > th {
+    background-color: #dbe7fd;
+    color: var(--hm-blue-900);
+    border-bottom: 2px solid #93b4f5 !important;
+}
+[data-bs-theme="light"] .table:not(#imprimible *) > tbody > tr:nth-child(even) > td {
+    background-color: #f4f7fd;
+}
+[data-bs-theme="light"] .table-hover:not(#imprimible *) > tbody > tr:hover > td {
+    background-color: #e6eefc;
+}
+@media print {
+    [data-bs-theme="light"] .table > thead > tr > th,
+    [data-bs-theme="light"] .table > tbody > tr > td {
+        background-color: transparent !important;
+    }
+}
+
+/* ====================================================================
+   32. TARIFAS POR NOCHE: grupos por tipo, diferencia con el precio base y barra de cambios
+   ==================================================================== */
+.tarifas-buscar {
+    width: min(16rem, 100%);
+}
+.tarifas-ajuste {
+    width: auto;
+    flex-wrap: nowrap;
+}
+.tarifas-ajuste input {
+    width: 4.5rem;
+    flex: 0 0 auto;
+}
+.tarifa-campo {
+    width: 9.5rem;
+    flex-wrap: nowrap;
+}
+.tabla-tarifas td:first-child,
+.tabla-tarifas th:first-child {
+    width: 30%;
+}
+.tarifa-dif {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background: var(--bs-secondary-bg);
+    color: var(--bs-secondary-color);
+    white-space: nowrap;
+}
+.tarifa-dif-arriba {
+    background: var(--bs-success-bg-subtle);
+    color: var(--bs-success-text-emphasis);
+}
+.tarifa-dif-abajo {
+    background: var(--bs-warning-bg-subtle);
+    color: var(--bs-warning-text-emphasis);
+}
+.tarifa-dif-error {
+    background: var(--bs-danger-bg-subtle);
+    color: var(--bs-danger-text-emphasis);
+}
+/* Fila con un precio cambiado y sin guardar (gana a las filas alternas de la tabla) */
+.table > tbody > tr.tarifa-cambiada > td {
+    background-color: color-mix(in srgb, var(--bs-warning) 14%, var(--bs-body-bg)) !important;
+}
+.table > tbody > tr.tarifa-cambiada > td:first-child {
+    box-shadow: inset 3px 0 0 var(--bs-warning);
+}
+/* Fija abajo (sticky no sirve: .app-main tiene overflow y la barra nunca se pegaría) */
+.tarifas-barra {
+    position: fixed;
+    left: 50%;
+    bottom: 1rem;
+    transform: translateX(-50%);
+    width: min(44rem, calc(100vw - 2rem));
+    /* Sobre .card:focus-within (1050), que eleva la tarjeta donde se está escribiendo */
+    z-index: 1060;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--bs-border-color);
+    border-left: 4px solid var(--bs-warning);
+    border-radius: 0.75rem;
+    background: var(--bs-body-bg);
+}
+.tarifas-barra[hidden] {
+    display: none;
+}
+/* Espacio al final para que la barra no tape la última habitación */
+#formTarifas:has(.tarifas-barra:not([hidden])) {
+    padding-bottom: 5.5rem;
+}
+@media (max-width: 575.98px) {
+    /* En el celular la diferencia y "deshacer" no caben: la fila cambiada se sigue resaltando */
+    .tabla-tarifas th:nth-child(n+3),
+    .tabla-tarifas td:nth-child(n+3) {
+        display: none;
+    }
+    .tabla-tarifas td:first-child,
+    .tabla-tarifas th:first-child {
+        width: auto;
+    }
 }

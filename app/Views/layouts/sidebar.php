@@ -24,7 +24,11 @@ $nombreEmpresa = $configApp['hotel_nombre'] ?? 'Hotel Manager';
     <div class="sidebar-brand">
         <a href="<?= url() ?>" class="brand-link">
             <?php if (!empty($logoArchivo) && file_exists(__DIR__ . '/../../../public/uploads/hotel/' . $logoArchivo)): ?>
-                <img src="<?= base_url('uploads/hotel/' . $logoArchivo) ?>" alt="Logo de <?= e($nombreEmpresa) ?>" class="brand-logo-img">
+                <!-- Marco circular: logo.js acerca los logos redondos con margen transparente
+                     (si no, el dibujo queda diminuto en el menú) -->
+                <span class="logo-marco brand-logo-marco">
+                    <img src="<?= e(base_url('uploads/hotel/' . $logoArchivo)) ?>" alt="Logo de <?= e($nombreEmpresa) ?>" class="brand-logo-img">
+                </span>
             <?php else: ?>
                 <div class="brand-logo-icon">
                     <i class="bi bi-buildings-fill"></i>

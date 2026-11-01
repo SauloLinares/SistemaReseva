@@ -54,6 +54,7 @@
     <?= script_js('envios.js') ?>
     <?= script_js('borrador.js') ?>
     <?= script_js('cobro.js') ?>
+    <?= script_js('logo.js') ?>
 
     <!-- Scripts personalizados con control de caché dinámico -->
     <?= script_js('custom.js') ?>
