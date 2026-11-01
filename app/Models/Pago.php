@@ -160,6 +160,38 @@ class Pago extends Model
         return $stmt->fetchAll();
     }
 
+    /**
+     * Cobrado, devuelto y cantidad de cobros de cada método en un período (Configuración →
+     * Métodos de pago). Un cobro dividido guarda una fila por método: cada parte cuenta en el suyo.
+     * Incluye los métodos sin movimiento y la fecha en que cada uno se usó por última vez.
+     */
+    public function resumenPorMetodo(string $desde, string $hasta): array
+    {
+        $stmt = $this->db->prepare("SELECT metodo_pago,
+                    SUM(CASE WHEN tipo <> 'devolucion' THEN monto ELSE 0 END) AS cobrado,
+                    SUM(CASE WHEN tipo = 'devolucion' THEN monto ELSE 0 END) AS devuelto,
+                    SUM(tipo <> 'devolucion') AS operaciones
+                FROM pagos
+                WHERE fecha_pago >= :desde AND fecha_pago < DATE_ADD(:hasta, INTERVAL 1 DAY)
+                GROUP BY metodo_pago");
+        $stmt->execute([':desde' => $desde, ':hasta' => $hasta]);
+        $periodo = array_column($stmt->fetchAll(), null, 'metodo_pago');
+        $ultimos = $this->db->query("SELECT metodo_pago, MAX(fecha_pago) FROM pagos WHERE tipo <> 'devolucion' GROUP BY metodo_pago")
+                            ->fetchAll(PDO::FETCH_KEY_PAIR);
+
+        $resumen = [];
+        foreach (self::METODOS as $metodo) {
+            $fila = $periodo[$metodo] ?? [];
+            $resumen[$metodo] = [
+                'cobrado'     => (float)($fila['cobrado'] ?? 0),
+                'devuelto'    => (float)($fila['devuelto'] ?? 0),
+                'operaciones' => (int)($fila['operaciones'] ?? 0),
+                'ultimo_uso'  => $ultimos[$metodo] ?? null,
+            ];
+        }
+        return $resumen;
+    }
+
     public function generarNumeroComprobante(string $tipo): string
     {
         $prefijo = match($tipo) {

@@ -4343,3 +4343,7 @@ label .kbd-atajo {
         min-height: 32px;
     }
 }
+/* Métodos de pago: el nombre y su nota no se aprietan a una palabra por línea */
+.metodo-pago-nombre {
+    min-width: 14rem;
+}

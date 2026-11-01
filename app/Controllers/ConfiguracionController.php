@@ -129,20 +129,18 @@ class ConfiguracionController extends Controller
     }
 
     /**
-     * Métodos de pago aceptados
+     * Métodos de pago que acepta el sistema (Pago::METODOS) y cuánto se cobró con cada uno
+     * en el mes elegido. Antes mostraba una lista fija con comisiones de ejemplo.
      */
     public function metodosPago(): void
     {
-        $metodos = [
-            ['nombre' => 'Efectivo', 'tipo' => 'Moneda Local / Dólares', 'comision' => '0%', 'estado' => 'Habilitado'],
-            ['nombre' => 'Tarjeta de Crédito', 'tipo' => 'Visa / Mastercard / Amex', 'comision' => '3.5%', 'estado' => 'Habilitado'],
-            ['nombre' => 'Tarjeta de Débito', 'tipo' => 'Redes bancarias', 'comision' => '2.0%', 'estado' => 'Habilitado'],
-            ['nombre' => 'Transferencia Bancaria', 'tipo' => 'BCP / BBVA / Interbank', 'comision' => '0%', 'estado' => 'Habilitado'],
-            ['nombre' => 'Yape / Plin', 'tipo' => 'Billeteras digitales QR', 'comision' => '0%', 'estado' => 'Habilitado']
-        ];
+        $mes = preg_match('/^\d{4}-(0[1-9]|1[0-2])$/', $_GET['mes'] ?? '') ? $_GET['mes'] : date('Y-m');
+        $desde = $mes . '-01';
+        $hasta = date('Y-m-t', strtotime($desde));
 
         $this->render('configuracion/metodos_pago', [
-            'metodos' => $metodos
+            'mes'     => $mes,
+            'resumen' => (new \App\Models\Pago())->resumenPorMetodo($desde, $hasta),
         ], 'Métodos de Pago');
     }
 
