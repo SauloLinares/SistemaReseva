@@ -3,6 +3,8 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Core\IntentosLogin;
+use App\Models\Auditoria;
 use App\Models\Usuario;
 
 /**
@@ -58,12 +60,29 @@ class LoginController extends Controller
             redirect('login');
         }
 
+        // Demasiados intentos fallidos: ni se revisa la contraseña hasta que pase el bloqueo
+        $bloqueo = IntentosLogin::minutosBloqueado($email);
+        if ($bloqueo > 0) {
+            $_SESSION['old']['email'] = $email;
+            $this->setFlash('danger', 'Demasiados intentos fallidos. Por seguridad, espera ' . $bloqueo . ($bloqueo === 1 ? ' minuto' : ' minutos') . ' antes de volver a intentarlo.');
+            redirect('login');
+        }
+
         // Verificar credenciales con el modelo
         $usuario = $this->usuarioModel->verificarCredenciales($email, $password);
 
         if (!$usuario) {
+            IntentosLogin::registrarFallo($email);
+            $quedan = IntentosLogin::restantes($email);
+            $mensaje = 'Correo o contraseña incorrectos. Verifica tus credenciales.';
+            if ($quedan === 0) {
+                $mensaje = 'Correo o contraseña incorrectos. Por seguridad, el ingreso con este correo queda bloqueado ' . IntentosLogin::MINUTOS . ' minutos.';
+                (new Auditoria())->registrar('Seguridad', 'Bloqueo de ingreso', 'Demasiados intentos fallidos para ' . $email . ' desde ' . ($_SERVER['REMOTE_ADDR'] ?? '?'));
+            } elseif ($quedan <= 2) {
+                $mensaje .= ' Te ' . ($quedan === 1 ? 'queda 1 intento' : "quedan {$quedan} intentos") . ' antes de un bloqueo de ' . IntentosLogin::MINUTOS . ' minutos.';
+            }
             $_SESSION['old']['email'] = $email;
-            $this->setFlash('danger', 'Correo o contraseña incorrectos. Verifica tus credenciales.');
+            $this->setFlash('danger', $mensaje);
             redirect('login');
         }
 
@@ -74,8 +93,11 @@ class LoginController extends Controller
             redirect('login');
         }
 
+        IntentosLogin::limpiar($email);
+
         // Regenerar ID de sesión para prevenir Session Fixation
         session_regenerate_id(true);
+        $_SESSION['ultima_actividad'] = time();
 
         // Guardar datos en la sesión
         // Debe cambiar la contraseña si se la asignó el administrador, o si sigue usando la
@@ -107,16 +129,21 @@ class LoginController extends Controller
     }
 
     /**
-     * Cierra la sesión activa del usuario
+     * Cierra la sesión activa del usuario. Solo por POST (con token): un enlace o una imagen
+     * de otra página no puede cerrarle la sesión a nadie.
      */
     public function logout(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            redirect(auth_check() ? '' : 'login');
+        }
 
-        // Limpiar información de usuario
-        unset($_SESSION['usuario']);
+        // Limpiar información de usuario; sesión y token nuevos para quien use el equipo después
+        unset($_SESSION['usuario'], $_SESSION['ultima_actividad'], $_SESSION['_csrf']);
+        session_regenerate_id(true);
 
         // Mensaje flash de despedida
         $this->setFlash('info', 'Has cerrado tu sesión de forma segura.');

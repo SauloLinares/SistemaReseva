@@ -56,9 +56,9 @@
 
                     <div class="card-footer d-flex justify-content-end gap-2">
                         <?php if ($obligatorio): ?>
-                            <a href="<?= url('login/logout') ?>" class="btn btn-outline-secondary me-auto">
+                            <button type="submit" form="formCerrarSesion" class="btn btn-outline-secondary me-auto" formnovalidate>
                                 <i class="bi bi-box-arrow-right me-1"></i> Salir
-                            </a>
+                            </button>
                         <?php else: ?>
                             <a href="<?= url('perfil') ?>" class="btn btn-outline-secondary">
                                 <i class="bi bi-arrow-left me-1"></i> Cancelar

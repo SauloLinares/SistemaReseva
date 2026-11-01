@@ -230,6 +230,10 @@
         progreso.iniciar();
         return fetchOriginal(recurso, opciones).finally(progreso.terminar).then(function (respuesta) {
             conexion.ocultar();
+            // Cada petición al sistema renueva el plazo de la sesión en el servidor
+            if (propio && !respuesta.redirected && !/\.(js|css|png|jpe?g|gif|svg|webp|woff2?)$/i.test(destino.pathname)) {
+                renovarActividad();
+            }
 
             // La sesión venció: el servidor redirigió al login en lugar de responder
             if (propio && respuesta.redirected && rutaLogin(respuesta.url)) {
@@ -279,5 +283,87 @@
             allowOutsideClick: false,
             allowEscapeKey: false,
         }).then(irAlLogin);
+    }
+
+    // -----------------------------------------------------------------
+    // 5. AVISO ANTES DEL CIERRE POR INACTIVIDAD
+    // El servidor cierra la sesión tras unos minutos sin uso (Acceso::sincronizarSesion).
+    // Dos minutos antes se avisa con una cuenta regresiva: "Seguir trabajando" renueva el
+    // plazo (perfil/pulso). Las pestañas abiertas comparten la hora de la última petición
+    // (localStorage): trabajar en una mantiene viva la sesión de todas.
+    // -----------------------------------------------------------------
+    const minutosSesion = Number((window.leerJson('app-config') || {}).sesionMinutos) || 0;
+    const MARCA = 'hm-ultima-actividad';
+    const AVISO_MS = 2 * 60 * 1000;
+    let ultimaLocal = Date.now();
+    let avisoAbierto = false;
+
+    function renovarActividad() {
+        ultimaLocal = Date.now();
+        try { localStorage.setItem(MARCA, String(ultimaLocal)); } catch (e) { /* sin almacenamiento: solo esta pestaña */ }
+        if (avisoAbierto && typeof Swal !== 'undefined') Swal.close();
+    }
+
+    const ultimaActividad = function () {
+        let compartida = 0;
+        try { compartida = Number(localStorage.getItem(MARCA)) || 0; } catch (e) { /* sin almacenamiento */ }
+        return Math.max(ultimaLocal, compartida);
+    };
+
+    const mmss = ms => {
+        const s = Math.max(0, Math.ceil(ms / 1000));
+        return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    };
+
+    function avisarInactividad() {
+        avisoAbierto = true;
+        let reloj = null;
+        Swal.fire({
+            icon: 'warning',
+            title: '¿Sigues ahí?',
+            html: 'Por seguridad, tu sesión se cerrará en <strong data-cuenta-sesion></strong> por falta de uso.',
+            showCancelButton: true,
+            confirmButtonText: 'Seguir trabajando',
+            cancelButtonText: 'Cerrar sesión',
+            confirmButtonColor: '#2563eb',
+            reverseButtons: true,
+            allowOutsideClick: false,
+            didOpen: function () {
+                const cuenta = Swal.getHtmlContainer().querySelector('[data-cuenta-sesion]');
+                const pintar = () => { cuenta.textContent = mmss(minutosSesion * 60000 - (Date.now() - ultimaActividad())); };
+                pintar();
+                reloj = setInterval(pintar, 1000);
+            },
+            willClose: function () { clearInterval(reloj); },
+        }).then(function (r) {
+            avisoAbierto = false;
+            if (r.isConfirmed) {
+                fetch(window.appUrl('perfil/pulso'), { headers: { Accept: 'application/json' } }).catch(function () {});
+            } else if (r.dismiss === Swal.DismissReason.cancel) {
+                document.querySelector('form[data-cerrar-sesion]')?.requestSubmit();
+            }
+        });
+    }
+
+    function revisarInactividad() {
+        const restante = minutosSesion * 60000 - (Date.now() - ultimaActividad());
+        if (restante <= 0) {
+            if (avisoAbierto) Swal.close();
+            sesionVencida();
+        } else if (avisoAbierto && restante > AVISO_MS) {
+            Swal.close(); // se siguió trabajando en otra pestaña
+        } else if (restante <= AVISO_MS && !avisoAbierto && typeof Swal !== 'undefined' && !Swal.isVisible()) {
+            avisarInactividad();
+        }
+    }
+
+    // Solo dentro del sistema (no en el login) y con un plazo conocido
+    if (minutosSesion > 0 && document.querySelector('form[data-cerrar-sesion]')) {
+        renovarActividad(); // cargar esta página fue una petición
+        setInterval(revisarInactividad, 15000);
+        // Al volver a una pestaña dormida, revisar enseguida
+        document.addEventListener('visibilitychange', function () {
+            if (!document.hidden) revisarInactividad();
+        });
     }
 })();

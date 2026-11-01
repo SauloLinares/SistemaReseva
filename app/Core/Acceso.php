@@ -182,14 +182,23 @@ class Acceso
     }
 
     /**
-     * Al empezar cada petición: vuelve a leer el usuario de la base. Si el administrador lo
-     * desactivó o lo borró, la sesión se cierra; si le cambió el rol, rige el nuevo desde ya.
+     * Al empezar cada petición. Si pasó más de App::sesionMinutos() sin uso, la sesión se
+     * cierra (una PC de recepción que quedó abierta no queda con acceso). Vuelve a leer el
+     * usuario de la base: si el administrador lo desactivó o lo borró, la sesión se cierra; si
+     * le cambió el rol, rige el nuevo desde ya.
      */
     public static function sincronizarSesion(): void
     {
         if (!auth_check()) {
             return;
         }
+        $minutos = \App\Config\App::sesionMinutos();
+        if (time() - (int) ($_SESSION['ultima_actividad'] ?? time()) > $minutos * 60) {
+            self::cerrarSesion("Tu sesión se cerró tras {$minutos} minutos sin uso. Inicia sesión otra vez para continuar.");
+            return;
+        }
+        $_SESSION['ultima_actividad'] = time();
+
         // rol_id vacío (usuarios creados antes de que se guardara): el rol se reconoce por su nombre
         $stmt = Database::conectar()->prepare(
             'SELECT u.estado, r.id AS rol_id, r.nombre AS rol FROM usuarios u
@@ -200,13 +209,19 @@ class Acceso
         $fila = $stmt->fetch();
 
         if (!$fila || (int) $fila['estado'] !== 1) {
-            unset($_SESSION['usuario']);
-            session_regenerate_id(true);
-            $_SESSION['flash'] = ['tipo' => 'warning', 'mensaje' => 'Tu cuenta fue desactivada. Si crees que es un error, habla con el administrador.'];
+            self::cerrarSesion('Tu cuenta fue desactivada. Si crees que es un error, habla con el administrador.');
             return;
         }
         $_SESSION['usuario']['rol_id'] = (int) $fila['rol_id'];
         $_SESSION['usuario']['rol'] = $fila['rol'] ?? '';
+        self::$permisos = null;
+    }
+
+    private static function cerrarSesion(string $aviso): void
+    {
+        unset($_SESSION['usuario'], $_SESSION['ultima_actividad']);
+        session_regenerate_id(true);
+        $_SESSION['flash'] = ['tipo' => 'warning', 'mensaje' => $aviso];
         self::$permisos = null;
     }
 }

@@ -555,10 +555,10 @@ $nombreEmpresa = $configApp['hotel_nombre'] ?? 'Hotel Manager';
                 <li class="nav-header fw-bold text-uppercase text-secondary mt-2">SESIÓN</li>
 
                 <li class="nav-item">
-                    <a href="<?= url('login/logout') ?>" class="nav-link text-danger">
+                    <button type="submit" form="formCerrarSesion" class="nav-link text-danger w-100 text-start border-0 bg-transparent">
                         <i class="nav-icon bi bi-box-arrow-right"></i>
                         <p>Cerrar Sesión</p>
-                    </a>
+                    </button>
                 </li>
             </ul>
             <!--end::Sidebar Menu-->

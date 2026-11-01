@@ -18,23 +18,36 @@ header('X-Frame-Options: SAMEORIGIN');
 header('Referrer-Policy: same-origin');
 header('Permissions-Policy: camera=(), microphone=(), geolocation=()');
 
-// 1. Iniciar sesión para mensajes flash y autenticación
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// 2. Registrar el Autoloader PSR-4 para cargar automáticamente todas las clases de App\
+// 1. Registrar el Autoloader PSR-4 para cargar automáticamente todas las clases de App\
 require_once __DIR__ . '/../app/Core/Autoloader.php';
 \App\Core\Autoloader::registrar();
 
-// 3. Cargar configuración general y funciones de ayuda globales (helpers)
+// 2. Cargar configuración general y funciones de ayuda globales (helpers)
 require_once __DIR__ . '/../app/Config/App.php';
 require_once __DIR__ . '/../app/Core/Helpers.php';
 
-// 3.0 Hora del hotel para date(), "hoy" y las fechas que se guardan (MySQL usa la misma: Database.php)
+// 3. Hora del hotel para date(), "hoy" y las fechas que se guardan (MySQL usa la misma: Database.php)
 date_default_timezone_set(\App\Config\App::zonaHoraria());
 
-// 3.1 Un error inesperado (excepción sin atrapar) no deja una pantalla en blanco ni muestra
+// 3.1 Sesión (mensajes flash y autenticación). La cookie no se puede leer desde JavaScript
+//      (HttpOnly), no viaja en envíos que salen de otros sitios (SameSite=Lax) y, con HTTPS,
+//      solo viaja cifrada (Secure). En modo estricto PHP no acepta un id de sesión inventado.
+if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.use_strict_mode', '1');
+    ini_set('session.use_only_cookies', '1');
+    // El cierre por inactividad lo controla Acceso; PHP no debe borrar la sesión antes
+    ini_set('session.gc_maxlifetime', (string) max(1440, \App\Config\App::sesionMinutos() * 60 + 300));
+    session_set_cookie_params([
+        'lifetime' => 0,
+        'path'     => '/',
+        'secure'   => ($_SERVER['HTTPS'] ?? '') !== '' && ($_SERVER['HTTPS'] ?? '') !== 'off',
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
+    session_start();
+}
+
+// 3.2 Un error inesperado (excepción sin atrapar) no deja una pantalla en blanco ni muestra
 //     detalles internos: se registra en el log de PHP y el usuario ve un aviso claro.
 set_exception_handler([\App\Core\Errores::class, 'excepcion']);
 

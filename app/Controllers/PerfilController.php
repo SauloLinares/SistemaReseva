@@ -94,6 +94,15 @@ class PerfilController extends Controller
     }
 
     /**
+     * "Seguir trabajando" del aviso de inactividad (envios.js). Llegar hasta aquí ya renovó
+     * el plazo de la sesión (Acceso::sincronizarSesion); solo se confirma.
+     */
+    public function pulso(): void
+    {
+        $this->json(['success' => true, 'minutos' => \App\Config\App::sesionMinutos()]);
+    }
+
+    /**
      * Formulario para cambiar la contraseña (también el obligatorio del primer ingreso)
      */
     public function clave(): void

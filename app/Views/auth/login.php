@@ -174,16 +174,6 @@ $rutaLogo = ($logoArchivo !== '' && file_exists(__DIR__ . '/../../../public/uplo
                         </div>
                     </div>
 
-                    <!-- Recordarme y Botón -->
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="recordar" name="recordar" checked>
-                            <label class="form-check-label small text-muted" for="recordar">
-                                Recordar sesión
-                            </label>
-                        </div>
-                    </div>
-
                     <!-- Botón de Ingreso -->
                     <div class="d-grid mb-3">
                         <button type="submit" class="btn btn-primary py-2 fw-semibold shadow-sm">

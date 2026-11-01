@@ -273,7 +273,7 @@ $totalAlertas = array_sum(array_column($alertasSistema, 'cantidad'));
                     <li><a class="dropdown-item" href="<?= url('perfil') ?>"><i class="bi bi-person-circle me-2"></i>Mi perfil</a></li>
                     <li><a class="dropdown-item" href="<?= url('perfil/clave') ?>"><i class="bi bi-key me-2"></i>Cambiar contraseña</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item text-danger" href="<?= url('login/logout') ?>"><i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión</a></li>
+                    <li><button type="submit" form="formCerrarSesion" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i>Cerrar sesión</button></li>
                 </ul>
             </li>
         </ul>

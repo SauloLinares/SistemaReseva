@@ -17,6 +17,18 @@ class App
      */
     public const ZONA_HORARIA = 'America/Lima';
 
+    /**
+     * Minutos sin uso tras los que se cierra la sesión (una PC de recepción que queda abierta no
+     * queda con acceso). Se puede cambiar con la variable de entorno APP_SESION_MIN (5 a 720).
+     */
+    public const SESION_MINUTOS = 30;
+
+    public static function sesionMinutos(): int
+    {
+        $minutos = (int) getenv('APP_SESION_MIN');
+        return $minutos >= 5 && $minutos <= 720 ? $minutos : self::SESION_MINUTOS;
+    }
+
     public static function zonaHoraria(): string
     {
         $zona = (string) getenv('APP_TZ');

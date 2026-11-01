@@ -114,7 +114,8 @@ test('usuario con contraseña asignada: debe cambiarla antes de usar el sistema'
         await expect(otra).toHaveURL(/url=reservas/);
 
         // La contraseña nueva es la que vale
-        await otra.goto(ruta('login/logout'));
+        await otra.locator('.app-sidebar button[form="formCerrarSesion"]').click();
+        await expect(otra).toHaveURL(/url=login/);
         await otra.fill('#email', email);
         await otra.fill('#password', propia);
         await otra.locator('button[type="submit"]').click();
