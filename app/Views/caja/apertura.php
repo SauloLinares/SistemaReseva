@@ -49,27 +49,27 @@
                             <!-- Monto inicial / Fondo de sencillo -->
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <label for="monto_inicial" class="form-label mb-0">Fondo Inicial en Efectivo (S/.) <span class="text-danger">*</span></label>
+                                    <label for="monto_inicial" class="form-label mb-0">Fondo Inicial en Efectivo (<?= e(moneda()) ?>) <span class="text-danger">*</span></label>
                                     <small class="text-muted">Sencillo para dar vuelto</small>
                                 </div>
                                 <div class="input-group input-group-lg">
-                                    <span class="input-group-text bg-success text-white fw-bold">S/.</span>
+                                    <span class="input-group-text bg-success text-white fw-bold"><?= e(moneda()) ?></span>
                                     <input type="number" step="0.50" min="0" name="monto_inicial" id="monto_inicial" class="form-control fw-bold text-success" value="100.00" required autofocus>
                                 </div>
                                 <div class="form-text small">Sugerencias rápidas de fondo:</div>
                                 <div class="d-flex gap-2 mt-1">
-                                    <button type="button" class="btn btn-outline-secondary btn-sm btn-sugerido" data-monto="0">S/. 0.00</button>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm btn-sugerido" data-monto="50">S/. 50.00</button>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm btn-sugerido active" data-monto="100">S/. 100.00</button>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm btn-sugerido" data-monto="150">S/. 150.00</button>
-                                    <button type="button" class="btn btn-outline-secondary btn-sm btn-sugerido" data-monto="200">S/. 200.00</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm btn-sugerido" data-monto="0"><?= e(moneda()) ?> 0.00</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm btn-sugerido" data-monto="50"><?= e(moneda()) ?> 50.00</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm btn-sugerido active" data-monto="100"><?= e(moneda()) ?> 100.00</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm btn-sugerido" data-monto="150"><?= e(moneda()) ?> 150.00</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm btn-sugerido" data-monto="200"><?= e(moneda()) ?> 200.00</button>
                                 </div>
                             </div>
 
                             <!-- Observaciones -->
                             <div class="mb-4">
                                 <label for="observaciones" class="form-label">Observaciones / Novedades de Entrada</label>
-                                <textarea id="observaciones" name="observaciones" class="form-control form-control-sm" rows="2" placeholder="Ej: Se recibe caja con S/. 100 en monedas de S/. 2 y S/. 5..."></textarea>
+                                <textarea id="observaciones" name="observaciones" class="form-control form-control-sm" rows="2" placeholder="Ej: Se recibe caja con <?= e(moneda()) ?> 100 en monedas de <?= e(moneda()) ?> 2 y <?= e(moneda()) ?> 5..."></textarea>
                             </div>
 
                             <!-- Botón de apertura -->

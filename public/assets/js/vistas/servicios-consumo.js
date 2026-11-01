@@ -12,5 +12,5 @@ function calcularTotal() {
     const precio = opt ? parseFloat(opt.dataset.precio || 0) : 0;
     const cant = parseInt(cantInput.value || 1);
     const total = precio * cant;
-    document.getElementById('displayTotalConsumo').textContent = 'S/. ' + total.toFixed(2);
+    document.getElementById('displayTotalConsumo').textContent = window.moneda + ' ' + total.toFixed(2);
 }

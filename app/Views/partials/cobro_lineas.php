@@ -39,7 +39,7 @@ $cajaAbierta = $cajaAbierta ?? null;
                 <?= opciones_metodo_pago() ?>
             </select>
             <div class="input-group">
-                <span class="input-group-text">S/.</span>
+                <span class="input-group-text"><?= e(moneda()) ?></span>
                 <input type="number" step="0.01" min="0.01" name="lineas[0][monto]" id="<?= e($idMonto) ?>"
                        class="form-control text-end fw-bold" inputmode="decimal" value="<?= e($monto) ?>"
                        aria-label="Monto" <?= !empty($atajo) ? 'data-atajo="' . e($atajo) . '" data-atajo-desc="Monto a cobrar"' : '' ?> required data-linea-monto>
@@ -55,7 +55,7 @@ $cajaAbierta = $cajaAbierta ?? null;
             <div class="col-6">
                 <label for="<?= e($idMonto) ?>-recibido" class="form-label small mb-1">Efectivo recibido</label>
                 <div class="input-group input-group-sm">
-                    <span class="input-group-text">S/.</span>
+                    <span class="input-group-text"><?= e(moneda()) ?></span>
                     <input type="number" step="0.01" min="0" name="recibido" id="<?= e($idMonto) ?>-recibido" class="form-control text-end"
                            inputmode="decimal" placeholder="Opcional" data-recibido>
                 </div>
@@ -69,6 +69,6 @@ $cajaAbierta = $cajaAbierta ?? null;
 
     <div class="d-flex justify-content-between align-items-center border-top mt-2 pt-2">
         <span class="text-body-secondary">Total a cobrar</span>
-        <strong class="fs-5" data-total>S/. 0.00</strong>
+        <strong class="fs-5" data-total><?= e(moneda()) ?> 0.00</strong>
     </div>
 </div>

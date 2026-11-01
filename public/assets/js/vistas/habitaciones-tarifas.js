@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const campos = [...form.querySelectorAll('input[name^="tarifas["]')];
     const barra = form.querySelector('[data-barra-cambios]');
     const resumen = form.querySelector('[data-resumen-cambios]');
-    const soles = n => 'S/. ' + n.toFixed(2);
+    const soles = n => window.moneda + ' ' + n.toFixed(2);
     const num = v => parseFloat(String(v).replace(',', '.'));
     // Por debajo de este porcentaje del precio base se pide confirmación al guardar
     const MINIMO_RAZONABLE = 0.7;

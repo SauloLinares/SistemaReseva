@@ -31,13 +31,13 @@ $acciones = $acciones ?? [];
                         <?php endforeach; ?>
                     </ol>
                 <?php endif; ?>
-                <h3 class="page-title mb-0">
+                <h1 class="page-title h3 mb-0">
                     <?php if (!empty($icono)): ?><i class="bi <?= e($icono) ?> me-2"></i><?php endif; ?>
                     <?= e($titulo) ?>
                     <?php if (!empty($insignia)): ?>
                         <span class="badge badge-soft-<?= e($insignia['variante'] ?? 'primary') ?> align-middle ms-2"><?= e($insignia['texto']) ?></span>
                     <?php endif; ?>
-                </h3>
+                </h1>
                 <?php if (!empty($subtitulo)): ?>
                     <p class="page-subtitle mb-0"><?= e($subtitulo) ?></p>
                 <?php endif; ?>

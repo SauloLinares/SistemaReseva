@@ -216,7 +216,7 @@
                                     <div class="col-12 col-md-5">
                                         <div class="input-group input-group-sm">
                                             <span class="input-group-text"><i class="bi bi-sort-down text-muted"></i></span>
-                                            <select id="ordenarHabitaciones" class="form-select form-select-sm">
+                                            <select id="ordenarHabitaciones" class="form-select form-select-sm" aria-label="Ordenar habitaciones">
                                                 <option value="num-asc">Número (Menor a Mayor)</option>
                                                 <option value="num-desc">Número (Mayor a Menor)</option>
                                                 <option value="precio-asc">Precio: Más Económico</option>
@@ -439,7 +439,7 @@
                                     <div class="p-2 bg-body-tertiary rounded-3 border">
                                         <div class="row g-2">
                                             <div class="col-6">
-                                                <label for="inputDescuento" class="form-label mb-1">Descuento (S/.)</label>
+                                                <label for="inputDescuento" class="form-label mb-1">Descuento (<?= e(moneda()) ?>)</label>
                                                 <input type="number" step="1.00" min="0" name="descuento" id="inputDescuento" class="form-control form-control-sm text-danger fw-bold" value="0.00">
                                             </div>
                                             <div class="col-6">
@@ -457,22 +457,22 @@
                             <div class="small mb-2 text-muted">
                                 <div class="d-flex justify-content-between mb-1">
                                     <span>Hospedaje:</span>
-                                    <span id="subtotalHospedajeDisplay" class="fw-semibold">S/. 0.00</span>
+                                    <span id="subtotalHospedajeDisplay" class="fw-semibold"><?= e(moneda()) ?> 0.00</span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-1" id="filaServiciosSubtotal" style="display: none;">
                                     <span>Servicios Extras:</span>
-                                    <span id="subtotalServiciosDisplay" class="fw-semibold text-success">+S/. 0.00</span>
+                                    <span id="subtotalServiciosDisplay" class="fw-semibold text-success">+<?= e(moneda()) ?> 0.00</span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-1 text-danger" id="filaDescuentoSubtotal" style="display: none;">
                                     <span>Descuento aplicado:</span>
-                                    <span id="descuentoDisplay" class="fw-bold">-S/. 0.00</span>
+                                    <span id="descuentoDisplay" class="fw-bold">-<?= e(moneda()) ?> 0.00</span>
                                 </div>
                             </div>
 
                             <!-- Botones de Porcentaje de Anticipo Rápido -->
                             <div class="mb-3">
                                 <div class="d-flex justify-content-between align-items-center mb-1">
-                                    <label for="inputAnticipo" class="form-label mb-0">Anticipo / Adelanto (S/.)</label>
+                                    <label for="inputAnticipo" class="form-label mb-0">Anticipo / Adelanto (<?= e(moneda()) ?>)</label>
                                     <div class="d-flex gap-1">
                                         <button type="button" class="btn btn-outline-secondary btn-anticipo-preset" data-pct="0">0%</button>
                                         <button type="button" class="btn btn-outline-secondary btn-anticipo-preset" data-pct="30">30%</button>
@@ -481,7 +481,7 @@
                                     </div>
                                 </div>
                                 <div class="input-group">
-                                    <span class="input-group-text bg-body-secondary fw-semibold">S/.</span>
+                                    <span class="input-group-text bg-body-secondary fw-semibold"><?= e(moneda()) ?></span>
                                     <input type="number" step="0.01" name="anticipo" id="inputAnticipo" class="form-control form-control-lg fw-bold text-primary" value="0.00" min="0">
                                 </div>
                                 <div class="form-text small">El anticipo genera un recibo de caja de ingreso inmediato.</div>
@@ -525,7 +525,7 @@
                                     <span class="fs-6 fw-bold d-block text-body">Monto Total:</span>
                                     <small class="text-muted" id="subtotalDetalle">0 hab. × 1 noche</small>
                                 </div>
-                                <span class="fs-3 fw-bolder text-primary" id="montoTotalDisplay">S/. 0.00</span>
+                                <span class="fs-3 fw-bolder text-primary" id="montoTotalDisplay"><?= e(moneda()) ?> 0.00</span>
                             </div>
 
                             <div class="d-grid gap-2">

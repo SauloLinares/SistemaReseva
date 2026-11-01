@@ -35,12 +35,12 @@
                                     <span class="fs-5 fw-bold text-success"><?= dinero($t['precio_base']) ?></span>
                                 </div>
                                 <div class="table-actions">
-                                    <button type="button" class="btn btn-icon btn-outline-primary" 
+                                    <button type="button" class="btn btn-icon btn-outline-primary" title="Editar" aria-label="Editar <?= e($t['nombre']) ?>"
                                             data-editar="<?= e(json_encode($t, JSON_UNESCAPED_UNICODE)) ?>">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
                                     <?php if ($t['total_habitaciones'] == 0): ?>
-                                        <a href="<?= url('habitaciones/eliminarTipo/' . $t['id']) ?>" class="btn btn-icon btn-outline-danger" title="Eliminar" data-confirm="¿Eliminar tipo?">
+                                        <a href="<?= url('habitaciones/eliminarTipo/' . $t['id']) ?>" class="btn btn-icon btn-outline-danger" title="Eliminar" aria-label="Eliminar <?= e($t['nombre']) ?>" data-confirm="¿Eliminar tipo?">
                                             <i class="bi bi-trash"></i>
                                         </a>
                                     <?php endif; ?>

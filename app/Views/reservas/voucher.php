@@ -40,8 +40,8 @@
                                    . "📅 *Check-in:* " . date('d/m/Y', strtotime($reserva['fecha_entrada'])) . " (14:00 hrs)\n"
                                    . "📅 *Check-out:* " . date('d/m/Y', strtotime($reserva['fecha_salida'])) . " (12:00 hrs)\n"
                                    . "🌙 *Noches:* " . $reserva['noches'] . "\n"
-                                   . "💰 *Total:* S/. " . number_format($reserva['total'], 2) . "\n"
-                                   . "💵 *Saldo en Check-in:* S/. " . number_format($reserva['saldo'], 2) . "\n\n"
+                                   . "💰 *Total:* " . moneda() . " " . number_format($reserva['total'], 2) . "\n"
+                                   . "💵 *Saldo en Check-in:* " . moneda() . " " . number_format($reserva['saldo'], 2) . "\n\n"
                                    . "¡Será un placer recibirle! Cualquier duda estamos a su servicio.";
                         $urlWs = "https://api.whatsapp.com/send?phone=" . $telLimpio . "&text=" . $mensajeWs;
                     ?>
@@ -82,8 +82,17 @@
                                     <?php endif; ?>
                                     <h4 class="fw-bold mb-0 text-uppercase text-dark"><?= htmlspecialchars($hotel['hotel_nombre'] ?? 'Hotel Manager & Suites') ?></h4>
                                 </div>
-                                <p class="text-muted small mb-0">RUC: <?= htmlspecialchars($hotel['hotel_ruc'] ?? '20601234567') ?> • <?= htmlspecialchars($hotel['hotel_direccion'] ?? 'Av. Principal 123, Miraflores, Lima') ?></p>
-                                <p class="text-muted small mb-0"><i class="bi bi-telephone me-1"></i><?= htmlspecialchars($hotel['hotel_telefono'] ?? '+51 987 654 321') ?> • <i class="bi bi-envelope me-1"></i><?= htmlspecialchars($hotel['hotel_correo'] ?? 'reservas@hotelmanager.com') ?></p>
+                                <?php
+                                    // Solo los datos que el hotel cargó en Configuración: un documento para el cliente no lleva datos de ejemplo
+                                    $dato = fn(string $clave) => trim((string)($hotel[$clave] ?? ''));
+                                    $linea1 = array_filter([$dato('hotel_ruc') !== '' ? 'RUC: ' . e($dato('hotel_ruc')) : '', e($dato('hotel_direccion'))]);
+                                    $linea2 = array_filter([
+                                        $dato('hotel_telefono') !== '' ? '<i class="bi bi-telephone me-1"></i>' . e($dato('hotel_telefono')) : '',
+                                        $dato('hotel_correo') !== '' ? '<i class="bi bi-envelope me-1"></i>' . e($dato('hotel_correo')) : '',
+                                    ]);
+                                ?>
+                                <?php if ($linea1): ?><p class="text-muted small mb-0"><?= implode(' • ', $linea1) ?></p><?php endif; ?>
+                                <?php if ($linea2): ?><p class="text-muted small mb-0"><?= implode(' • ', $linea2) ?></p><?php endif; ?>
                             </div>
                             <div class="col-4 text-end">
                                 <span class="badge bg-primary text-white px-3 py-1.5 fw-bold fs-6 mb-1 d-inline-block">
@@ -265,7 +274,7 @@
                             <ul class="mb-0 ps-3">
                                 <li>Horario de Check-in: a partir de las <strong>14:00 hrs</strong>. Check-out: hasta las <strong>12:00 hrs</strong>.</li>
                                 <li>Para el ingreso es indispensable que todos los huéspedes adultos presenten su documento físico original (DNI o Pasaporte).</li>
-                                <li>El saldo pendiente de S/. <?= number_format($reserva['saldo'], 2) ?> se cancelará en la recepción al momento del Check-in.</li>
+                                <li>El saldo pendiente de <?= e(moneda()) ?> <?= number_format($reserva['saldo'], 2) ?> se cancelará en la recepción al momento del Check-in.</li>
                                 <?php if (!empty($reserva['notas'])): ?>
                                     <li class="text-dark"><strong>Requerimientos del huésped:</strong> <?= htmlspecialchars($reserva['notas']) ?></li>
                                 <?php endif; ?>

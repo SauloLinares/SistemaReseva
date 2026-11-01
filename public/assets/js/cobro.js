@@ -5,7 +5,7 @@
     'use strict';
 
     const MAX_LINEAS = 4;
-    const soles = n => 'S/. ' + (Math.round(n * 100) / 100).toFixed(2);
+    const soles = n => window.moneda + ' ' + (Math.round(n * 100) / 100).toFixed(2);
     const num = v => parseFloat(String(v).replace(',', '.')) || 0;
 
     function iniciar(cobro) {

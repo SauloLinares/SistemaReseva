@@ -14,6 +14,6 @@ function actualizarSaldo(sel) {
     const opt = sel.options[sel.selectedIndex];
     if (opt && opt.dataset.saldo) {
         document.querySelector('[data-cobro]').fijarMonto(opt.dataset.saldo);
-        document.getElementById('textoSaldoAyuda').textContent = 'Saldo total adeudado: S/. ' + opt.dataset.saldo;
+        document.getElementById('textoSaldoAyuda').textContent = 'Saldo total adeudado: ' + window.moneda + ' ' + opt.dataset.saldo;
     }
 }

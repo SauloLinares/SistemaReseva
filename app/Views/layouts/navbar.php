@@ -91,7 +91,7 @@ try {
             'color'    => 'danger',
             'titulo'   => 'Caja cerrada sin turno activo',
             'desc'     => 'Abre un turno para registrar cobros y anticipos',
-            'enlace'   => url('caja/apertura'),
+            'enlace'   => url('caja'),
             'badge'    => 'Caja',
             'badge_bg' => 'bg-danger-subtle text-danger border border-danger-subtle'
         ];

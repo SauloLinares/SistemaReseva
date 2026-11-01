@@ -93,7 +93,7 @@
                         </select>
                     </div>
                     <div class="col-6">
-                        <label for="servPrecio" class="form-label">Precio (S/.) <span class="text-danger">*</span></label>
+                        <label for="servPrecio" class="form-label">Precio (<?= e(moneda()) ?>) <span class="text-danger">*</span></label>
                         <input type="number" step="0.01" name="precio" id="servPrecio" class="form-control" value="0.00" required>
                     </div>
                 </div>

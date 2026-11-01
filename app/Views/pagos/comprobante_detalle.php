@@ -26,10 +26,18 @@
                                 <?php endif; ?>
                                 <h3 class="fw-bold text-primary mb-0"><?= $hayLogo ? '' : '🏨 ' ?><?= htmlspecialchars($config['hotel_nombre'] ?? 'Hotel Manager & Resort') ?></h3>
                             </div>
+                            <?php
+                                // Solo los datos que el hotel cargó en Configuración: un documento para el cliente no lleva datos de ejemplo
+                                $dato = fn(string $clave) => trim((string)($config[$clave] ?? ''));
+                                $contacto = array_filter([
+                                    $dato('hotel_telefono') !== '' ? 'Tel: ' . e($dato('hotel_telefono')) : '',
+                                    $dato('hotel_correo') !== '' ? 'Email: ' . e($dato('hotel_correo')) : '',
+                                ]);
+                            ?>
                             <p class="text-muted small mb-1">
-                                RUC: <strong><?= htmlspecialchars($config['hotel_ruc'] ?? '20491823901') ?></strong><br>
-                                <?= htmlspecialchars($config['hotel_direccion'] ?? 'Av. Del Sol 1245, Zona Turística') ?><br>
-                                Tel: <?= htmlspecialchars($config['hotel_telefono'] ?? '+51 987 654 321') ?> | Email: <?= htmlspecialchars($config['hotel_correo'] ?? 'reservas@hotel.com') ?>
+                                <?php if ($dato('hotel_ruc') !== ''): ?>RUC: <strong><?= e($dato('hotel_ruc')) ?></strong><br><?php endif; ?>
+                                <?php if ($dato('hotel_direccion') !== ''): ?><?= e($dato('hotel_direccion')) ?><br><?php endif; ?>
+                                <?= implode(' | ', $contacto) ?>
                             </p>
                         </div>
                         <div class="col-sm-5 text-sm-end mt-3 mt-sm-0">
@@ -103,7 +111,7 @@
                         <div class="col-sm-5">
                             <div class="p-3 bg-light rounded border">
                                 <?php
-                                    $igvPorcentaje = 18;
+                                    $igvPorcentaje = igv_porcentaje();
                                     $totalMonto = $totalComprobante;
                                     $subtotal = round($totalMonto / (1 + ($igvPorcentaje / 100)), 2);
                                     $igv = round($totalMonto - $subtotal, 2);
@@ -113,7 +121,7 @@
                                     <span><?= dinero($subtotal) ?></span>
                                 </div>
                                 <div class="d-flex justify-content-between mb-1 small">
-                                    <span>I.G.V. (<?= $igvPorcentaje ?>%):</span>
+                                    <span>I.G.V. (<?= e(rtrim(rtrim(number_format($igvPorcentaje, 2, ".", ""), "0"), ".")) ?>%):</span>
                                     <span><?= dinero($igv) ?></span>
                                 </div>
                                 <hr class="my-2">

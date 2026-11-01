@@ -24,7 +24,7 @@
                                 <a href="<?= url('seguridad/permisos?rol_id=' . $r['id']) ?>" class="btn btn-sm btn-outline-primary">
                                     <i class="bi bi-key me-1"></i> Matriz de Permisos
                                 </a>
-                                <button type="button" class="btn btn-icon btn-outline-primary" data-editar="<?= e(json_encode($r, JSON_UNESCAPED_UNICODE)) ?>">
+                                <button type="button" class="btn btn-icon btn-outline-primary" title="Editar" aria-label="Editar el rol <?= e($r['nombre']) ?>" data-editar="<?= e(json_encode($r, JSON_UNESCAPED_UNICODE)) ?>">
                                     <i class="bi bi-pencil-square"></i>
                                 </button>
                             </div>

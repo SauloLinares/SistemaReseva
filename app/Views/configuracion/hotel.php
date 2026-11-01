@@ -50,21 +50,21 @@
                             </div>
                             <div class="col-12 col-md-4">
                                 <label for="hotel_ruc" class="form-label">RUC / NIF / Identificación Tributaria <span class="text-danger">*</span></label>
-                                <input id="hotel_ruc" type="text" name="hotel_ruc" class="form-control form-control-lg" value="<?= htmlspecialchars($config['hotel_ruc'] ?? '20491823901') ?>" required>
+                                <input id="hotel_ruc" type="text" name="hotel_ruc" class="form-control form-control-lg" value="<?= e($config['hotel_ruc'] ?? '') ?>" placeholder="Ej: 20491823901" required>
                             </div>
 
                             <div class="col-12 col-md-6">
                                 <label for="hotel_telefono" class="form-label">Teléfonos de Contacto</label>
-                                <input id="hotel_telefono" type="text" name="hotel_telefono" class="form-control" value="<?= htmlspecialchars($config['hotel_telefono'] ?? '+51 1 450-8900 / +51 987 654 321') ?>">
+                                <input id="hotel_telefono" type="text" name="hotel_telefono" class="form-control" value="<?= e($config['hotel_telefono'] ?? '') ?>" placeholder="Ej: +51 1 450-8900 / +51 987 654 321">
                             </div>
                             <div class="col-12 col-md-6">
                                 <label for="hotel_correo" class="form-label">Correo Electrónico Oficial</label>
-                                <input id="hotel_correo" type="email" name="hotel_correo" class="form-control" value="<?= htmlspecialchars($config['hotel_correo'] ?? 'reservas@hotelmanager.com') ?>">
+                                <input id="hotel_correo" type="email" name="hotel_correo" class="form-control" value="<?= e($config['hotel_correo'] ?? '') ?>" placeholder="Ej: reservas@hotelmanager.com">
                             </div>
 
                             <div class="col-12">
                                 <label for="hotel_direccion" class="form-label">Dirección Física del Hotel</label>
-                                <input id="hotel_direccion" type="text" name="hotel_direccion" class="form-control" value="<?= htmlspecialchars($config['hotel_direccion'] ?? 'Av. Del Sol 1245, Zona Turística, Perú') ?>">
+                                <input id="hotel_direccion" type="text" name="hotel_direccion" class="form-control" value="<?= e($config['hotel_direccion'] ?? '') ?>" placeholder="Ej: Av. Del Sol 1245, Zona Turística, Perú">
                             </div>
 
                             <div class="col-12 col-md-6">

@@ -12,6 +12,11 @@
 
     // Equivalente de url() de PHP: appUrl('reservas/editar/3'), appUrl('pagos/crear?reserva_id=1')
     const config = window.leerJson('app-config') || {};
+
+    // Símbolo de moneda de Configuración → Parámetros. Algunos montos se arman con innerHTML:
+    // se quitan los caracteres que podrían formar HTML.
+    window.moneda = String(config.moneda || '').replace(/[<>&"']/g, '') || 'S/.';
+
     window.appUrl = function (ruta) {
         ruta = String(ruta || '').replace(/^\/+/, '');
         if (ruta === '') return config.baseUrl || '';

@@ -41,7 +41,7 @@
             <div class="card-body py-2">
                 <form method="GET" action="<?= url('habitaciones') ?>" class="row g-2 align-items-center">
                     <div class="col-12 col-md-4">
-                        <select name="estado" class="form-select form-select-sm">
+                        <select name="estado" class="form-select form-select-sm" aria-label="Filtrar por estado">
                             <option value="">-- Todos los estados --</option>
                             <option value="disponible" <?= ($filtroEstado === 'disponible') ? 'selected' : '' ?>>Disponibles</option>
                             <option value="ocupada" <?= ($filtroEstado === 'ocupada') ? 'selected' : '' ?>>Ocupadas</option>
@@ -50,7 +50,7 @@
                         </select>
                     </div>
                     <div class="col-12 col-md-4">
-                        <select name="tipo_id" class="form-select form-select-sm">
+                        <select name="tipo_id" class="form-select form-select-sm" aria-label="Filtrar por tipo">
                             <option value="">-- Todos los tipos --</option>
                             <?php foreach ($tipos as $t): ?>
                                 <option value="<?= $t['id'] ?>" <?= ($filtroTipo == $t['id']) ? 'selected' : '' ?>>

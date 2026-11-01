@@ -2395,6 +2395,9 @@ body.pos-split-active .page-title {
 }
 
 [data-bs-theme="dark"] #imprimible .table {
+    /* .table define su propio --bs-table-bg (el fondo oscuro del tema): se anula aquí, no en #imprimible */
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--hm-slate-900);
     background-color: transparent !important;
     border-color: var(--hm-slate-200) !important;
 }
@@ -4314,5 +4317,29 @@ label .kbd-atajo {
     .tabla-tarifas td:first-child,
     .tabla-tarifas th:first-child {
         width: auto;
+    }
+}
+
+/* ====================================================================
+   33. CORRECCIONES DE LA AUDITORÍA
+   ==================================================================== */
+/* Los textos .visually-hidden (position:absolute) de una tabla se salían de su caja con scroll
+   y ensanchaban toda la página en el teléfono (Usuarios, Servicios) */
+.table-responsive {
+    position: relative;
+}
+/* Recuadro de la foto de la habitación: blanco en modo claro, del tema en modo oscuro */
+[data-bs-theme="dark"] .foto-preview.bg-white {
+    background-color: var(--bs-tertiary-bg) !important;
+}
+/* En pantallas táctiles, casillas y botones pequeños más fáciles de tocar con el dedo
+   (con mouse se ven como siempre) */
+@media (pointer: coarse) {
+    .app-main .form-check-input:not([role="switch"]) {
+        width: 1.35em;
+        height: 1.35em;
+    }
+    .app-main .btn-sm:not(.btn-link) {
+        min-height: 32px;
     }
 }

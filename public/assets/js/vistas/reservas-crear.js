@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const badgeEstadia = item.querySelector('.precio-estadia-hab');
             if (badgeEstadia) {
                 if (noches > 1) {
-                    badgeEstadia.textContent = `S/. ${totalEstadiaHab.toFixed(2)} (${noches} nts)`;
+                    badgeEstadia.textContent = `${window.moneda} ${totalEstadiaHab.toFixed(2)} (${noches} nts)`;
                     badgeEstadia.style.display = 'inline-block';
                 } else {
                     badgeEstadia.style.display = 'none';
@@ -150,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 htmlTagsSrv += `
                     <span class="badge badge-soft-success">
-                        <i class="bi bi-check2 me-1"></i>${nombre} (S/. ${precio.toFixed(2)})
+                        <i class="bi bi-check2 me-1"></i>${nombre} (${window.moneda} ${precio.toFixed(2)})
                     </span>
                 `;
             } else {
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', function() {
             bloqueSrvTags.style.display = 'block';
             listaSrvTags.innerHTML = htmlTagsSrv;
             filaServiciosSubtotal.style.display = 'flex';
-            subtotalServiciosDisplay.textContent = `+S/. ${subtotalServicios.toFixed(2)}`;
+            subtotalServiciosDisplay.textContent = `+${window.moneda} ${subtotalServicios.toFixed(2)}`;
         } else {
             bloqueSrvTags.style.display = 'none';
             filaServiciosSubtotal.style.display = 'none';
@@ -203,14 +203,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Fila de descuento
         if (descuento > 0) {
             filaDescuentoSubtotal.style.display = 'flex';
-            descuentoDisplay.textContent = `-S/. ${descuento.toFixed(2)}`;
+            descuentoDisplay.textContent = `-${window.moneda} ${descuento.toFixed(2)}`;
         } else {
             filaDescuentoSubtotal.style.display = 'none';
         }
 
-        if (subtotalHospedajeDisplay) subtotalHospedajeDisplay.textContent = `S/. ${subtotalHabitaciones.toFixed(2)}`;
+        if (subtotalHospedajeDisplay) subtotalHospedajeDisplay.textContent = `${window.moneda} ${subtotalHabitaciones.toFixed(2)}`;
         if (subtotalDetalle) subtotalDetalle.textContent = `${countSelected} hab. × ${noches} ${noches === 1 ? 'noche' : 'noches'}`;
-        if (montoTotalDisplay) montoTotalDisplay.textContent = 'S/. ' + totalNeto.toFixed(2);
+        if (montoTotalDisplay) montoTotalDisplay.textContent = window.moneda + ' ' + totalNeto.toFixed(2);
 
         // Semáforo de Capacidad
         actualizarSemaforoCapacidad(capacidadTotal, countSelected);
@@ -325,11 +325,11 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (anticipo > 0) {
             boxAlertaSaldo.className = 'alert alert-warning py-2 px-3 small rounded-3 mb-3 d-flex align-items-center gap-2 border-warning-subtle';
             iconoSaldo.className = 'bi bi-exclamation-circle-fill fs-5 text-warning';
-            textoSaldo.innerHTML = `Anticipo abonado: <strong>S/. ${anticipo.toFixed(2)}</strong>. Saldo a cobrar en Check-in: <strong class="text-danger">S/. ${saldoRestante.toFixed(2)}</strong>`;
+            textoSaldo.innerHTML = `Anticipo abonado: <strong>${window.moneda} ${anticipo.toFixed(2)}</strong>. Saldo a cobrar en Check-in: <strong class="text-danger">${window.moneda} ${saldoRestante.toFixed(2)}</strong>`;
         } else {
             boxAlertaSaldo.className = 'alert alert-info py-2 px-3 small rounded-3 mb-3 d-flex align-items-center gap-2 border-info-subtle';
             iconoSaldo.className = 'bi bi-wallet2 fs-5 text-info';
-            textoSaldo.innerHTML = `Sin anticipo. Se cobrará la totalidad de <strong class="text-body">S/. ${total.toFixed(2)}</strong> en el Check-in.`;
+            textoSaldo.innerHTML = `Sin anticipo. Se cobrará la totalidad de <strong class="text-body">${window.moneda} ${total.toFixed(2)}</strong> en el Check-in.`;
         }
     }
 

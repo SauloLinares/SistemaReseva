@@ -182,14 +182,14 @@
                             <input type="number" name="cantidad" id="modalConsumoCantidad" class="form-control" value="1" min="1" max="100" required>
                         </div>
                         <div class="col-6">
-                            <label for="modalConsumoPrecio" class="form-label">Precio Unitario (S/.) <span class="text-danger">*</span></label>
+                            <label for="modalConsumoPrecio" class="form-label">Precio Unitario (<?= e(moneda()) ?>) <span class="text-danger">*</span></label>
                             <input type="number" step="0.01" name="precio_unitario" id="modalConsumoPrecio" class="form-control" placeholder="0.00" required>
                         </div>
                     </div>
 
                     <div class="p-2 mb-3 bg-light-subtle rounded border d-flex justify-content-between align-items-center">
                         <span class="fw-semibold small">Total a Cargar:</span>
-                        <span class="fs-5 fw-bold text-success" id="modalConsumoTotalText">S/. 0.00</span>
+                        <span class="fs-5 fw-bold text-success" id="modalConsumoTotalText"><?= e(moneda()) ?> 0.00</span>
                     </div>
 
                     <div class="form-check mb-3">

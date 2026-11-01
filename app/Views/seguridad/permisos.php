@@ -73,22 +73,22 @@
                                         </td>
                                         <td class="text-center">
                                             <div class="form-check d-inline-block">
-                                                <input class="form-check-input" type="checkbox" name="permisos[<?= $key ?>][]" value="ver" <?= ($esAdmin || isset($permisosMap[$key . '_ver']) || isset($permisosMap[$key . '_gestionar'])) ? 'checked' : '' ?>>
+                                                <input class="form-check-input" type="checkbox" name="permisos[<?= $key ?>][]" value="ver" aria-label="Ver: <?= e($nombreModulo) ?>" <?= ($esAdmin || isset($permisosMap[$key . '_ver']) || isset($permisosMap[$key . '_gestionar'])) ? 'checked' : '' ?>>
                                             </div>
                                         </td>
                                         <td class="text-center">
                                             <div class="form-check d-inline-block">
-                                                <input class="form-check-input" type="checkbox" name="permisos[<?= $key ?>][]" value="crear" <?= ($esAdmin || isset($permisosMap[$key . '_crear']) || isset($permisosMap[$key . '_gestionar'])) ? 'checked' : '' ?>>
+                                                <input class="form-check-input" type="checkbox" name="permisos[<?= $key ?>][]" value="crear" aria-label="Crear: <?= e($nombreModulo) ?>" <?= ($esAdmin || isset($permisosMap[$key . '_crear']) || isset($permisosMap[$key . '_gestionar'])) ? 'checked' : '' ?>>
                                             </div>
                                         </td>
                                         <td class="text-center">
                                             <div class="form-check d-inline-block">
-                                                <input class="form-check-input" type="checkbox" name="permisos[<?= $key ?>][]" value="editar" <?= ($esAdmin || isset($permisosMap[$key . '_editar']) || isset($permisosMap[$key . '_gestionar'])) ? 'checked' : '' ?>>
+                                                <input class="form-check-input" type="checkbox" name="permisos[<?= $key ?>][]" value="editar" aria-label="Modificar: <?= e($nombreModulo) ?>" <?= ($esAdmin || isset($permisosMap[$key . '_editar']) || isset($permisosMap[$key . '_gestionar'])) ? 'checked' : '' ?>>
                                             </div>
                                         </td>
                                         <td class="text-center">
                                             <div class="form-check d-inline-block">
-                                                <input class="form-check-input" type="checkbox" name="permisos[<?= $key ?>][]" value="eliminar" <?= ($esAdmin || isset($permisosMap[$key . '_eliminar'])) ? 'checked' : '' ?>>
+                                                <input class="form-check-input" type="checkbox" name="permisos[<?= $key ?>][]" value="eliminar" aria-label="Eliminar: <?= e($nombreModulo) ?>" <?= ($esAdmin || isset($permisosMap[$key . '_eliminar'])) ? 'checked' : '' ?>>
                                             </div>
                                         </td>
                                     </tr>

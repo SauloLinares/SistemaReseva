@@ -315,11 +315,47 @@ if (!function_exists('old')) {
     }
 }
 
+if (!function_exists('config_hotel')) {
+    /**
+     * Un valor de Configuración (tabla configuracion), leída una sola vez por petición
+     */
+    function config_hotel(string $clave, string $default = ''): string
+    {
+        static $config = null;
+        if ($config === null) {
+            try {
+                $config = (new \App\Models\Configuracion())->obtenerTodos();
+            } catch (\Throwable $e) {
+                $config = [];
+            }
+        }
+        $valor = trim((string)($config[$clave] ?? ''));
+        return $valor !== '' ? $valor : $default;
+    }
+}
+
+if (!function_exists('moneda')) {
+    /** Símbolo de moneda de Configuración → Parámetros */
+    function moneda(): string
+    {
+        return config_hotel('hotel_moneda_simbolo', 'S/.');
+    }
+}
+
+if (!function_exists('igv_porcentaje')) {
+    /** Porcentaje de IGV de Configuración → Parámetros (18 si no hay uno válido) */
+    function igv_porcentaje(): float
+    {
+        $igv = (float)config_hotel('hotel_igv_porcentaje', '18');
+        return $igv >= 0 && $igv < 100 ? $igv : 18.0;
+    }
+}
+
 if (!function_exists('dinero')) {
     function dinero(float|int|string|null $monto): string
     {
         $num = (float)($monto ?? 0);
-        return 'S/. ' . number_format($num, 2, '.', ',');
+        return moneda() . ' ' . number_format($num, 2, '.', ',');
     }
 }
 

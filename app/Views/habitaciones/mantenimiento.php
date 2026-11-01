@@ -121,7 +121,7 @@
                     <input id="responsable" type="text" name="responsable" class="form-control" placeholder="Ej: Juan Pérez / Empresa externa">
                 </div>
                 <div class="mb-3">
-                    <label for="costo" class="form-label">Costo Estimado (S/.)</label>
+                    <label for="costo" class="form-label">Costo Estimado (<?= e(moneda()) ?>)</label>
                     <input id="costo" type="number" step="0.01" name="costo" class="form-control" value="0.00">
                 </div>
                 <div class="mb-3">

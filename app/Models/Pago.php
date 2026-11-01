@@ -110,7 +110,7 @@ class Pago extends Model
             $this->recalcularSaldo($reservaId);
 
             $metodos = implode(' + ', array_map(fn($l) => $l['metodo'], $lineas));
-            (new Auditoria())->registrar('Pagos', 'Registrar', "Pago {$comprobanteNumero} por S/. {$total} ({$metodos}) registrado para la reserva ID: {$reservaId}");
+            (new Auditoria())->registrar('Pagos', 'Registrar', "Pago {$comprobanteNumero} por " . moneda() . " {$total} ({$metodos}) registrado para la reserva ID: {$reservaId}");
 
             if ($propia) {
                 $this->db->commit();

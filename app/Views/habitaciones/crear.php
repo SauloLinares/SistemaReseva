@@ -38,9 +38,9 @@
                             </div>
 
                             <div class="col-12 col-md-6">
-                                <label for="precio_diario" class="form-label">Precio por Noche (S/.) <span class="text-danger">*</span></label>
+                                <label for="precio_diario" class="form-label">Precio por Noche (<?= e(moneda()) ?>) <span class="text-danger">*</span></label>
                                 <div class="input-group">
-                                    <span class="input-group-text">S/.</span>
+                                    <span class="input-group-text"><?= e(moneda()) ?></span>
                                     <input type="number" step="0.01" name="precio_diario" id="precio_diario" class="form-control" placeholder="0.00" required>
                                 </div>
                             </div>

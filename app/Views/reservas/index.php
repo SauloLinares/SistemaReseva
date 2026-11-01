@@ -40,8 +40,8 @@
                         <button type="submit" class="btn btn-sm btn-primary w-100">
                             <i class="bi bi-funnel me-1"></i> Filtrar
                         </button>
-                        <a href="<?= url('reservas') ?>" class="btn btn-sm btn-outline-secondary">
-                            <i class="bi bi-arrow-counterclockwise"></i>
+                        <a href="<?= url('reservas') ?>" class="btn btn-sm btn-outline-secondary" title="Limpiar filtros" aria-label="Limpiar filtros">
+                            <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i>
                         </a>
                     </div>
                 </form>

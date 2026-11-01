@@ -83,7 +83,7 @@
                                         <td class="text-end fw-bold pt-2">
                                             <?php $dif = (float)$turno['diferencia']; ?>
                                             <?php if (abs($dif) < 0.01): ?>
-                                                <span class="text-success"><i class="bi bi-check-circle me-1"></i>S/. 0.00 (Cuadrado)</span>
+                                                <span class="text-success"><i class="bi bi-check-circle me-1"></i><?= e(moneda()) ?> 0.00 (Cuadrado)</span>
                                             <?php elseif ($dif > 0): ?>
                                                 <span class="text-warning"><i class="bi bi-plus-circle me-1"></i>+<?= dinero($dif) ?> (Sobrante)</span>
                                             <?php else: ?>

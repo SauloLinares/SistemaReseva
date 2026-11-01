@@ -89,7 +89,7 @@ sort($pisos, SORT_NATURAL);
                                         </td>
                                         <td class="text-end">
                                             <div class="input-group input-group-sm tarifa-campo ms-auto">
-                                                <span class="input-group-text">S/.</span>
+                                                <span class="input-group-text"><?= e(moneda()) ?></span>
                                                 <input type="number" step="0.01" min="0.01" name="tarifas[<?= (int)$h['id'] ?>]" id="tarifa-<?= (int)$h['id'] ?>"
                                                        class="form-control text-end fw-semibold" value="<?= e($precio) ?>" inputmode="decimal"
                                                        data-original="<?= e($precio) ?>" data-base="<?= e(number_format((float)$h['precio_base'], 2, '.', '')) ?>"

@@ -63,7 +63,7 @@ class CajaController extends Controller
         $turnoId = $this->cajaModel->abrirTurno($usuarioId, $montoInicial, $observaciones);
 
         if ($turnoId) {
-            $this->auditoriaModel->registrar('Caja', 'Apertura', "Apertura de turno de caja #{$turnoId} con fondo inicial de S/. {$montoInicial}");
+            $this->auditoriaModel->registrar('Caja', 'Apertura', "Apertura de turno de caja #{$turnoId} con fondo inicial de " . moneda() . " {$montoInicial}");
             $this->setFlash('success', "¡Caja y turno #{$turnoId} abiertos exitosamente!");
         } else {
             $this->setFlash('warning', 'Ya existe un turno de caja abierto en este momento.');
@@ -113,8 +113,8 @@ class CajaController extends Controller
 
         if ($ok) {
             $tipoLabel = ($tipo === 'ingreso') ? 'Ingreso extra' : 'Egreso/Gasto';
-            $this->auditoriaModel->registrar('Caja', 'Movimiento', "{$tipoLabel} de S/. {$monto} por: {$concepto}");
-            $this->setFlash('success', "{$tipoLabel} de S/. " . number_format($monto, 2) . " registrado correctamente.");
+            $this->auditoriaModel->registrar('Caja', 'Movimiento', "{$tipoLabel} de " . moneda() . " {$monto} por: {$concepto}");
+            $this->setFlash('success', "{$tipoLabel} de " . moneda() . " " . number_format($monto, 2) . " registrado correctamente.");
         } else {
             $this->setFlash('danger', 'Ocurrió un error al registrar el movimiento.');
         }
@@ -167,7 +167,7 @@ class CajaController extends Controller
         $ok = $this->cajaModel->cerrarTurno($turnoId, $montoReal, $observaciones);
 
         if ($ok) {
-            $this->auditoriaModel->registrar('Caja', 'Cierre', "Cierre y arqueo de turno #{$turnoId}. Conteo físico en efectivo: S/. {$montoReal}");
+            $this->auditoriaModel->registrar('Caja', 'Cierre', "Cierre y arqueo de turno #{$turnoId}. Conteo físico en efectivo: " . moneda() . " {$montoReal}");
             $this->setFlash('success', "¡Turno #{$turnoId} cerrado exitosamente! Puedes revisar el reporte de arqueo.");
             redirect('caja/cierre/' . $turnoId);
         } else {

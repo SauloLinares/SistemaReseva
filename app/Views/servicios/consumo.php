@@ -51,7 +51,7 @@
                             <div class="col-12">
                                 <div class="p-3 bg-light rounded border d-flex justify-content-between align-items-center">
                                     <span class="fs-5 fw-bold">Total a Cargar:</span>
-                                    <span class="fs-4 fw-bold text-success" id="displayTotalConsumo">S/. 0.00</span>
+                                    <span class="fs-4 fw-bold text-success" id="displayTotalConsumo"><?= e(moneda()) ?> 0.00</span>
                                 </div>
                             </div>
 

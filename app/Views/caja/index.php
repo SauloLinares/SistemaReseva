@@ -241,9 +241,9 @@
                     </div>
                     <div class="row g-2 mb-3">
                         <div class="col-6">
-                            <label for="monto" class="form-label">Monto (S/.) <span class="text-danger">*</span></label>
+                            <label for="monto" class="form-label">Monto (<?= e(moneda()) ?>) <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                <span class="input-group-text">S/.</span>
+                                <span class="input-group-text"><?= e(moneda()) ?></span>
                                 <input id="monto" type="number" step="0.10" min="0.10" name="monto" class="form-control fw-bold text-danger" placeholder="0.00" required>
                             </div>
                         </div>
@@ -292,9 +292,9 @@
                     </div>
                     <div class="row g-2 mb-3">
                         <div class="col-6">
-                            <label for="monto_2" class="form-label">Monto (S/.) <span class="text-danger">*</span></label>
+                            <label for="monto_2" class="form-label">Monto (<?= e(moneda()) ?>) <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                <span class="input-group-text">S/.</span>
+                                <span class="input-group-text"><?= e(moneda()) ?></span>
                                 <input id="monto_2" type="number" step="0.10" min="0.10" name="monto" class="form-control fw-bold text-success" placeholder="0.00" required>
                             </div>
                         </div>
@@ -350,16 +350,16 @@
                         <div class="col-12 col-md-4">
                             <div class="p-3 bg-primary-subtle border border-primary-subtle rounded-3 text-center">
                                 <small class="text-primary fw-semibold d-block mb-1">Total Esperado en Gaveta</small>
-                                <strong class="fs-4 text-primary" id="montoEsperadoSpan">S/. <?= number_format($resumen['monto_esperado_efectivo'], 2) ?></strong>
+                                <strong class="fs-4 text-primary" id="montoEsperadoSpan"><?= e(moneda()) ?> <?= number_format($resumen['monto_esperado_efectivo'], 2) ?></strong>
                             </div>
                         </div>
                     </div>
 
                     <!-- Input de Efectivo Real Contado -->
                     <div class="mb-3">
-                        <label for="monto_real_efectivo" class="form-label">Ingresa el Efectivo Físico Contado en tu Cajón (S/.) <span class="text-danger">*</span></label>
+                        <label for="monto_real_efectivo" class="form-label">Ingresa el Efectivo Físico Contado en tu Cajón (<?= e(moneda()) ?>) <span class="text-danger">*</span></label>
                         <div class="input-group input-group-lg">
-                            <span class="input-group-text bg-success text-white fw-bold">S/.</span>
+                            <span class="input-group-text bg-success text-white fw-bold"><?= e(moneda()) ?></span>
                             <input type="number" step="0.10" min="0" name="monto_real_efectivo" id="monto_real_efectivo" data-esperado="<?= (float)$resumen['monto_esperado_efectivo'] ?>" class="form-control fw-bold fs-3 text-success" value="<?= number_format($resumen['monto_esperado_efectivo'], 2, '.', '') ?>" required autofocus>
                             <button type="button" class="btn btn-outline-secondary" id="btnCopiarEsperado" title="Usar monto exacto esperado">
                                 <i class="bi bi-magic me-1"></i> Monto Exacto
@@ -376,7 +376,7 @@
                     <!-- Observaciones de Cierre -->
                     <div class="mb-2">
                         <label for="observaciones_cierre" class="form-label">Observaciones de Cierre / Novedades</label>
-                        <textarea id="observaciones_cierre" name="observaciones_cierre" class="form-control form-control-sm" rows="2" placeholder="Ej: Se deja sobre con S/. 450 en caja fuerte, se entrega turno a María..."></textarea>
+                        <textarea id="observaciones_cierre" name="observaciones_cierre" class="form-control form-control-sm" rows="2" placeholder="Ej: Se deja sobre con <?= e(moneda()) ?> 450 en caja fuerte, se entrega turno a María..."></textarea>
                     </div>
                 </div>
                 <div class="modal-footer bg-body-tertiary px-4 py-3">

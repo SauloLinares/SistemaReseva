@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const cant = parseFloat(inputCantidad.value) || 0;
         const precio = parseFloat(inputPrecio.value) || 0;
         const total = (cant * precio).toFixed(2);
-        totalText.textContent = 'S/. ' + total;
+        totalText.textContent = window.moneda + ' ' + total;
     }
 
     if (selectServicio) {
@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
             alertModal.textContent = '';
             formModal.reset();
             inputCantidad.value = 1;
-            totalText.textContent = 'S/. 0.00';
+            totalText.textContent = window.moneda + ' 0.00';
         });
     });
 

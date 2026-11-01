@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalEvento = new bootstrap.Modal(document.getElementById('modalDetalleEvento'));
 
     const fechaEs = iso => iso ? iso.split('-').reverse().join('/') : '--';
-    const soles = n => 'S/. ' + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const soles = n => window.moneda + ' ' + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     const noches = (a, b) => Math.round((new Date(b) - new Date(a)) / 86400000);
     const badgeEstado = {
         confirmada: 'badge-soft-primary',

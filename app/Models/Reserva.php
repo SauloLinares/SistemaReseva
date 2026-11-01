@@ -312,7 +312,7 @@ class Reserva extends Model
 
             // Registrar auditoría
             $auditoriaModel = new Auditoria();
-            $auditoriaModel->registrar('Reservas', 'Crear', "Nueva reserva registrada con código {$codigo} para {$dias} noches. Total: S/. {$total}");
+            $auditoriaModel->registrar('Reservas', 'Crear', "Nueva reserva registrada con código {$codigo} para {$dias} noches. Total: " . moneda() . " {$total}");
 
             $this->db->commit();
             return $reservaId;

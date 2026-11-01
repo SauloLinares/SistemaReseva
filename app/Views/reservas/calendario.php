@@ -78,7 +78,7 @@
                 </div>
                 <div class="d-flex justify-content-between pt-1">
                     <span class="text-body-secondary small">Total de la reserva</span>
-                    <strong id="mCalTotal">S/. 0.00</strong>
+                    <strong id="mCalTotal"><?= e(moneda()) ?> 0.00</strong>
                 </div>
             </div>
             <div class="modal-footer">

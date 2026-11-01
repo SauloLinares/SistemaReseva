@@ -28,7 +28,7 @@
                                 <th class="col-w-sm">Código</th>
                                 <th>Nombre y Descripción</th>
                                 <th>Categoría</th>
-                                <th class="text-end">Precio (S/.)</th>
+                                <th class="text-end">Precio (<?= e(moneda()) ?>)</th>
                                 <th class="text-center">Stock</th>
                                 <th class="text-center">Estado</th>
                                 <th class="text-center col-w-md">Acciones</th>
@@ -58,7 +58,7 @@
                                             </span>
                                         </td>
                                         <td class="text-end fw-bold text-primary">
-                                            S/. <?= number_format((float)$p['precio'], 2) ?>
+                                            <?= e(moneda()) ?> <?= number_format((float)$p['precio'], 2) ?>
                                         </td>
                                         <td class="text-center">
                                             <?php if ((int)$p['stock'] <= 5): ?>

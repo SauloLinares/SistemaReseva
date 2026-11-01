@@ -364,6 +364,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 perPageSelect: [10, 25, 50, 100],
                 labels: {
                     placeholder: "",
+                    searchTitle: "Buscar en la tabla",
                     perPage: "registros",
                     noRows: "No se encontraron registros para mostrar",
                     info: "Mostrando registros del {start} al {end} de un total de {rows}",
