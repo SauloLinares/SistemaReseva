@@ -360,7 +360,7 @@ $nombreEmpresa = $configApp['hotel_nombre'] ?? 'Hotel Manager';
                 <?php endif; ?>
 
                 <!-- SECCIÓN: ADMINISTRACIÓN -->
-                <?php if (puede_alguna(['servicios', 'servicios/consumo', 'servicios/porHuesped', 'reportes/reservas', 'reportes/ocupacion', 'reportes/ingresos', 'reportes/huespedes', 'reportes/cancelaciones', 'seguridad/usuarios', 'seguridad/roles', 'seguridad/permisos', 'seguridad/auditoria', 'configuracion/hotel', 'configuracion/documentos', 'configuracion/metodosPago', 'configuracion/parametros'])): ?>
+                <?php if (puede_alguna(['servicios', 'servicios/consumo', 'servicios/porHuesped', 'reportes/reservas', 'reportes/ocupacion', 'reportes/ingresos', 'reportes/huespedes', 'reportes/cancelaciones', 'seguridad/usuarios', 'seguridad/roles', 'seguridad/permisos', 'seguridad/auditoria', 'configuracion/hotel', 'configuracion/documentos', 'configuracion/metodosPago', 'configuracion/parametros', 'configuracion/respaldo'])): ?>
                 <li class="nav-header fw-bold text-uppercase text-secondary mt-2">ADMINISTRACIÓN</li>
                 <?php endif; ?>
 
@@ -506,7 +506,7 @@ $nombreEmpresa = $configApp['hotel_nombre'] ?? 'Hotel Manager';
                 <?php endif; ?>
 
                 <!-- 10. Configuración -->
-                <?php if (puede_alguna(['configuracion/hotel', 'configuracion/documentos', 'configuracion/metodosPago', 'configuracion/parametros'])): ?>
+                <?php if (puede_alguna(['configuracion/hotel', 'configuracion/documentos', 'configuracion/metodosPago', 'configuracion/parametros', 'configuracion/respaldo'])): ?>
                 <li class="nav-item <?= $esActivo('configuracion') ? 'menu-open' : '' ?>">
                     <a href="#" class="nav-link <?= $esActivo('configuracion') ? 'active' : '' ?>">
                         <i class="nav-icon bi bi-gear text-secondary"></i>
@@ -545,6 +545,14 @@ $nombreEmpresa = $configApp['hotel_nombre'] ?? 'Hotel Manager';
                             <a href="<?= url('configuracion/parametros') ?>" class="nav-link <?= $rutaActual === 'configuracion/parametros' || $rutaActual === 'configuracion' ? 'active' : '' ?>">
                                 <i class="nav-icon bi bi-sliders"></i>
                                 <p>Parámetros generales</p>
+                            </a>
+                        </li>
+                        <?php endif; ?>
+                        <?php if (puede_ruta('configuracion/respaldo')): ?>
+                        <li class="nav-item">
+                            <a href="<?= url('configuracion/respaldo') ?>" class="nav-link <?= $rutaActual === 'configuracion/respaldo' ? 'active' : '' ?>">
+                                <i class="nav-icon bi bi-database-down"></i>
+                                <p>Respaldo de datos</p>
                             </a>
                         </li>
                         <?php endif; ?>

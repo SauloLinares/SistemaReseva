@@ -183,4 +183,73 @@ class ConfiguracionController extends Controller
         $this->setFlash('success', 'Parámetros generales guardados correctamente.');
         redirect('configuracion/parametros');
     }
+
+    /** Días tras los que se avisa que conviene un respaldo nuevo */
+    public const DIAS_RESPALDO = 7;
+
+    /**
+     * Respaldo de la base de datos y las fotos (solo el Administrador: lleva los datos de
+     * todos los huéspedes). Muestra cuándo fue el último y quién lo descargó.
+     */
+    public function respaldo(): void
+    {
+        $ultimo = json_decode($this->configModel->obtener('ultimo_respaldo', ''), true) ?: null;
+        $db = \App\Config\Database::conectar();
+        $tamano = (int) $db->query("SELECT SUM(data_length + index_length) FROM information_schema.tables WHERE table_schema = DATABASE()")->fetchColumn();
+        $tablas = (int) $db->query("SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_type = 'BASE TABLE'")->fetchColumn();
+
+        $this->render('configuracion/respaldo', [
+            'ultimo'   => $ultimo,
+            'dias'     => $ultimo ? (int) floor((time() - strtotime($ultimo['fecha'])) / 86400) : null,
+            'tamanoKb' => (int) ceil($tamano / 1024),
+            'tablas'   => $tablas,
+            'fotosKb'  => (int) ceil(self::tamanoCarpeta(__DIR__ . '/../../public/uploads') / 1024),
+        ], 'Respaldo de Datos');
+    }
+
+    /**
+     * Genera el .zip (base de datos + fotos) y lo descarga. Por POST con token.
+     */
+    public function descargarRespaldo(): void
+    {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            redirect('configuracion/respaldo');
+        }
+        if (!class_exists(\ZipArchive::class)) {
+            $this->setFlash('danger', 'El servidor no tiene la extensión zip de PHP: no se puede armar el respaldo.');
+            redirect('configuracion/respaldo');
+        }
+
+        @set_time_limit(300);
+        $ruta = \App\Core\Respaldo::generar();
+        $bytes = filesize($ruta);
+
+        $this->configModel->guardar('ultimo_respaldo', json_encode([
+            'fecha'   => date('Y-m-d H:i:s'),
+            'usuario' => auth_user('nombre'),
+            'kb'      => (int) ceil($bytes / 1024),
+        ], JSON_UNESCAPED_UNICODE), 'sistema', 'Último respaldo descargado (Configuración → Respaldo)');
+        $this->auditoriaModel->registrar('Configuración', 'Respaldo', 'Descargó un respaldo completo (' . number_format($bytes / 1024, 0) . ' KB)');
+
+        $hotel = trim(preg_replace('/[^a-z0-9]+/', '-', strtolower(iconv('UTF-8', 'ASCII//TRANSLIT', config_hotel('hotel_nombre', 'hotel')) ?: 'hotel')), '-');
+        header('Content-Type: application/zip');
+        header('Content-Disposition: attachment; filename="respaldo-' . ($hotel ?: 'hotel') . '-' . date('Y-m-d-Hi') . '.zip"');
+        header('Content-Length: ' . $bytes);
+        header('Cache-Control: no-store');
+        readfile($ruta);
+        unlink($ruta);
+        exit;
+    }
+
+    private static function tamanoCarpeta(string $carpeta): int
+    {
+        if (!is_dir($carpeta)) {
+            return 0;
+        }
+        $total = 0;
+        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($carpeta, \FilesystemIterator::SKIP_DOTS)) as $archivo) {
+            $total += $archivo->getSize();
+        }
+        return $total;
+    }
 }

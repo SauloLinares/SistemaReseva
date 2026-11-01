@@ -107,6 +107,25 @@ try {
         ];
         $totalAlertas += 1;
     }
+
+    // 6. Respaldo pendiente: nunca se hizo o tiene más de una semana (solo lo ve el Administrador)
+    $ultimoRespaldo = json_decode(config_hotel('ultimo_respaldo', ''), true);
+    $diasRespaldo = $ultimoRespaldo ? (int) floor((time() - strtotime($ultimoRespaldo['fecha'])) / 86400) : null;
+    if ($diasRespaldo === null || $diasRespaldo > \App\Controllers\ConfiguracionController::DIAS_RESPALDO) {
+        $alertasSistema[] = [
+            'tipo'     => 'respaldo',
+            'icono'    => 'bi-database-down',
+            'color'    => 'warning',
+            'titulo'   => $diasRespaldo === null ? 'Sin respaldo de datos' : "Último respaldo hace {$diasRespaldo} días",
+            'desc'     => 'Descarga una copia de la base de datos y las fotos',
+            'ruta'     => 'configuracion/respaldo',
+            'enlace'   => url('configuracion/respaldo'),
+            'badge'    => 'Respaldo',
+            'badge_bg' => 'bg-warning-subtle text-warning-emphasis border border-warning-subtle',
+            'cantidad' => 1,
+        ];
+        $totalAlertas += 1;
+    }
 } catch (\Throwable $e) {
     // Tolerancia ante cualquier excepción
 }

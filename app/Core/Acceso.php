@@ -69,6 +69,13 @@ class Acceso
         'SeguridadController@guardarPermisos'  => ['seguridad', 'editar'],
     ];
 
+    /**
+     * Lo que solo hace el rol Administrador, aunque la matriz dé permisos de Configuración:
+     * el respaldo lleva los datos de todos los huéspedes y las contraseñas cifradas.
+     */
+    public const SOLO_ADMINISTRADOR = 'administrador';
+    private const SOLO_ADMIN = ['ConfiguracionController@respaldo', 'ConfiguracionController@descargarRespaldo'];
+
     private static ?array $permisos = null;
 
     /**
@@ -77,6 +84,9 @@ class Acceso
     public static function requerido(string $controlador, string $metodo): ?array
     {
         $clase = substr(strrchr('\\' . $controlador, '\\'), 1);
+        if (in_array("{$clase}@{$metodo}", self::SOLO_ADMIN, true)) {
+            return [self::SOLO_ADMINISTRADOR, 'ver'];
+        }
         if (isset(self::EXCEPCIONES["{$clase}@{$metodo}"])) {
             return self::EXCEPCIONES["{$clase}@{$metodo}"];
         }
@@ -139,6 +149,9 @@ class Acceso
         }
         if ((int) auth_user('rol_id') === self::ROL_ADMIN) {
             return true;
+        }
+        if ($modulo === self::SOLO_ADMINISTRADOR) {
+            return false;
         }
         if (self::$permisos === null) {
             self::$permisos = self::cargarPermisos((int) auth_user('rol_id'));

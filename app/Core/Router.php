@@ -121,7 +121,7 @@ class Router
         if ($requerido && auth_check() && !Acceso::puede(...$requerido)) {
             [$modulo, $accion] = $requerido;
             $this->rechazarPeticion(
-                'Tu rol no tiene permiso para ' . self::ACCIONES_TEXTO[$accion] . ' en «' . Acceso::MODULOS[$modulo] . '». Si lo necesitas, pídelo al administrador.',
+                'Tu rol no tiene permiso para ' . self::ACCIONES_TEXTO[$accion] . ' en «' . (Acceso::MODULOS[$modulo] ?? 'Respaldo de datos (solo el Administrador)') . '». Si lo necesitas, pídelo al administrador.',
                 true
             );
             return;
