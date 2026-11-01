@@ -18,7 +18,14 @@
                     <!-- Encabezado del Hotel -->
                     <div class="row align-items-center border-bottom pb-4 mb-4">
                         <div class="col-sm-7">
-                            <h3 class="fw-bold text-primary mb-1">🏨 <?= htmlspecialchars($config['hotel_nombre'] ?? 'Hotel Manager & Resort') ?></h3>
+                            <!-- Logo al costado del nombre (mismo marco que el voucher); sin logo, el emoji de siempre -->
+                            <?php $hayLogo = !empty($config['hotel_logo']) && file_exists(__DIR__ . '/../../../public/uploads/hotel/' . $config['hotel_logo']); ?>
+                            <div class="d-flex align-items-center gap-3 mb-2">
+                                <?php if ($hayLogo): ?>
+                                    <span class="logo-marco voucher-logo-marco"><img src="<?= e(base_url('uploads/hotel/' . $config['hotel_logo'])) ?>" alt="Logo de <?= e($config['hotel_nombre'] ?? 'el hotel') ?>"></span>
+                                <?php endif; ?>
+                                <h3 class="fw-bold text-primary mb-0"><?= $hayLogo ? '' : '🏨 ' ?><?= htmlspecialchars($config['hotel_nombre'] ?? 'Hotel Manager & Resort') ?></h3>
+                            </div>
                             <p class="text-muted small mb-1">
                                 RUC: <strong><?= htmlspecialchars($config['hotel_ruc'] ?? '20491823901') ?></strong><br>
                                 <?= htmlspecialchars($config['hotel_direccion'] ?? 'Av. Del Sol 1245, Zona Turística') ?><br>
