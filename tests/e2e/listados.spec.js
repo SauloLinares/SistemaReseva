@@ -89,3 +89,11 @@ test('aviso del Inicio: se cierra hasta el día siguiente', async ({ page }) => 
     await page.reload();
     await expect(page.locator('#avisoInicio')).toBeVisible();
 });
+
+test('las fechas del sistema van en hora de Perú (antes, desde las 7 p. m. ya era "mañana")', async ({ page }) => {
+    const hoyPeru = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Lima' }).format(new Date()); // AAAA-MM-DD
+    await page.goto(ruta('reportes/ingresos'));
+    await expect(page.locator('input[name="desde"]')).toHaveValue(hoyPeru.slice(0, 8) + '01');
+    await page.goto(ruta('pagos/crear'));
+    await expect(page.locator('#fecha_pago')).toHaveValue(new RegExp('^' + hoyPeru + 'T'));
+});

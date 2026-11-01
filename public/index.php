@@ -31,6 +31,9 @@ require_once __DIR__ . '/../app/Core/Autoloader.php';
 require_once __DIR__ . '/../app/Config/App.php';
 require_once __DIR__ . '/../app/Core/Helpers.php';
 
+// 3.0 Hora del hotel para date(), "hoy" y las fechas que se guardan (MySQL usa la misma: Database.php)
+date_default_timezone_set(\App\Config\App::zonaHoraria());
+
 // 3.1 Un error inesperado (excepción sin atrapar) no deja una pantalla en blanco ni muestra
 //     detalles internos: se registra en el log de PHP y el usuario ve un aviso claro.
 set_exception_handler([\App\Core\Errores::class, 'excepcion']);

@@ -37,6 +37,9 @@ class Database
                         PDO::ATTR_EMULATE_PREPARES => false
                     ]
                 );
+                // NOW() y CURRENT_TIMESTAMP en la misma hora que PHP, sin depender de cómo esté
+                // configurado el servidor MySQL
+                self::$conexion->exec("SET time_zone = '" . (new \DateTime())->format('P') . "'");
             } catch (PDOException $e) {
                 // Mensaje didáctico y visual para guiar a los alumnos ante fallos de conexión
                 echo "<!DOCTYPE html>

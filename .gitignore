@@ -16,3 +16,6 @@ public/uploads/usuarios/
 
 # Copia minificada (npm run build): se genera al publicar
 public/assets/dist/
+
+# Respaldos de la base de datos (datos reales: no van al repositorio)
+respaldos/
