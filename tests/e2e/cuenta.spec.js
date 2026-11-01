@@ -85,6 +85,8 @@ test('usuario con contraseña asignada: debe cambiarla antes de usar el sistema'
     await page.fill('#userNombre', 'ZZ Prueba Cuenta');
     await page.fill('#userEmail', email);
     await page.fill('#userPassword', temporal);
+    // Con su rol (Recepcionista) puede abrir Reservas: rol_id se guarda y se respeta
+    await page.selectOption('#userRol', { label: 'Recepcionista' });
     await page.locator('#modalUsuario [type="submit"]').click();
     await expect(page.locator('#sessionFlashToast')).toContainText('Deberá cambiar la contraseña');
 

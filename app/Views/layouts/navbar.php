@@ -22,9 +22,11 @@ try {
             'color'    => 'success',
             'titulo'   => "$checkinsPendientes Check-in(s) para hoy",
             'desc'     => 'Huéspedes programados para ingresar hoy',
+            'ruta'     => 'recepcion/checkin',
             'enlace'   => url('recepcion/checkin'),
             'badge'    => 'Hoy',
-            'badge_bg' => 'bg-success-subtle text-success border border-success-subtle'
+            'badge_bg' => 'bg-success-subtle text-success border border-success-subtle',
+            'cantidad' => $checkinsPendientes,
         ];
         $totalAlertas += $checkinsPendientes;
     }
@@ -40,9 +42,11 @@ try {
             'color'    => 'danger',
             'titulo'   => "$checkoutsPendientes Check-out(s) para hoy",
             'desc'     => 'Huéspedes que deben desocupar habitación hoy',
+            'ruta'     => 'recepcion/checkout',
             'enlace'   => url('recepcion/checkout'),
             'badge'    => 'Salida',
-            'badge_bg' => 'bg-danger-subtle text-danger border border-danger-subtle'
+            'badge_bg' => 'bg-danger-subtle text-danger border border-danger-subtle',
+            'cantidad' => $checkoutsPendientes,
         ];
         $totalAlertas += $checkoutsPendientes;
     }
@@ -57,9 +61,11 @@ try {
             'color'    => 'warning',
             'titulo'   => "$habsMantenimiento Habitación(es) en mantenimiento",
             'desc'     => 'Habitaciones fuera de servicio o en limpieza',
+            'ruta'     => 'habitaciones/mantenimiento',
             'enlace'   => url('habitaciones/mantenimiento'),
             'badge'    => 'Atención',
-            'badge_bg' => 'bg-warning-subtle text-warning-emphasis border border-warning-subtle'
+            'badge_bg' => 'bg-warning-subtle text-warning-emphasis border border-warning-subtle',
+            'cantidad' => $habsMantenimiento,
         ];
         $totalAlertas += $habsMantenimiento;
     }
@@ -74,9 +80,11 @@ try {
             'color'    => 'info',
             'titulo'   => "$reservasPendientes Reserva(s) pendientes de pago",
             'desc'     => 'Reservas sin comprobante o saldo por cobrar',
+            'ruta'     => 'reservas?estado=pendiente',
             'enlace'   => url('reservas?estado=pendiente'),
             'badge'    => 'Pendiente',
-            'badge_bg' => 'bg-info-subtle text-info-emphasis border border-info-subtle'
+            'badge_bg' => 'bg-info-subtle text-info-emphasis border border-info-subtle',
+            'cantidad' => $reservasPendientes,
         ];
         $totalAlertas += $reservasPendientes;
     }
@@ -91,15 +99,21 @@ try {
             'color'    => 'danger',
             'titulo'   => 'Caja cerrada sin turno activo',
             'desc'     => 'Abre un turno para registrar cobros y anticipos',
+            'ruta'     => 'caja',
             'enlace'   => url('caja'),
             'badge'    => 'Caja',
-            'badge_bg' => 'bg-danger-subtle text-danger border border-danger-subtle'
+            'badge_bg' => 'bg-danger-subtle text-danger border border-danger-subtle',
+            'cantidad' => 1,
         ];
         $totalAlertas += 1;
     }
 } catch (\Throwable $e) {
     // Tolerancia ante cualquier excepción
 }
+
+// Solo las alertas de pantallas que el rol del usuario puede abrir
+$alertasSistema = array_values(array_filter($alertasSistema, fn($a) => puede_ruta($a['ruta'])));
+$totalAlertas = array_sum(array_column($alertasSistema, 'cantidad'));
 ?>
 
 
@@ -117,21 +131,29 @@ try {
 
         <!-- Acciones rápidas: una sola principal (Nueva Reserva); las demás en gris para no competir -->
         <div class="d-none d-md-flex align-items-center gap-2 ms-auto me-3">
+            <?php if (puede_ruta('huespedes/buscar')): ?>
             <a href="<?= url('huespedes/buscar') ?>" class="btn btn-outline-secondary btn-nav-action" title="Atajo: Presiona F3">
                 <i class="bi bi-search me-1"></i> Buscar DNI <kbd class="nav-kbd">F3</kbd>
             </a>
+            <?php endif; ?>
+            <?php if (puede_ruta('recepcion/checkin')): ?>
             <a href="<?= url('recepcion/checkin') ?>" class="btn btn-outline-secondary btn-nav-action" title="Atajo: Presiona F4">
                 <i class="bi bi-box-arrow-in-right me-1"></i> Check-in <kbd class="nav-kbd">F4</kbd>
             </a>
+            <?php endif; ?>
+            <?php if (puede_ruta('reservas/crear')): ?>
             <a href="<?= url('reservas/crear') ?>" class="btn btn-primary btn-nav-action" title="Atajo: Presiona F2 o Ctrl+K">
                 <i class="bi bi-plus-lg me-1"></i> Nueva Reserva <kbd class="nav-kbd nav-kbd-on-primary">F2</kbd>
             </a>
+            <?php endif; ?>
         </div>
 
         <!-- En móvil las acciones rápidas se ocultan: queda un acceso directo a Nueva Reserva -->
+        <?php if (puede_ruta('reservas/crear')): ?>
         <a href="<?= url('reservas/crear') ?>" class="btn btn-primary btn-icon d-md-none ms-auto me-2" title="Nueva reserva" aria-label="Nueva reserva">
             <i class="bi bi-plus-lg"></i>
         </a>
+        <?php endif; ?>
 
         <!-- Menú de la derecha: Tema & Perfil -->
         <ul class="navbar-nav d-flex align-items-center gap-2">
@@ -211,18 +233,22 @@ try {
                     </div>
 
                     <!-- Pie de Alertas -->
-                    <div class="dropdown-footer p-2 text-center bg-body-tertiary border-top d-flex justify-content-around">
+                    <div class="dropdown-footer p-2 text-center bg-body-tertiary border-top d-flex justify-content-around gap-2">
+                        <?php if (puede_ruta('recepcion/estadias')): ?>
                         <a href="<?= url('recepcion/estadias') ?>" class="small text-decoration-none fw-semibold">
                             <i class="bi bi-door-open me-1"></i>Recepción
                         </a>
-                        <span class="text-muted">•</span>
+                        <?php endif; ?>
+                        <?php if (puede_ruta('reservas')): ?>
                         <a href="<?= url('reservas') ?>" class="small text-decoration-none fw-semibold">
                             <i class="bi bi-calendar-check me-1"></i>Reservas
                         </a>
-                        <span class="text-muted">•</span>
+                        <?php endif; ?>
+                        <?php if (puede_ruta('habitaciones/estados')): ?>
                         <a href="<?= url('habitaciones/estados') ?>" class="small text-decoration-none fw-semibold">
                             <i class="bi bi-grid me-1"></i>Habitaciones
                         </a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </li>

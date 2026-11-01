@@ -90,7 +90,10 @@ abstract class Controller
     protected function requireAuth(): void
     {
         if (!auth_check()) {
-            $this->setFlash('warning', 'Debes iniciar sesión para acceder al sistema.');
+            // Sin pisar un aviso más preciso (ej. "Tu cuenta fue desactivada", de Acceso::sincronizarSesion)
+            if (empty($_SESSION['flash'])) {
+                $this->setFlash('warning', 'Debes iniciar sesión para acceder al sistema.');
+            }
             redirect('login');
         }
 

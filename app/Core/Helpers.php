@@ -315,6 +315,31 @@ if (!function_exists('old')) {
     }
 }
 
+if (!function_exists('puede')) {
+    /** ¿El rol del usuario permite $accion (ver, crear, editar, eliminar) en $modulo? (App\Core\Acceso) */
+    function puede(string $modulo, string $accion = 'ver'): bool
+    {
+        return \App\Core\Acceso::puede($modulo, $accion);
+    }
+
+    /** ¿El usuario puede abrir esta ruta? Para mostrar u ocultar enlaces: puede_ruta('caja/historial') */
+    function puede_ruta(string $ruta): bool
+    {
+        return \App\Core\Acceso::puedeRuta($ruta);
+    }
+
+    /** ¿Puede abrir alguna de estas rutas? (grupos del menú) */
+    function puede_alguna(array $rutas): bool
+    {
+        foreach ($rutas as $ruta) {
+            if (\App\Core\Acceso::puedeRuta($ruta)) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
 if (!function_exists('config_hotel')) {
     /**
      * Un valor de Configuración (tabla configuracion), leída una sola vez por petición

@@ -37,6 +37,8 @@ $pageTitle = preg_replace('/\s*[-|·]\s*Hotel Manager\s*$/u', '', $pageTitle ?? 
         'urlRutas' => base_url('index.php?url='),
         'usuario'  => (int) (auth_user('id') ?? 0),
         'moneda'   => moneda(),
+        // Atajos globales (F2, F3, F4) solo hacia pantallas que el rol puede abrir
+        'atajos'   => array_values(array_filter(['reservas/crear', 'huespedes/buscar', 'recepcion/checkin'], 'puede_ruta')),
     ], JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
     <?= script_js('nucleo.js') ?>
 

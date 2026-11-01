@@ -30,17 +30,12 @@
             </div>
         </div>
 
-        <?php
-            // Mapear permisos existentes en array rápido
-            $permisosMap = [];
-            foreach ($permisos as $p) {
-                $permisosMap[$p['modulo'] . '_' . $p['accion']] = true;
-                if ($p['modulo'] === 'todos') {
-                    $permisosMap['todos_todos'] = true;
-                }
-            }
-            $esAdmin = ($rolSeleccionadoId === 1 || isset($permisosMap['todos_todos']));
-        ?>
+        <?php if ($esAdmin): ?>
+            <div class="alert alert-info d-flex gap-2 align-items-start">
+                <i class="bi bi-shield-check fs-5" aria-hidden="true"></i>
+                <div>El <strong>Administrador</strong> tiene siempre todos los permisos y no se pueden quitar: así el sistema nunca queda sin alguien que lo administre.</div>
+            </div>
+        <?php endif; ?>
 
         <form method="POST" action="<?= url('seguridad/guardarPermisos') ?>">
             <input type="hidden" name="rol_id" value="<?= $rolSeleccionadoId ?>">
@@ -48,7 +43,7 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0"><i class="bi bi-shield-lock me-2"></i>Módulos y Acciones Permitidas</h5>
-                    <button type="submit" class="btn btn-primary btn-sm">
+                    <button type="submit" class="btn btn-primary btn-sm" <?= $esAdmin ? 'hidden' : '' ?>>
                         <i class="bi bi-save me-1"></i> Guardar Permisos
                     </button>
                 </div>
@@ -71,33 +66,21 @@
                                             <strong class="text-body-emphasis"><?= htmlspecialchars($nombreModulo) ?></strong>
                                             <small class="text-muted d-block">Identificador: <code><?= htmlspecialchars($key) ?></code></small>
                                         </td>
-                                        <td class="text-center">
-                                            <div class="form-check d-inline-block">
-                                                <input class="form-check-input" type="checkbox" name="permisos[<?= $key ?>][]" value="ver" aria-label="Ver: <?= e($nombreModulo) ?>" <?= ($esAdmin || isset($permisosMap[$key . '_ver']) || isset($permisosMap[$key . '_gestionar'])) ? 'checked' : '' ?>>
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check d-inline-block">
-                                                <input class="form-check-input" type="checkbox" name="permisos[<?= $key ?>][]" value="crear" aria-label="Crear: <?= e($nombreModulo) ?>" <?= ($esAdmin || isset($permisosMap[$key . '_crear']) || isset($permisosMap[$key . '_gestionar'])) ? 'checked' : '' ?>>
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check d-inline-block">
-                                                <input class="form-check-input" type="checkbox" name="permisos[<?= $key ?>][]" value="editar" aria-label="Modificar: <?= e($nombreModulo) ?>" <?= ($esAdmin || isset($permisosMap[$key . '_editar']) || isset($permisosMap[$key . '_gestionar'])) ? 'checked' : '' ?>>
-                                            </div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="form-check d-inline-block">
-                                                <input class="form-check-input" type="checkbox" name="permisos[<?= $key ?>][]" value="eliminar" aria-label="Eliminar: <?= e($nombreModulo) ?>" <?= ($esAdmin || isset($permisosMap[$key . '_eliminar'])) ? 'checked' : '' ?>>
-                                            </div>
-                                        </td>
+                                        <?php foreach (['ver' => 'Ver', 'crear' => 'Crear', 'editar' => 'Modificar', 'eliminar' => 'Eliminar'] as $accion => $texto): ?>
+                                            <td class="text-center">
+                                                <div class="form-check d-inline-block">
+                                                    <input class="form-check-input" type="checkbox" name="permisos[<?= e($key) ?>][]" value="<?= $accion ?>" aria-label="<?= $texto ?>: <?= e($nombreModulo) ?>"
+                                                        <?= ($esAdmin || isset($efectivos['todos']) || isset($efectivos[$key . '.' . $accion])) ? 'checked' : '' ?> <?= $esAdmin ? 'disabled' : '' ?>>
+                                                </div>
+                                            </td>
+                                        <?php endforeach; ?>
                                     </tr>
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
                     </div>
                 </div>
-                <div class="card-footer text-end">
+                <div class="card-footer text-end" <?= $esAdmin ? 'hidden' : '' ?>>
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-save me-1"></i> Guardar Configuración de Permisos
                     </button>

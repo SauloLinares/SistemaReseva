@@ -58,27 +58,26 @@ class Rol extends Model
         return $stmt->fetchAll();
     }
 
+    /**
+     * Reemplaza los permisos del rol: ['modulo' => ['ver', 'crear', ...]]. Todo o nada:
+     * si algo falla, el rol conserva los permisos que tenía.
+     */
     public function guardarPermisos(int $rolId, array $permisos): bool
     {
-        $this->db->prepare("DELETE FROM permisos WHERE rol_id = :id")->execute([':id' => $rolId]);
-        $stmt = $this->db->prepare("INSERT INTO permisos (rol_id, modulo, accion) VALUES (:rol_id, :modulo, :accion)");
-        foreach ($permisos as $mod => $acciones) {
-            if (is_array($acciones)) {
-                foreach ($acciones as $acc) {
-                    $stmt->execute([
-                        ':rol_id' => $rolId,
-                        ':modulo' => $mod,
-                        ':accion' => $acc
-                    ]);
+        $this->db->beginTransaction();
+        try {
+            $this->db->prepare("DELETE FROM permisos WHERE rol_id = :id")->execute([':id' => $rolId]);
+            $stmt = $this->db->prepare("INSERT INTO permisos (rol_id, modulo, accion) VALUES (:rol_id, :modulo, :accion)");
+            foreach ($permisos as $modulo => $acciones) {
+                foreach ((array) $acciones as $accion) {
+                    $stmt->execute([':rol_id' => $rolId, ':modulo' => $modulo, ':accion' => $accion]);
                 }
-            } else {
-                $stmt->execute([
-                    ':rol_id' => $rolId,
-                    ':modulo' => $mod,
-                    ':accion' => $acciones
-                ]);
             }
+            $this->db->commit();
+            return true;
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            return false;
         }
-        return true;
     }
 }

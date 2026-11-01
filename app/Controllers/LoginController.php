@@ -88,7 +88,8 @@ class LoginController extends Controller
             'nombre'             => $usuario['nombre'],
             'email'              => $usuario['email'],
             'foto'               => $usuario['foto'] ?? null,
-            'rol'                => $usuario['rol'] ?? 'Administrador',
+            'rol'                => $usuario['rol'] ?? '',
+            'rol_id'             => (int)($usuario['rol_id'] ?? 0),
             'ultimo_login'       => $usuario['ultimo_login'],
             'debe_cambiar_clave' => $debeCambiar,
         ];

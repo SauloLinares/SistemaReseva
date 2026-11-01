@@ -16,8 +16,13 @@ namespace App\Core;
  */
 class Router
 {
+    private const ACCIONES_TEXTO = ['ver' => 'entrar', 'crear' => 'registrar', 'editar' => 'modificar', 'eliminar' => 'eliminar o anular'];
+
     public function dispatch(): void
     {
+        // Usuario desactivado o con otro rol desde que inició sesión: rige lo que diga la base
+        Acceso::sincronizarSesion();
+
         // 0. Todo POST debe traer el token CSRF de la sesión (formulario o cabecera AJAX)
         $esPost = ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'POST';
         if ($esPost && !csrf_valido($_POST['_csrf'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null)) {
@@ -110,6 +115,18 @@ class Router
             return;
         }
 
+        // 7.1 Permisos del rol (Seguridad → Matriz de Permisos). Sin sesión, el controlador
+        //     ya manda al login.
+        $requerido = Acceso::requerido($controladorCompleto, $metodo);
+        if ($requerido && auth_check() && !Acceso::puede(...$requerido)) {
+            [$modulo, $accion] = $requerido;
+            $this->rechazarPeticion(
+                'Tu rol no tiene permiso para ' . self::ACCIONES_TEXTO[$accion] . ' en «' . Acceso::MODULOS[$modulo] . '». Si lo necesitas, pídelo al administrador.',
+                true
+            );
+            return;
+        }
+
         // 8. Ejecutar el método pasando los parámetros
         call_user_func_array([$instanciaControlador, $metodo], $parametros);
     }
@@ -118,7 +135,7 @@ class Router
      * Responde a una petición rechazada por seguridad:
      * JSON 403 para AJAX, o mensaje flash y regreso a la página anterior.
      */
-    private function rechazarPeticion(string $mensaje): void
+    private function rechazarPeticion(string $mensaje, bool $sinPermiso = false): void
     {
         $esAjax = ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest'
             || str_contains($_SERVER['HTTP_ACCEPT'] ?? '', 'application/json')
@@ -135,9 +152,11 @@ class Router
 
         $_SESSION['flash'] = ['tipo' => 'danger', 'mensaje' => $mensaje];
 
-        // Volver a la página anterior solo si es de este mismo sitio
+        // Volver a la página anterior solo si es de este mismo sitio. Sin permiso para ver una
+        // pantalla se va al Inicio (la anterior podría ser esa misma: se repetiría el rechazo).
         $anterior = $_SERVER['HTTP_REFERER'] ?? '';
-        $destino = str_starts_with($anterior, base_url()) ? $anterior : url();
+        $volver = str_starts_with($anterior, base_url()) && !($sinPermiso && ($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET');
+        $destino = $volver ? $anterior : url();
         header('Location: ' . $destino);
     }
 

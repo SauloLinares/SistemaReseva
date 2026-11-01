@@ -103,7 +103,7 @@ class Usuario extends Model
      */
     public function obtenerPorId(int $id): ?array
     {
-        $sql = "SELECT id, nombre, email, telefono, foto, rol, estado, debe_cambiar_clave, clave_cambiada_en, ultimo_login, created_at
+        $sql = "SELECT id, nombre, email, telefono, foto, rol_id, rol, estado, debe_cambiar_clave, clave_cambiada_en, ultimo_login, created_at
                 FROM usuarios WHERE id = :id LIMIT 1";
         $stmt = $this->db->prepare($sql);
         $stmt->execute([':id' => $id]);
@@ -154,8 +154,8 @@ class Usuario extends Model
     public function crear(array $datos): bool
     {
         // La contraseña la eligió el administrador: el usuario debe cambiarla al ingresar
-        $sql = "INSERT INTO usuarios (nombre, email, password, rol, estado, debe_cambiar_clave)
-                VALUES (:nombre, :email, :password, :rol, :estado, 1)";
+        $sql = "INSERT INTO usuarios (nombre, email, password, rol_id, rol, estado, debe_cambiar_clave)
+                VALUES (:nombre, :email, :password, :rol_id, :rol, :estado, 1)";
 
         $stmt = $this->db->prepare($sql);
 
@@ -165,7 +165,8 @@ class Usuario extends Model
             ':nombre'   => trim($datos['nombre'] ?? ''),
             ':email'    => trim($datos['email'] ?? ''),
             ':password' => $passwordHash,
-            ':rol'      => trim($datos['rol'] ?? 'Administrador'),
+            ':rol_id'   => (int)$datos['rol_id'],
+            ':rol'      => (string)$datos['rol'],
             ':estado'   => isset($datos['estado']) ? (int)$datos['estado'] : 1
         ]);
     }
@@ -175,7 +176,10 @@ class Usuario extends Model
      */
     public function listarTodos(): array
     {
-        $sql = "SELECT id, nombre, email, rol, estado, ultimo_login, created_at FROM usuarios ORDER BY id ASC";
+        // rol_id vacío (usuarios creados antes de que se guardara): el rol se reconoce por su nombre
+        $sql = "SELECT u.id, u.nombre, u.email, r.id AS rol_id, COALESCE(r.nombre, u.rol) AS rol, u.estado, u.ultimo_login, u.created_at
+                FROM usuarios u LEFT JOIN roles r ON r.id = COALESCE(u.rol_id, (SELECT id FROM roles WHERE nombre = u.rol LIMIT 1))
+                ORDER BY u.id ASC";
         $stmt = $this->db->query($sql);
         return $stmt->fetchAll();
     }
@@ -188,7 +192,7 @@ class Usuario extends Model
     {
         if (!empty($datos['password'])) {
             // Contraseña restablecida por el administrador: el usuario debe cambiarla al ingresar
-            $sql = "UPDATE usuarios SET nombre = :nombre, email = :email, password = :pass, rol = :rol, estado = :estado,
+            $sql = "UPDATE usuarios SET nombre = :nombre, email = :email, password = :pass, rol_id = :rol_id, rol = :rol, estado = :estado,
                     debe_cambiar_clave = :obligar WHERE id = :id";
             $stmt = $this->db->prepare($sql);
             return $stmt->execute([
@@ -197,17 +201,19 @@ class Usuario extends Model
                 ':email'  => trim($datos['email'] ?? ''),
                 ':pass'   => password_hash($datos['password'], PASSWORD_DEFAULT),
                 ':obligar' => $obligarCambio ? 1 : 0,
-                ':rol'    => trim($datos['rol'] ?? 'Administrador'),
+                ':rol_id' => (int)$datos['rol_id'],
+                ':rol'    => (string)$datos['rol'],
                 ':estado' => isset($datos['estado']) ? (int)$datos['estado'] : 1
             ]);
         } else {
-            $sql = "UPDATE usuarios SET nombre = :nombre, email = :email, rol = :rol, estado = :estado WHERE id = :id";
+            $sql = "UPDATE usuarios SET nombre = :nombre, email = :email, rol_id = :rol_id, rol = :rol, estado = :estado WHERE id = :id";
             $stmt = $this->db->prepare($sql);
             return $stmt->execute([
                 ':id'     => $id,
                 ':nombre' => trim($datos['nombre'] ?? ''),
                 ':email'  => trim($datos['email'] ?? ''),
-                ':rol'    => trim($datos['rol'] ?? 'Administrador'),
+                ':rol_id' => (int)$datos['rol_id'],
+                ':rol'    => (string)$datos['rol'],
                 ':estado' => isset($datos['estado']) ? (int)$datos['estado'] : 1
             ]);
         }

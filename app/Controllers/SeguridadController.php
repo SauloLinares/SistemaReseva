@@ -58,6 +58,18 @@ class SeguridadController extends Controller
             redirect('seguridad/usuarios');
         }
 
+        // Rol: debe existir. El administrador principal y uno mismo conservan el que tienen
+        // (si no, alguien podría quitarse el acceso a Seguridad y dejar el sistema sin quien lo administre)
+        $actual = $id ? $this->usuarioModel->obtenerPorId($id) : null;
+        $rolId = ($id === 1 || $id === (int) auth_user('id')) ? (int)($actual['rol_id'] ?? 0) : (int)($_POST['rol_id'] ?? 0);
+        $rol = $this->rolModel->obtenerPorId($rolId);
+        if (!$rol || ($id && !$actual)) {
+            $this->setFlash('danger', 'Elige un rol válido para el usuario.');
+            redirect('seguridad/usuarios');
+        }
+        $_POST['rol_id'] = $rol['id'];
+        $_POST['rol'] = $rol['nombre'];
+
         if ($id) {
             $propio = $id === (int) auth_user('id');
             $ok = $this->usuarioModel->actualizar($id, $_POST, !$propio);
@@ -161,23 +173,12 @@ class SeguridadController extends Controller
         $rolSeleccionadoId = !empty($_GET['rol_id']) ? (int)$_GET['rol_id'] : ($roles[0]['id'] ?? 1);
         $permisos = $this->rolModel->obtenerPermisos($rolSeleccionadoId);
 
-        $modulos = [
-            'reservas'      => 'Gestión de Reservas',
-            'huespedes'     => 'Directorio de Huéspedes',
-            'habitaciones'  => 'Administración de Habitaciones',
-            'recepcion'     => 'Check-in y Check-out',
-            'pagos'         => 'Caja y Facturación',
-            'servicios'     => 'Servicios Adicionales',
-            'reportes'      => 'Reportes y Estadísticas',
-            'seguridad'     => 'Seguridad y Usuarios',
-            'configuracion' => 'Configuración del Hotel'
-        ];
-
         $this->render('seguridad/permisos', [
             'roles'             => $roles,
             'rolSeleccionadoId' => $rolSeleccionadoId,
-            'permisos'          => $permisos,
-            'modulos'           => $modulos
+            'efectivos'         => \App\Core\Acceso::expandir($permisos),
+            'esAdmin'           => $rolSeleccionadoId === \App\Core\Acceso::ROL_ADMIN,
+            'modulos'           => \App\Core\Acceso::MODULOS,
         ], 'Matriz de Permisos por Rol');
     }
 
@@ -190,8 +191,21 @@ class SeguridadController extends Controller
             redirect('seguridad/permisos');
         }
 
-        $rolId = (int)($_POST['rol_id'] ?? 1);
-        $permisosPost = $_POST['permisos'] ?? [];
+        $rolId = (int)($_POST['rol_id'] ?? 0);
+
+        // El Administrador tiene siempre todo: si se le pudiera quitar, el sistema quedaría sin quien lo administre
+        if ($rolId === \App\Core\Acceso::ROL_ADMIN || !$this->rolModel->obtenerPorId($rolId)) {
+            $this->setFlash('danger', 'Los permisos del Administrador no se pueden cambiar.');
+            redirect('seguridad/permisos');
+        }
+
+        // Solo módulos y acciones conocidos (lo que llega del formulario no se guarda tal cual)
+        $permisosPost = [];
+        foreach ((array)($_POST['permisos'] ?? []) as $modulo => $acciones) {
+            if (isset(\App\Core\Acceso::MODULOS[$modulo]) && is_array($acciones)) {
+                $permisosPost[$modulo] = array_values(array_intersect(\App\Core\Acceso::ACCIONES, $acciones));
+            }
+        }
 
         $ok = $this->rolModel->guardarPermisos($rolId, $permisosPost);
 

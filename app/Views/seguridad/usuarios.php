@@ -88,9 +88,9 @@
                 <div class="row g-2 mb-3">
                     <div class="col-6">
                         <label for="userRol" class="form-label">Rol Asignado</label>
-                        <select name="rol" id="userRol" class="form-select">
+                        <select name="rol_id" id="userRol" class="form-select">
                             <?php foreach ($roles as $r): ?>
-                                <option value="<?= htmlspecialchars($r['nombre']) ?>"><?= htmlspecialchars($r['nombre']) ?></option>
+                                <option value="<?= (int)$r['id'] ?>"><?= e($r['nombre']) ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>

@@ -523,7 +523,7 @@ document.addEventListener('DOMContentLoaded', function () {
         { tecla: 'F2', desc: 'Nueva reserva', ruta: 'reservas/crear' },
         { tecla: 'F3', desc: 'Buscar huésped por documento', ruta: 'huespedes/buscar' },
         { tecla: 'F4', desc: 'Check-in', ruta: 'recepcion/checkin' },
-    ];
+    ].filter(a => (window.leerJson('app-config')?.atajos || []).includes(a.ruta));
 
     const visible = el => !!(el.offsetWidth || el.offsetHeight || el.getClientRects().length);
     const ambitoActual = () => document.querySelector('.modal.show') || document;
@@ -589,7 +589,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.addEventListener('keydown', function (e) {
         if (!/^F\d{1,2}$/.test(e.key) || e.ctrlKey || e.altKey || e.metaKey) {
             // Ctrl + K -> Nueva reserva
-            if (e.ctrlKey && e.key === 'k') {
+            if (e.ctrlKey && e.key === 'k' && ATAJOS_GLOBALES.some(a => a.ruta === 'reservas/crear')) {
                 e.preventDefault();
                 window.location.href = window.appUrl('reservas/crear');
             }

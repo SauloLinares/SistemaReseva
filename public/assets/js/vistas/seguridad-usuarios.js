@@ -5,7 +5,9 @@ function editarUsuario(u) {
     document.getElementById('userId').value = u.id;
     document.getElementById('userNombre').value = u.nombre;
     document.getElementById('userEmail').value = u.email;
-    document.getElementById('userRol').value = u.rol || 'Administrador';
+    document.getElementById('userRol').value = u.rol_id || '';
+    // El administrador principal y uno mismo no cambian de rol (el servidor tampoco lo acepta)
+    document.getElementById('userRol').disabled = Number(u.id) === 1 || Number(u.id) === Number(window.leerJson('app-config')?.usuario);
     document.getElementById('userEstado').value = u.estado;
     document.getElementById('userPassword').value = '';
     document.getElementById('userPassword').required = false; // al editar, vacía = no cambiarla
@@ -19,6 +21,7 @@ document.getElementById('modalUsuario').addEventListener('hidden.bs.modal', func
     document.getElementById('userEmail').value = '';
     document.getElementById('userPassword').value = '';
     document.getElementById('userPassword').required = true;
+    document.getElementById('userRol').disabled = false;
 });
 
 // Botones "Editar" de la tabla: el registro viene en data-editar (JSON).
