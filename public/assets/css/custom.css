@@ -4561,3 +4561,31 @@ body.bienvenida-activa {
     appearance: none;
     display: none;
 }
+
+/* 38. LUPA EN EL BUSCADOR DE LAS TABLAS
+   Con el campo vacío se ve una lupa a la derecha; al escribir la reemplaza la X para vaciarlo.
+   Solo en el buscador de tablas: otros buscadores ya llevan su lupa a la izquierda. */
+.datatable-search .campo-limpiable::after {
+    content: "\f52a";
+    font-family: "bootstrap-icons";
+    position: absolute;
+    right: 0.6rem;
+    font-size: 0.8rem;
+    line-height: 1;
+    color: var(--bs-secondary-color);
+    pointer-events: none;
+}
+
+.datatable-search .campo-limpiable:has(.btn-limpiar:not([hidden]))::after {
+    content: none;
+}
+
+/* 39. FICHA DEL HUÉSPED EN "RESUMEN Y COBRO"
+   La ficha del titular vive en el panel de cobro (columna angosta): más compacta. */
+.guest-preview-resumen {
+    padding: 0.7rem 0.85rem;
+}
+.guest-preview-resumen .avatar-md {
+    width: 2.5rem;
+    height: 2.5rem;
+}

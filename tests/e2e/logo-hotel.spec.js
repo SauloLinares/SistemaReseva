@@ -42,3 +42,19 @@ test('el buscador de las tablas muestra una sola X para vaciarlo', async ({ page
     expect(ocultaNativa).toBe(true);
     await expect(page.locator('.datatable-search button')).toHaveCount(1);
 });
+
+test('el buscador de las tablas muestra una lupa vacío y la X al escribir', async ({ page }) => {
+    await page.goto(ruta('reservas'));
+    const caja = page.locator('.datatable-search .campo-limpiable');
+    const lupa = () => caja.evaluate(el => getComputedStyle(el, '::after').content);
+    expect(await lupa()).not.toBe('none');
+    await expect(caja.locator('.btn-limpiar')).toBeHidden();
+
+    await caja.locator('input').fill('a');
+    await expect(caja.locator('.btn-limpiar')).toBeVisible();
+    expect(await lupa()).toBe('none');
+
+    await caja.locator('.btn-limpiar').click();
+    expect(await lupa()).not.toBe('none');
+    await caja.screenshot({ path: 'test-results/lupa-buscador.png' });
+});
