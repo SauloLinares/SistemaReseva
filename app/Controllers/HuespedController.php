@@ -130,12 +130,17 @@ class HuespedController extends Controller
             $this->json([
                 'success' => true,
                 'mensaje' => '¡Huésped registrado correctamente!',
+                // Los mismos datos que llevan las opciones del selector (la ficha los muestra)
                 'huesped' => [
                     'id'               => $id,
+                    'nombres'          => $nuevo['nombres'],
+                    'apellidos'        => $nuevo['apellidos'],
                     'nombre_completo'  => $nuevo['nombres'] . ' ' . $nuevo['apellidos'],
                     'tipo_documento'   => $nuevo['tipo_documento'],
                     'numero_documento' => $nuevo['numero_documento'],
-                    'telefono'         => $nuevo['telefono'] ?: 'S/N',
+                    'telefono'         => $nuevo['telefono'] ?? '',
+                    'correo'           => $nuevo['correo'] ?? '',
+                    'nacionalidad'     => $nuevo['nacionalidad'] ?? '',
                     'texto_select'     => $textoSelect
                 ]
             ]);

@@ -705,15 +705,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (selectHuesped) {
                     const h = data.huesped;
-                    const nombreCompleto = `${h.nombres} ${h.apellidos}`.trim();
+                    const nombreCompleto = (h.nombre_completo || [h.nombres, h.apellidos].filter(Boolean).join(' ')).trim();
                     const opt = document.createElement('option');
                     opt.value = h.id;
                     opt.text = h.texto_select || `${nombreCompleto} (Doc: ${h.numero_documento})`;
                     opt.dataset.nombres = nombreCompleto;
                     opt.dataset.doc = h.numero_documento || '';
                     opt.dataset.tipoDoc = h.tipo_documento || 'DNI';
-                    opt.dataset.telefono = h.telefono || 'No registrado';
-                    opt.dataset.correo = h.correo || 'No registrado';
+                    opt.dataset.telefono = h.telefono || '';
+                    opt.dataset.correo = h.correo || '';
                     opt.dataset.nacionalidad = h.nacionalidad || 'Perú';
                     opt.dataset.totalReservas = '0';
 

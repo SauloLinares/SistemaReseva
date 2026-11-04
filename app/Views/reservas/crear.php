@@ -57,33 +57,6 @@
                                     </select>
                                     <div class="form-text">Búsqueda inteligente con ficha interactiva, avatar e insignias de cliente frecuente/VIP.</div>
                                 </div>
-
-                                <!-- Mini Preview Card del Huésped Seleccionado con Insignia VIP -->
-                                <div class="col-12">
-                                    <div id="cardPreviewHuesped" class="guest-preview-card d-none">
-                                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                                            <div class="d-flex align-items-center gap-3">
-                                                <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center shadow-xs avatar-md" id="prevAvatar">
-                                                    <i class="bi bi-person-fill"></i>
-                                                </div>
-                                                <div>
-                                                    <div class="d-flex align-items-center gap-2">
-                                                        <h6 class="mb-0 fw-bold text-body" id="prevNombre">--</h6>
-                                                        <span id="prevBadgeVIP"></span>
-                                                    </div>
-                                                    <div class="d-flex align-items-center gap-2 flex-wrap mt-1">
-                                                        <span class="badge badge-soft-secondary" id="prevDoc">DNI: --</span>
-                                                        <span class="badge badge-soft-info" id="prevNacionalidad"><i class="bi bi-geo-alt me-1"></i>--</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="d-flex flex-column align-items-sm-end gap-1 small text-muted">
-                                                <div><i class="bi bi-telephone text-primary me-1"></i><span id="prevTel" class="text-body fw-medium">--</span></div>
-                                                <div><i class="bi bi-envelope text-primary me-1"></i><span id="prevCorreo" class="text-body fw-medium">--</span></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -392,6 +365,29 @@
                             <span class="badge badge-soft-primary" id="badgeTotalNochesResumen">1 noche</span>
                         </div>
                         <div class="card-body pos-split-card-body">
+                            <!-- Huésped titular elegido en el paso 1 (con insignia de cliente frecuente/VIP) -->
+                            <div id="cardPreviewHuesped" class="guest-preview-card guest-preview-resumen mb-3 d-none">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-primary text-white fw-bold d-flex align-items-center justify-content-center shadow-xs avatar-md flex-shrink-0" id="prevAvatar">
+                                        <i class="bi bi-person-fill"></i>
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="d-flex align-items-center gap-2 flex-wrap">
+                                            <h6 class="mb-0 fw-bold text-body text-truncate" id="prevNombre">--</h6>
+                                            <span id="prevBadgeVIP"></span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-1 flex-wrap mt-1">
+                                            <span class="badge badge-soft-secondary" id="prevDoc">DNI: --</span>
+                                            <span class="badge badge-soft-info" id="prevNacionalidad"><i class="bi bi-geo-alt me-1"></i>--</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-column gap-1 small text-muted mt-2">
+                                    <div class="text-truncate"><i class="bi bi-telephone text-primary me-1"></i><span id="prevTel" class="text-body fw-medium">--</span></div>
+                                    <div class="text-truncate"><i class="bi bi-envelope text-primary me-1"></i><span id="prevCorreo" class="text-body fw-medium">--</span></div>
+                                </div>
+                            </div>
+
                             <!-- Fechas Programadas -->
                             <div class="mb-3 p-2 resumen-fechas-box rounded-3">
                                 <div class="d-flex justify-content-between small mb-1">
