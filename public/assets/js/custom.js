@@ -357,16 +357,33 @@ document.addEventListener('DOMContentLoaded', function () {
             // Se guardan la instancia y los títulos originales: Exportar necesita todas las filas
             // (no solo la página visible) y los títulos tal como se escribieron
             table.titulosOriginales = [...table.querySelectorAll('thead th')].map(th => th.textContent.trim());
+
+            // La fila "No hay…" (una celda con colspan) no es un registro: su texto pasa a ser el
+            // mensaje de tabla vacía y la fila se quita (con colspan la librería se descuadra)
+            let sinFilas = 'No se encontraron registros para mostrar';
+            table.querySelectorAll('tbody tr').forEach(tr => {
+                if (tr.cells.length === 1 && tr.cells[0].colSpan > 1) {
+                    sinFilas = tr.textContent.trim().replace(/\s+/g, ' ') || sinFilas;
+                    tr.remove();
+                }
+            });
+
+            // Acciones (y columnas marcadas con data-no-ordenar) no se ordenan
+            const sinOrden = [...table.querySelectorAll('thead th')]
+                .map((th, i) => (th.hasAttribute('data-no-ordenar') || /^acci(ón|ones?)$/i.test(th.textContent.trim())) ? i : -1)
+                .filter(i => i >= 0);
+
             table.tablaDatos = new simpleDatatables.DataTable(table, {
                 searchable: true,
                 fixedHeight: false,
                 perPage: 10,
                 perPageSelect: [10, 25, 50, 100],
+                columns: sinOrden.length ? [{ select: sinOrden, sortable: false }] : [],
                 labels: {
                     placeholder: "",
                     searchTitle: "Buscar en la tabla",
                     perPage: "registros",
-                    noRows: "No se encontraron registros para mostrar",
+                    noRows: sinFilas,
                     info: "Mostrando registros del {start} al {end} de un total de {rows}",
                     noResults: "Ningún resultado coincide con la búsqueda"
                 }

@@ -16,13 +16,10 @@
                 <h5 class="card-title mb-0">
                     <i class="bi bi-clock-history me-1"></i>Registro de Turnos
                 </h5>
-                <div class="d-flex align-items-center gap-2">
-                    <input type="text" id="filtroHistorialCaja" class="form-control form-control-sm col-w-xl" placeholder="Buscar por recepcionista, fecha...">
-                </div>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0" id="tablaHistorialCaja">
+                    <table class="table table-hover align-middle mb-0 table-datatable" id="tablaHistorialCaja">
                         <thead class="table-light">
                             <tr>
                                 <th class="ps-3"># Turno</th>
@@ -110,4 +107,3 @@
     </div>
 </div>
 
-<?= script_js('vistas/caja-historial.js') ?>

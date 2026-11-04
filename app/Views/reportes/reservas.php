@@ -89,7 +89,7 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table id="tablaReporteReservas" class="table table-hover align-middle mb-0">
+                    <table id="tablaReporteReservas" class="table table-hover align-middle mb-0 table-datatable">
                         <thead class="table-light">
                             <tr>
                                 <th>Código</th>

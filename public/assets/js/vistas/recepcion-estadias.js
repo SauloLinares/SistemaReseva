@@ -32,18 +32,19 @@ document.addEventListener('DOMContentLoaded', function() {
     if (inputCantidad) inputCantidad.addEventListener('input', actualizarTotal);
     if (inputPrecio) inputPrecio.addEventListener('input', actualizarTotal);
 
-    // Al abrir el modal desde un botón de fila
-    document.querySelectorAll('.btn-abrir-consumo').forEach(btn => {
-        btn.addEventListener('click', function() {
-            document.getElementById('modalConsumoReservaId').value = this.dataset.reservaId || '';
-            document.getElementById('modalConsumoHabitacion').textContent = 'Hab. ' + (this.dataset.habitacion || '');
-            document.getElementById('modalConsumoHuesped').textContent = this.dataset.huesped || '';
-            alertModal.classList.add('d-none');
-            alertModal.textContent = '';
-            formModal.reset();
-            inputCantidad.value = 1;
-            totalText.textContent = window.moneda + ' 0.00';
-        });
+    // Al abrir el modal desde un botón de fila. Delegado en el documento: la tabla pagina y
+    // reconstruye sus filas, así que los botones de otras páginas no existen al cargar
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.btn-abrir-consumo');
+        if (!btn) return;
+        document.getElementById('modalConsumoReservaId').value = btn.dataset.reservaId || '';
+        document.getElementById('modalConsumoHabitacion').textContent = 'Hab. ' + (btn.dataset.habitacion || '');
+        document.getElementById('modalConsumoHuesped').textContent = btn.dataset.huesped || '';
+        alertModal.classList.add('d-none');
+        alertModal.textContent = '';
+        formModal.reset();
+        inputCantidad.value = 1;
+        totalText.textContent = window.moneda + ' 0.00';
     });
 
     if (formModal && btnGuardar) {

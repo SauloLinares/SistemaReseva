@@ -7,7 +7,7 @@
 <div class="app-content">
     <div class="container-fluid">
 
-        <div class="row">
+        <div class="row justify-content-center">
             <div class="col-12 col-lg-8">
                 <form action="<?= url('configuracion/guardarParametros') ?>" method="POST" class="card border-secondary">
                     <div class="card-header">

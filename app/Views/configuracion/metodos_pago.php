@@ -59,7 +59,7 @@
             <?php partial('card_header', ['titulo' => 'Formas de pago aceptadas', 'icono' => 'bi-wallet2']) ?>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0" id="tablaMetodos">
+                    <table class="table table-hover align-middle mb-0 table-datatable" id="tablaMetodos">
                         <thead>
                             <tr>
                                 <th>Método de pago</th>

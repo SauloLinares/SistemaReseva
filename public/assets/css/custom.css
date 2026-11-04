@@ -4209,14 +4209,15 @@ label .kbd-atajo {
 }
 
 /* ====================================================================
-   31. TABLAS EN MODO CLARO: cabecera azul suave y filas alternas
+   31. TABLAS EN MODO CLARO: cabecera del color de la tarjeta y filas alternas
    Solo en modo claro (el oscuro ya distingue cabecera y filas). Se excluyen los
    documentos imprimibles (#imprimible: comprobantes, vouchers), que van en blanco.
    ==================================================================== */
+/* Los títulos de columna usan el mismo fondo que la cabecera de la tarjeta (como en modo oscuro) */
 [data-bs-theme="light"] .table:not(#imprimible *) > thead > tr > th {
-    background-color: #dbe7fd;
+    background-color: var(--hm-surface-header);
     color: var(--hm-blue-900);
-    border-bottom: 2px solid #93b4f5 !important;
+    border-bottom: 2px solid var(--hm-border-header) !important;
 }
 [data-bs-theme="light"] .table:not(#imprimible *) > tbody > tr:nth-child(even) > td {
     background-color: #f4f7fd;
@@ -4505,4 +4506,40 @@ body.bienvenida-activa {
     .bienvenida-tarjeta {
         animation: none;
     }
+}
+
+/* 35. FLECHAS DE ORDEN EN LAS CABECERAS DE TABLA
+   La librería las pinta en negro y casi transparentes: en modo oscuro no se ven.
+   Usan el color del texto de la cabecera, tenues en reposo y marcadas en la columna ordenada.
+   El hueco a la derecha evita que la flecha pise el texto en columnas angostas o a la derecha. */
+.datatable-sorter {
+    padding-right: 16px;
+}
+
+.datatable-sorter::before {
+    border-top-color: currentColor;
+}
+
+.datatable-sorter::after {
+    border-bottom-color: currentColor;
+}
+
+.datatable-sorter::before,
+.datatable-sorter::after {
+    opacity: 0.35;
+}
+
+.datatable-sorter:hover::before,
+.datatable-sorter:hover::after {
+    opacity: 0.6;
+}
+
+.datatable-ascending .datatable-sorter::after,
+.datatable-descending .datatable-sorter::before {
+    opacity: 1;
+}
+
+.datatable-ascending .datatable-sorter::before,
+.datatable-descending .datatable-sorter::after {
+    opacity: 0.15;
 }

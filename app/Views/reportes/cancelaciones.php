@@ -17,7 +17,7 @@
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table id="tablaReporteCancelaciones" class="table table-hover align-middle mb-0">
+                    <table id="tablaReporteCancelaciones" class="table table-hover align-middle mb-0 table-datatable">
                         <thead class="table-light">
                             <tr>
                                 <th>Código Reserva</th>

@@ -10,7 +10,7 @@
 <div class="app-content">
     <div class="container-fluid">
 
-        <div class="row">
+        <div class="row justify-content-center">
             <div class="col-12 col-lg-8">
                 <form action="<?= url('habitaciones/guardar') ?>" method="POST" enctype="multipart/form-data" class="card">
                     <div class="card-header">
