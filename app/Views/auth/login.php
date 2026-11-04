@@ -136,7 +136,7 @@ $rutaLogo = ($logoArchivo !== '' && file_exists(__DIR__ . '/../../../public/uplo
                 <?php endif; ?>
 
                 <!-- Formulario de Autenticación -->
-                <form action="<?= url('login/autenticar') ?>" method="POST" autocomplete="on">
+                <form action="<?= url('login/autenticar') ?>" method="POST" autocomplete="on" id="formLogin">
 
                     <!-- Campo Correo -->
                     <div class="mb-3">
@@ -176,7 +176,7 @@ $rutaLogo = ($logoArchivo !== '' && file_exists(__DIR__ . '/../../../public/uplo
 
                     <!-- Botón de Ingreso -->
                     <div class="d-grid mb-3">
-                        <button type="submit" class="btn btn-primary py-2 fw-semibold shadow-sm">
+                        <button type="submit" class="btn btn-primary py-2 fw-semibold shadow-sm" id="btnIngresar">
                             <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar Sesión
                         </button>
                     </div>

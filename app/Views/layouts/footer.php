@@ -50,6 +50,8 @@
         <?php unset($_SESSION['operaciones_completadas']); ?>
     <?php endif; ?>
 
+    <?php if (!empty($hayBienvenida)): ?><?= script_js('bienvenida.js') ?><?php endif; ?>
+
     <!-- Cerrar sesión: por POST con token (un enlace de otra página no puede cerrarla). Los botones
          "Cerrar sesión" del menú, de la cuenta y de Cambiar contraseña lo envían con form="formCerrarSesion" -->
     <form method="POST" action="<?= url('login/logout') ?>" id="formCerrarSesion" data-cerrar-sesion hidden></form>

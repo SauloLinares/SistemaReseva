@@ -34,3 +34,23 @@ document.querySelectorAll('[data-bs-theme-value]').forEach(button => {
         } catch {}
     });
 });
+
+// Al enviar: "Verificando credenciales…" y campos bloqueados (readonly, no disabled: un campo
+// deshabilitado no se envía). Si el servidor devuelve la página con un error, todo vuelve a la normalidad.
+const formLogin = document.getElementById('formLogin');
+const btnIngresar = document.getElementById('btnIngresar');
+if (formLogin && btnIngresar) {
+    formLogin.addEventListener('submit', function () {
+        formLogin.querySelectorAll('input').forEach(i => { i.readOnly = true; });
+        setTimeout(function () {
+            btnIngresar.disabled = true;
+            btnIngresar.innerHTML = '<span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Verificando credenciales…';
+        });
+    });
+    // Volver con "Atrás" a esta página no la deja bloqueada
+    window.addEventListener('pageshow', function () {
+        formLogin.querySelectorAll('input').forEach(i => { i.readOnly = false; });
+        btnIngresar.disabled = false;
+        btnIngresar.innerHTML = '<i class="bi bi-box-arrow-in-right me-1"></i> Iniciar Sesión';
+    });
+}

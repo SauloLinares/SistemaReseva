@@ -124,7 +124,8 @@ class LoginController extends Controller
             redirect('perfil/clave');
         }
 
-        $this->setFlash('success', '¡Bienvenido(a), ' . htmlspecialchars($usuario['nombre']) . '!');
+        // La primera pantalla muestra la bienvenida con su barra de carga (layouts/footer.php)
+        $_SESSION['bienvenida'] = ['nombre' => $usuario['nombre'], 'rol' => $usuario['rol'] ?? ''];
         redirect('');
     }
 

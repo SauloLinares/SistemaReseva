@@ -69,6 +69,29 @@ $pageTitle = preg_replace('/\s*[-|·]\s*Hotel Manager\s*$/u', '', $pageTitle ?? 
     <link rel="stylesheet" href="<?= e(asset_version('css/custom.css')) ?>" />
 </head>
 <body class="layout-fixed fixed-header sidebar-expand-lg bg-body-tertiary">
+    <?php if (!empty($_SESSION['bienvenida'])): ?>
+        <!-- Bienvenida tras ingresar: tarjeta con barra de carga mientras la pantalla termina de
+             prepararse (bienvenida.js la retira a los ~3 segundos). Solo la primera pantalla; va al inicio
+             del body para que el panel no se vea antes que la tarjeta. -->
+        <?php $bienvenida = $_SESSION['bienvenida']; unset($_SESSION['bienvenida']); $hayBienvenida = true; ?>
+        <div class="bienvenida" id="bienvenida" role="status" aria-live="polite">
+            <div class="bienvenida-tarjeta">
+                <div class="bienvenida-insignia" aria-hidden="true">
+                    <span class="bienvenida-aro bienvenida-aro-1"></span>
+                    <span class="bienvenida-aro bienvenida-aro-2"></span>
+                    <span class="bienvenida-aro bienvenida-aro-3"></span>
+                    <span class="bienvenida-centro"><i class="bi bi-check-lg"></i></span>
+                </div>
+                <p class="bienvenida-titulo">¡Acceso concedido!</p>
+                <p class="bienvenida-texto">
+                    Bienvenido(a), <strong><?= e($bienvenida['nombre']) ?></strong>.
+                    <span class="d-block" data-bienvenida-paso>Verificando tus permisos…</span>
+                </p>
+                <div class="bienvenida-barra" aria-hidden="true"><span data-bienvenida-avance></span></div>
+                <p class="bienvenida-estado"><span data-bienvenida-porcentaje>0</span>% · <?= e($bienvenida['rol'] ?: 'Usuario') ?></p>
+            </div>
+        </div>
+    <?php endif; ?>
     <!-- Toast Container Flotante para notificaciones no invasivas -->
     <div class="toast-container position-fixed top-0 end-0 p-3 app-toasts" id="toastContainer">
         <?php if (!empty($_SESSION['flash'])): ?>
