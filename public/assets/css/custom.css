@@ -4508,13 +4508,19 @@ body.bienvenida-activa {
         padding: 2rem 1.5rem 1.5rem;
     }
 }
-/* Con "reducir movimiento" la barra avanza igual, pero los aros no giran */
+/* Con "reducir movimiento" (p. ej. Windows con los efectos de animación apagados) los aros
+   siguen girando, como en la referencia: es un giro suave de unos segundos que indica que el
+   sistema está cargando. Solo se quitan el rebote de entrada de la tarjeta y el latido del check. */
 @media (prefers-reduced-motion: reduce) {
-    .bienvenida-aro,
     .bienvenida-centro,
     .bienvenida-tarjeta {
         animation: none;
     }
+    /* AdminLTE pone toda animación a 0 s y una sola vuelta (con !important): se restaura aquí */
+    .bienvenida-aro-1 { animation-duration: 2.2s !important; }
+    .bienvenida-aro-2 { animation-duration: 1.8s !important; }
+    .bienvenida-aro-3 { animation-duration: 6s !important; }
+    .bienvenida-aro { animation-iteration-count: infinite !important; }
 }
 
 /* 35. FLECHAS DE ORDEN EN LAS CABECERAS DE TABLA

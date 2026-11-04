@@ -47,3 +47,22 @@ test('en el teléfono la tarjeta cabe en la pantalla', async ({ browser }) => {
     await page.screenshot({ path: 'test-results/bienvenida-movil.png' });
     await contexto.close();
 });
+
+test('con "reducir movimiento" activado los aros siguen girando', async ({ browser }) => {
+    const { contexto, page } = await ingresar(browser, { reducedMotion: 'reduce' });
+    const aro = page.locator('.bienvenida-aro-1');
+    await expect(aro).toBeVisible();
+    const estilo = await aro.evaluate(el => {
+        const c = getComputedStyle(el);
+        return { nombre: c.animationName, duracion: c.animationDuration, vueltas: c.animationIterationCount };
+    });
+    expect(estilo.nombre).toBe('bienvenida-gira');
+    expect(parseFloat(estilo.duracion)).toBeGreaterThan(1);
+    expect(estilo.vueltas).toBe('infinite');
+    // El ángulo cambia con el tiempo: de verdad gira
+    const angulo = () => aro.evaluate(el => getComputedStyle(el).transform);
+    const antes = await angulo();
+    await page.waitForTimeout(300);
+    expect(await angulo()).not.toBe(antes);
+    await contexto.close();
+});

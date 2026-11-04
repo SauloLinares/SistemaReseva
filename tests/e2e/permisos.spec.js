@@ -114,15 +114,22 @@ test('un usuario desactivado pierde la sesión que tenía abierta', async ({ bro
 
 test('el administrador principal no puede perder su rol (ni por una petición directa)', async ({ page }) => {
     await page.goto(ruta('seguridad/usuarios'));
-    await page.evaluate(async (url) => {
+    // Se reenvían el nombre, el correo y el estado que ya tiene (no se pisan los datos reales del
+    // administrador); solo se intenta cambiarle el rol
+    const antes = await page.evaluate(async (url) => {
+        const boton = [...document.querySelectorAll('[data-editar]')].find(b => JSON.parse(b.dataset.editar).id == 1);
+        const u = JSON.parse(boton.dataset.editar);
         await fetch(url, {
             method: 'POST',
             headers: { 'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content, 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: 'id=1&nombre=Administrador%20General&email=admin%40admin.com&rol_id=2&estado=1&password=',
+            body: new URLSearchParams({ id: '1', nombre: u.nombre, email: u.email, rol_id: '2', estado: String(u.estado), password: '' }),
         });
+        return u.nombre;
     }, ruta('seguridad/guardarUsuario'));
     // Sigue siendo administrador: puede abrir Seguridad y su fila dice Administrador
     await page.goto(ruta('seguridad/usuarios'));
     await expect(page).toHaveURL(/seguridad\/usuarios/);
     await expect(page.locator('table tbody tr', { hasText: 'admin@admin.com' })).toContainText('Administrador');
+    // Y conserva su nombre
+    await expect(page.locator('table tbody tr', { hasText: 'admin@admin.com' })).toContainText(antes);
 });
