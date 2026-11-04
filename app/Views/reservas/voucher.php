@@ -56,8 +56,9 @@
                             </a>
                         <?php endif; ?>
                         
-                        <?php if ($reserva['fecha_entrada'] === date('Y-m-d') && $reserva['estado'] !== 'en_estadia'): ?>
-                            <a href="<?= url('recepcion/checkin') ?>" class="btn btn-outline-dark">
+                        <?php // Lleva la reserva ya elegida en el check-in (no hay que buscarla en la lista) ?>
+                        <?php if ($reserva['fecha_entrada'] === date('Y-m-d') && in_array($reserva['estado'], ['pendiente', 'confirmada'], true) && puede_ruta('recepcion/checkin')): ?>
+                            <a href="<?= url('recepcion/checkin?reserva_id=' . (int) $reserva['id']) ?>" class="btn btn-outline-dark" data-pasar-checkin>
                                 <i class="bi bi-box-arrow-in-right text-success me-1"></i> Pasar a Check-in Hoy
                             </a>
                         <?php endif; ?>

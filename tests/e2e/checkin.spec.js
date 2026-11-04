@@ -29,10 +29,18 @@ test('una reserva que ya está en estadía no vuelve a hacer check-in', async ({
 });
 
 test('antes de la fecha de entrada hay que confirmar el ingreso anticipado', async ({ page }) => {
-    const id = await reservaDeLaLista(page, /llega el/);
-    test.skip(!id, 'No hay reservas futuras en esta base');
+    // Una reserva futura que admita el ingreso anticipado (si su habitación tiene otra reserva
+    // antes, el anticipo se bloquea y no sirve para esta prueba)
+    await page.goto(ruta('recepcion/checkin'));
+    const futuras = await page.locator('#selectReserva option').evaluateAll(os =>
+        os.filter(o => o.value && /llega el/.test(o.textContent)).map(o => o.value));
+    let id = null;
+    for (const candidato of futuras) {
+        await page.goto(ruta('recepcion/checkin?reserva_id=' + candidato));
+        if (await page.locator('[data-checkin-anticipado]').count()) { id = candidato; break; }
+    }
+    test.skip(!id, 'No hay reservas futuras que admitan check-in anticipado en esta base');
 
-    await page.goto(ruta('recepcion/checkin?reserva_id=' + id));
     await expect(page.locator('[data-checkin-anticipado]')).toContainText('Check-in anticipado');
     await expect(page.locator('#confirmaAnticipado')).toHaveAttribute('required', '');
 
@@ -53,4 +61,20 @@ test('una reserva cuya salida ya pasó no deja hacer check-in', async ({ page })
 
     await expect(page.locator('[data-problema-checkin]')).toContainText('no se presentó');
     await expect(page.locator('form[action*="procesarCheckin"] [type="submit"]')).toBeDisabled();
+});
+
+test('"Pasar a Check-in Hoy" del voucher abre el check-in con esa reserva ya elegida', async ({ page }) => {
+    const id = await reservaDeLaLista(page, /llega hoy/);
+    test.skip(!id, 'No hay reservas que lleguen hoy en esta base');
+
+    // El botón está en el aviso de reserva recién confirmada (?nuevo=1)
+    await page.goto(ruta('reservas/voucher/' + id + '?nuevo=1'));
+    const boton = page.locator('[data-pasar-checkin]');
+    await expect(boton).toBeVisible();
+    await boton.click();
+
+    await expect(page).toHaveURL(new RegExp('recepcion/checkin&reserva_id=' + id + '$'));
+    await expect(page.locator('#selectReserva')).toHaveValue(id);
+    // Con la reserva elegida ya se ve su ficha para confirmar el ingreso
+    await expect(page.locator('form[action*="procesarCheckin"] [type="submit"]')).toBeEnabled();
 });
