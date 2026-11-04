@@ -101,13 +101,29 @@ class ConfiguracionController extends Controller
             }
             $nombreArchivo = 'logo_' . time() . '.' . $ext;
             if (move_uploaded_file($_FILES['hotel_logo']['tmp_name'], $dirUploads . $nombreArchivo)) {
+                $this->borrarLogoGuardado();
                 $this->configModel->guardar('hotel_logo', $nombreArchivo, 'general', 'Logotipo oficial del establecimiento');
             }
+        } elseif (($_POST['quitar_logo'] ?? '') === '1') {
+            // "Quitar logo": el sistema vuelve a mostrar el nombre del hotel en su lugar
+            $this->borrarLogoGuardado();
+            $this->configModel->guardar('hotel_logo', '', 'general', 'Logotipo oficial del establecimiento');
+            $this->auditoriaModel->registrar('Configuración', 'Datos Hotel', 'Se quitó el logotipo del hotel');
         }
 
         $this->auditoriaModel->registrar('Configuración', 'Datos Hotel', 'Actualización de datos generales del hotel');
         $this->setFlash('success', 'Datos del hotel actualizados correctamente.');
         redirect('configuracion/hotel');
+    }
+
+    /** Borra del disco el archivo del logo actual (solo uno de uploads/hotel llamado logo… o hotel_logo…) */
+    private function borrarLogoGuardado(): void
+    {
+        $actual = basename((string) ($this->configModel->obtenerTodos()['hotel_logo'] ?? ''));
+        $archivo = dirname(__DIR__, 2) . '/public/uploads/hotel/' . $actual;
+        if (preg_match('/^(hotel_)?logo[\w-]*\.(png|jpe?g|webp)$/i', $actual) && is_file($archivo)) {
+            unlink($archivo);
+        }
     }
 
     /**

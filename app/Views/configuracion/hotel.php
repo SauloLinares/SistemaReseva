@@ -35,7 +35,16 @@
                                 </div>
                                 <div class="col-12 col-sm">
                                     <label class="form-label mb-1" for="inputLogoHotel">Adjuntar o Actualizar Logotipo</label>
-                                    <input type="file" name="hotel_logo" id="inputLogoHotel" class="form-control" accept="image/png, image/jpeg, image/webp">
+                                    <div class="d-flex gap-2">
+                                        <input type="file" name="hotel_logo" id="inputLogoHotel" class="form-control" accept="image/png, image/jpeg, image/webp">
+                                        <button type="button" class="btn btn-outline-danger flex-shrink-0" id="btnQuitarLogo" data-guardado="<?= $rutaLogo ? '1' : '0' ?>"<?= $rutaLogo ? '' : ' hidden' ?>>
+                                            <i class="bi bi-trash me-1"></i>Quitar logo
+                                        </button>
+                                    </div>
+                                    <input type="hidden" name="quitar_logo" id="quitarLogo" value="0">
+                                    <div class="form-text text-warning mt-1" id="avisoQuitarLogo" hidden>
+                                        <i class="bi bi-exclamation-triangle me-1"></i>El logo se quitará al guardar. Mientras tanto se mostrará el nombre del hotel.
+                                    </div>
                                     <div class="form-text mt-1 text-muted small">
                                         <i class="bi bi-info-circle me-1"></i>Formatos recomendados: <strong>PNG transparente, WebP o JPG</strong> (máx. 2 MB). Este logotipo aparecerá en la barra lateral del sistema, en comprobantes impresos y recibos oficiales.
                                     </div>
@@ -92,6 +101,3 @@
 </div>
 
 <?= script_js('vistas/configuracion-hotel.js') ?>
-
-    </div>
-</div>

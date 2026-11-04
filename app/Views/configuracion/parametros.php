@@ -8,10 +8,11 @@
     <div class="container-fluid">
 
         <div class="row justify-content-center">
-            <div class="col-12 col-lg-8">
-                <form action="<?= url('configuracion/guardarParametros') ?>" method="POST" class="card border-secondary">
-                    <div class="card-header">
-                        <h5 class="card-title mb-0"><i class="bi bi-gear-fill me-2"></i>Parámetros de Operación</h5>
+            <div class="col-12 col-lg-9">
+                <form action="<?= url('configuracion/guardarParametros') ?>" method="POST" class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0"><i class="bi bi-gear me-2"></i>Parámetros de Operación</h5>
+                        <span class="badge badge-soft-info"><i class="bi bi-shield-check me-1"></i>Configuración Global</span>
                     </div>
                     <div class="card-body">
                         <div class="row g-3">
