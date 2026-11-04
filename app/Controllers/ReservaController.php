@@ -156,7 +156,8 @@ class ReservaController extends Controller
         }
         // El modelo rechaza la reserva si alguna habitación ya está ocupada en esas fechas
         $this->volverConErrores('reservas/crear', [
-            'habitaciones' => 'Una o más habitaciones elegidas ya están ocupadas o reservadas en esas fechas. Elige otras o cambia las fechas.',
+            'habitaciones' => $this->mensajeCruce($habitacionesIds, $_POST)
+                ?? 'Una o más habitaciones elegidas ya están ocupadas o reservadas en esas fechas. Elige otras o cambia las fechas.',
         ], 'No se pudo registrar la reserva.');
     }
 
@@ -269,8 +270,20 @@ class ReservaController extends Controller
             redirect('reservas/editar/' . $id);
         }
         $this->volverConErrores('reservas/editar/' . $id, [
-            'fecha_entrada' => 'Las habitaciones de esta reserva no están libres en las nuevas fechas.',
+            'fecha_entrada' => $this->mensajeCruce($habitacionesIds ?: array_column($this->reservaModel->obtenerPorId($id)['habitaciones'] ?? [], 'habitacion_id'), $_POST, $id)
+                ?? 'No se pudieron guardar los cambios de la reserva.',
         ], 'No se pudo actualizar la reserva.');
+    }
+
+    /** "La habitación 101 ya está reservada del 10/11/2026 al 12/11/2026 (RES-…)…", o null si no hay cruce */
+    private function mensajeCruce(array $habitacionesIds, array $datos, ?int $ignorarId = null): ?string
+    {
+        $cruce = $this->reservaModel->reservaQueSeCruza($habitacionesIds, $datos['fecha_entrada'] ?? '', $datos['fecha_salida'] ?? '', $ignorarId);
+        if (!$cruce) {
+            return null;
+        }
+        return 'La habitación ' . $cruce['habitacion'] . ' ya está reservada del ' . fecha_es($cruce['fecha_entrada'])
+            . ' al ' . fecha_es($cruce['fecha_salida']) . ' (' . $cruce['codigo_reserva'] . '). Elige otras fechas o libera esa reserva.';
     }
 
     /**

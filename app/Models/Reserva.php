@@ -157,6 +157,31 @@ class Reserva extends Model
         return ($ocupada === 0);
     }
 
+    /**
+     * Primera reserva activa que ocupa alguna de esas habitaciones en el rango (la salida de una
+     * puede coincidir con la entrada de otra). Devuelve código y número de habitación, o null.
+     */
+    public function reservaQueSeCruza(array $habitacionesIds, string $fechaEntrada, string $fechaSalida, ?int $ignorarReservaId = null): ?array
+    {
+        $ids = array_values(array_filter(array_map('intval', $habitacionesIds)));
+        if (!$ids) {
+            return null;
+        }
+        $marcas = implode(',', array_fill(0, count($ids), '?'));
+        $sql = "SELECT r.codigo_reserva, r.fecha_entrada, r.fecha_salida, h.numero AS habitacion
+                FROM reserva_habitaciones rh
+                INNER JOIN reservas r ON r.id = rh.reserva_id
+                INNER JOIN habitaciones h ON h.id = rh.habitacion_id
+                WHERE rh.habitacion_id IN ($marcas)
+                AND r.estado NOT IN ('cancelada', 'finalizada')
+                AND r.fecha_entrada < ? AND r.fecha_salida > ?
+                AND r.id != ?
+                ORDER BY r.fecha_entrada LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([...$ids, $fechaSalida, $fechaEntrada, $ignorarReservaId ?? 0]);
+        return $stmt->fetch() ?: null;
+    }
+
     public function generarCodigoReserva(): string
     {
         $anio = date('Y');
@@ -336,12 +361,14 @@ class Reserva extends Model
             $dias = (int)ceil((strtotime($datos['fecha_salida']) - strtotime($datos['fecha_entrada'])) / 86400);
             if ($dias < 1) $dias = 1;
 
-            if (!empty($habitacionesIds)) {
-                foreach ($habitacionesIds as $habId) {
-                    if (!$this->habitacionEstaDisponible((int)$habId, $datos['fecha_entrada'], $datos['fecha_salida'], $id)) {
-                        $this->db->rollBack();
-                        return false;
-                    }
+            // Las habitaciones (las nuevas o, si no se cambian, las que ya tiene) deben estar libres
+            // en las fechas nuevas, salvo que la reserva quede cancelada o finalizada
+            $estadoNuevo = $datos['estado'] ?? $reserva['estado'];
+            if (!in_array($estadoNuevo, ['cancelada', 'finalizada'], true)) {
+                $aRevisar = !empty($habitacionesIds) ? $habitacionesIds : array_column($reserva['habitaciones'] ?? [], 'habitacion_id');
+                if ($this->reservaQueSeCruza($aRevisar, $datos['fecha_entrada'], $datos['fecha_salida'], $id)) {
+                    $this->db->rollBack();
+                    return false;
                 }
             }
 

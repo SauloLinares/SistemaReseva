@@ -20,7 +20,8 @@ async function reservaDeLaLista(page, patron) {
 
 test('una reserva que ya está en estadía no vuelve a hacer check-in', async ({ page }) => {
     await page.goto(ruta('reservas?estado=en_estadia'));
-    const enlace = await page.locator('a[href*="reservas/voucher/"]').first().getAttribute('href').catch(() => null);
+    const enlaces = page.locator('a[href*="reservas/voucher/"]');
+    const enlace = (await enlaces.count()) ? await enlaces.first().getAttribute('href') : null;
     test.skip(!enlace, 'No hay reservas en estadía en esta base');
     const id = enlace.match(/voucher\/(\d+)/)[1];
 

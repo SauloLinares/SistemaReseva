@@ -5,6 +5,7 @@ const { ruta } = require('./utilidades');
 test('el botón Salida del panel abre el check-out de ese huésped', async ({ page }) => {
     await page.goto(ruta('home'));
     const boton = page.locator('a[title^="Check-out de Hab."]').first();
+    test.skip(!(await boton.count()), 'No hay huéspedes en estadía en esta base');
     const habitacion = (await boton.getAttribute('title')).replace('Check-out de Hab. ', '');
     await boton.click();
     await expect(page).toHaveURL(/recepcion\/checkout&id=\d+/);
@@ -44,6 +45,7 @@ test('el detalle del calendario muestra soles y fechas legibles', async ({ page 
 test('el modal de habitación ocupada enlaza a la reserva de esa habitación', async ({ page }) => {
     await page.goto(ruta('home'));
     const tarjeta = page.locator('.room-card-interactive[data-estado="ocupada"]').first();
+    test.skip(!(await tarjeta.count()), 'No hay habitaciones ocupadas en esta base');
     const reservaId = await tarjeta.getAttribute('data-reserva-id');
     await tarjeta.click();
     await expect(page.locator('#mBtnCargarConsumo')).toHaveAttribute('href', new RegExp('reserva_id=' + reservaId + '$'));
