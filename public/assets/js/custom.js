@@ -388,6 +388,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     noResults: "Ningún resultado coincide con la búsqueda"
                 }
             });
+
+            // Búsqueda que llega en el enlace (?q=…): se escribe en el buscador de la tabla
+            const inicial = (table.dataset.busquedaInicial || '').trim();
+            const entrada = table.tablaDatos.wrapperDOM?.querySelector('.datatable-input');
+            if (inicial && entrada) {
+                entrada.value = inicial;
+                table.tablaDatos.search(inicial);
+            }
         }
     });
 

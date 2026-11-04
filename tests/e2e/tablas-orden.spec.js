@@ -1,5 +1,5 @@
 // Las flechas para ordenar las columnas deben verse en ambos temas: toman el color del texto de
-// la cabecera (en modo oscuro, claras) y la columna ordenada resalta su flecha.
+// la cabecera y la columna ordenada resalta su flecha.
 const { test, expect } = require('@playwright/test');
 const { ruta } = require('./utilidades');
 
@@ -19,7 +19,7 @@ for (const tema of ['light', 'dark']) {
         const estilo = await sorter.evaluate(el => ({
             flecha: getComputedStyle(el, '::before').borderTopColor,
             opacidad: Number(getComputedStyle(el, '::before').opacity),
-            fondo: getComputedStyle(document.body).backgroundColor,
+            fondo: getComputedStyle(el.closest('th')).backgroundColor,
         }));
         expect(Math.abs(brillo(estilo.flecha) - brillo(estilo.fondo))).toBeGreaterThan(0.4);
         expect(estilo.opacidad).toBeGreaterThanOrEqual(0.3);
@@ -31,3 +31,22 @@ for (const tema of ['light', 'dark']) {
         await page.locator('table thead').first().screenshot({ path: `test-results/flechas-orden-${tema}.png` });
     });
 }
+
+test('en modo claro los títulos de columna tienen el fondo y la letra de la cabecera de la tarjeta', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('theme', 'light'));
+    await page.goto(ruta('reservas'));
+    await page.evaluate(() => document.documentElement.setAttribute('data-bs-theme', 'light'));
+    const c = await page.evaluate(() => {
+        const tarjeta = document.querySelector('.card:has(.datatable-wrapper)');
+        const th = getComputedStyle(tarjeta.querySelector('thead th'));
+        return {
+            fondoCabecera: getComputedStyle(tarjeta.querySelector('.card-header')).backgroundColor,
+            letraCabecera: getComputedStyle(tarjeta.querySelector('.card-header .card-title')).color,
+            fondoTitulos: th.backgroundColor,
+            letraTitulos: th.color,
+        };
+    });
+    expect(c.fondoTitulos).toBe(c.fondoCabecera);
+    expect(c.letraTitulos).toBe(c.letraCabecera);
+    expect(brillo(c.letraTitulos)).toBeLessThan(0.25);
+});

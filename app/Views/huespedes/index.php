@@ -13,34 +13,12 @@
 <div class="app-content">
     <div class="container-fluid">
 
-        <!-- Tarjeta de Búsqueda Rápida -->
-        <div class="card mb-4">
-            <div class="card-body py-2">
-                <form method="GET" action="<?= url('huespedes') ?>" class="row g-2 align-items-center">
-                    <div class="col-12 col-md-8">
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-search"></i></span>
-                            <input type="text" name="q" class="form-control" placeholder="Buscar por DNI, pasaporte, nombres, apellidos o teléfono..." value="<?= htmlspecialchars($busqueda ?? '') ?>">
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-4 d-flex gap-2">
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="bi bi-filter me-1"></i> Buscar
-                        </button>
-                        <?php if (!empty($busqueda)): ?>
-                            <a href="<?= url('huespedes') ?>" class="btn btn-outline-secondary">Limpiar</a>
-                        <?php endif; ?>
-                    </div>
-                </form>
-            </div>
-        </div>
-
         <!-- Tabla de Huéspedes -->
         <div class="card">
             <?php partial('card_header', ['titulo' => 'Huéspedes Registrados (' . count($huespedes) . ')', 'icono' => 'bi-card-list']) ?>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table id="tablaHuespedes" class="table table-hover align-middle mb-0 datatable-init">
+                    <table id="tablaHuespedes" class="table table-hover align-middle mb-0 datatable-init" data-busqueda-inicial="<?= e($busqueda ?? '') ?>">
                         <thead class="table-light">
                             <tr>
                                 <th>Huésped</th>

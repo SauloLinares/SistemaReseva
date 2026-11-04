@@ -21,7 +21,8 @@ class HuespedController extends Controller
     public function index(): void
     {
         $busqueda = $_GET['q'] ?? null;
-        $huespedes = $this->huespedModel->listarTodos($busqueda);
+        // Se listan todos: un ?q= solo rellena el buscador de la tabla (que filtra al escribir)
+        $huespedes = $this->huespedModel->listarTodos();
 
         $this->render('huespedes/index', [
             'huespedes' => $huespedes,

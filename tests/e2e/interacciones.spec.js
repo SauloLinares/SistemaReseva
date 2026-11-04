@@ -53,7 +53,6 @@ test('Disponibilidad: el botón de 7 noches busca con ese rango', async ({ page 
 
 // Regresión: los formularios GET perdían la ruta (?url=...) y llevaban al Panel
 const filtrosGet = [
-    { pantalla: 'huespedes', llenar: (p) => p.fill('input[name="q"]', 'a'), titulo: 'Huéspedes' },
     { pantalla: 'reservas', llenar: (p) => p.selectOption('#filtroEstado', 'confirmada'), titulo: 'Reservas' },
     { pantalla: 'habitaciones', llenar: (p) => p.selectOption('select[name="estado"]', 'disponible'), titulo: 'Habitaciones' },
     { pantalla: 'reportes/ingresos', llenar: (p) => p.fill('#desde', '2026-10-01'), titulo: 'Ingresos' },

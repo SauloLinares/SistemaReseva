@@ -85,12 +85,17 @@
     --hm-neutral-hover: var(--hm-slate-700);
 
     /* --- Tokens semánticos: superficies y texto --- */
+    /* Página clara y tarjeta blanca; cabecera, títulos de columna y pie un paso más marcados
+       (#dde5f0) y la tabla con su propio tono gris azulado, como en modo oscuro */
     --hm-body-bg: var(--hm-slate-50);
     --hm-surface: #ffffff;
-    --hm-surface-header: var(--hm-blue-75);
-    --hm-surface-footer: var(--hm-gray-25);
-    --hm-border: rgba(226, 232, 240, 0.8);
-    --hm-border-header: var(--hm-blue-150);
+    --hm-surface-header: #dde5f0;
+    --hm-surface-footer: #dde5f0;
+    --hm-border: rgba(207, 217, 230, 0.8);
+    --hm-border-header: #cfd9e6;
+    --hm-tabla-fila: #f1f4f9;
+    --hm-tabla-alterna: #e9eef5;
+    --hm-tabla-hover: #e0e8f3;
     --hm-text: var(--hm-slate-800);
     --hm-text-muted: var(--hm-slate-500);
 
@@ -4213,17 +4218,21 @@ label .kbd-atajo {
    Solo en modo claro (el oscuro ya distingue cabecera y filas). Se excluyen los
    documentos imprimibles (#imprimible: comprobantes, vouchers), que van en blanco.
    ==================================================================== */
-/* Los títulos de columna usan el mismo fondo que la cabecera de la tarjeta (como en modo oscuro) */
+/* Los títulos de columna usan el mismo fondo y color de letra que la cabecera de la tarjeta */
 [data-bs-theme="light"] .table:not(#imprimible *) > thead > tr > th {
     background-color: var(--hm-surface-header);
-    color: var(--hm-blue-900);
+    color: var(--hm-text);
     border-bottom: 2px solid var(--hm-border-header) !important;
 }
+/* Las filas tienen su propio tono (gris azulado suave), como la tabla en modo oscuro */
+[data-bs-theme="light"] .table:not(#imprimible *) > tbody > tr > td {
+    background-color: var(--hm-tabla-fila);
+}
 [data-bs-theme="light"] .table:not(#imprimible *) > tbody > tr:nth-child(even) > td {
-    background-color: #f4f7fd;
+    background-color: var(--hm-tabla-alterna);
 }
 [data-bs-theme="light"] .table-hover:not(#imprimible *) > tbody > tr:hover > td {
-    background-color: #e6eefc;
+    background-color: var(--hm-tabla-hover);
 }
 @media print {
     [data-bs-theme="light"] .table > thead > tr > th,
@@ -4542,4 +4551,13 @@ body.bienvenida-activa {
 .datatable-ascending .datatable-sorter::before,
 .datatable-descending .datatable-sorter::after {
     opacity: 0.15;
+}
+
+/* 37. BUSCADORES CON BOTÓN PARA VACIAR: sin la X propia del navegador
+   Los campos type="search" traen una X nativa; junto a la del sistema (.btn-limpiar) se veían dos. */
+.campo-limpiable input[type="search"]::-webkit-search-cancel-button,
+.campo-limpiable input[type="search"]::-webkit-search-decoration {
+    -webkit-appearance: none;
+    appearance: none;
+    display: none;
 }
