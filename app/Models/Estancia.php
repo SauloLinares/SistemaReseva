@@ -68,6 +68,56 @@ class Estancia extends Model
         return $stmt->fetchAll();
     }
 
+    /**
+     * Por qué no se puede hacer el check-in de esta reserva hoy, o null si se puede.
+     * - Solo reservas pendientes o confirmadas (no una ya en estadía, cancelada o finalizada).
+     * - No después de la fecha de salida (el huésped no se presentó: cambiar fechas o cancelar).
+     * - Antes de la fecha de entrada solo si se confirma el check-in anticipado y las
+     *   habitaciones no están reservadas por otro en esos días.
+     * - Ninguna habitación puede seguir ocupada por otra estadía (salida sin registrar).
+     */
+    public function problemaCheckin(array $reserva, bool $anticipadoConfirmado): ?string
+    {
+        $codigo = $reserva['codigo_reserva'];
+        if (!in_array($reserva['estado'], ['pendiente', 'confirmada'], true)) {
+            $estados = ['en_estadia' => 'ya está en estadía', 'cancelada' => 'está cancelada', 'finalizada' => 'ya finalizó'];
+            return "La reserva {$codigo} " . ($estados[$reserva['estado']] ?? 'no está lista para ingresar') . ': no se le puede hacer check-in.';
+        }
+        if (empty($reserva['habitaciones'])) {
+            return "La reserva {$codigo} no tiene habitaciones asignadas. Asígnalas antes del check-in.";
+        }
+
+        $hoy = date('Y-m-d');
+        if ($reserva['fecha_salida'] <= $hoy) {
+            return "La salida de la reserva {$codigo} era el " . fecha_es($reserva['fecha_salida'])
+                . ': el huésped no se presentó. Cambia las fechas de la reserva o cancélala.';
+        }
+
+        $reservaModel = new Reserva();
+        $anticipado = $reserva['fecha_entrada'] > $hoy;
+        if ($anticipado && !$anticipadoConfirmado) {
+            return "La reserva {$codigo} es para el " . fecha_es($reserva['fecha_entrada'])
+                . '. Para que el huésped ingrese antes, confirma el check-in anticipado.';
+        }
+
+        foreach ($reserva['habitaciones'] as $hab) {
+            $ocupante = $this->db->prepare("SELECT r.codigo_reserva, r.fecha_salida FROM estancias e
+                                            INNER JOIN reservas r ON r.id = e.reserva_id
+                                            WHERE e.habitacion_id = :h AND e.estado = 'activa' LIMIT 1");
+            $ocupante->execute([':h' => (int) $hab['habitacion_id']]);
+            if ($fila = $ocupante->fetch()) {
+                return "La habitación {$hab['numero']} sigue ocupada por la reserva {$fila['codigo_reserva']} (salida prevista el "
+                    . fecha_es($fila['fecha_salida']) . '). Registra primero su check-out o cambia la habitación.';
+            }
+            // Ingresar antes ocupa la habitación desde hoy: no debe chocar con otra reserva
+            if ($anticipado && !$reservaModel->habitacionEstaDisponible((int) $hab['habitacion_id'], $hoy, $reserva['fecha_entrada'], (int) $reserva['id'])) {
+                return "La habitación {$hab['numero']} tiene otra reserva antes del " . fecha_es($reserva['fecha_entrada'])
+                    . ': no se puede adelantar el check-in.';
+            }
+        }
+        return null;
+    }
+
     public function registrarCheckin(int $reservaId, ?int $habitacionId = null, string $observaciones = ''): bool
     {
         $this->db->beginTransaction();
@@ -75,7 +125,8 @@ class Estancia extends Model
         try {
             $reservaModel = new Reserva();
             $reserva = $reservaModel->obtenerPorId($reservaId);
-            if (!$reserva) {
+            // Una reserva ya en estadía, cancelada o finalizada no vuelve a ingresar (duplicaría estadías)
+            if (!$reserva || !in_array($reserva['estado'], ['pendiente', 'confirmada'], true)) {
                 $this->db->rollBack();
                 return false;
             }

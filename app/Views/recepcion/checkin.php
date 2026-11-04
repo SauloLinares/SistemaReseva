@@ -23,12 +23,17 @@
                                 <select name="reserva_id" id="selectReserva" class="form-select select-search" data-atajo="F7" data-atajo-desc="Elegir la reserva" required placeholder="Escribe el código, nombre del huésped o habitación...">
                                     <option value="">-- Elige una reserva lista para ingreso --</option>
                                     <?php foreach ($reservas as $r): ?>
+                                        <?php
+                                            // Cuándo llega: hoy, más adelante o con atraso
+                                            $cuando = $r['fecha_entrada'] > $hoy ? ' · llega el ' . fecha_es($r['fecha_entrada'])
+                                                : ($r['fecha_entrada'] < $hoy ? ' · atrasada (entrada ' . fecha_es($r['fecha_entrada']) . ')' : ' · llega hoy');
+                                        ?>
                                         <option value="<?= $r['id'] ?>" <?= ($reservaSeleccionada && $reservaSeleccionada['id'] == $r['id']) ? 'selected' : '' ?>>
-                                            <?= htmlspecialchars($r['codigo_reserva']) ?> - <?= htmlspecialchars($r['huesped_nombre']) ?> (Hab: <?= htmlspecialchars($r['habitaciones_asignadas'] ?: 'Sin asignar') ?>)
+                                            <?= htmlspecialchars($r['codigo_reserva']) ?> - <?= htmlspecialchars($r['huesped_nombre']) ?> (Hab: <?= htmlspecialchars($r['habitaciones_asignadas'] ?: 'Sin asignar') ?>)<?= e($cuando) ?>
                                         </option>
                                     <?php endforeach; ?>
                                 </select>
-                                <div class="form-text">Muestra reservas con estado "Confirmada" o "Pendiente".</div>
+                                <div class="form-text">Reservas confirmadas o pendientes. El check-in se hace desde el día de entrada; antes, se pide confirmar el ingreso anticipado.</div>
                             </div>
 
                             <div class="mb-3">
@@ -36,13 +41,33 @@
                                 <textarea name="observaciones" id="obsCheckin" class="form-control" rows="3" placeholder="Ej: Se entregaron 2 tarjetas magnéticas, huésped presentó pasaporte original..."></textarea>
                             </div>
 
-                            <div class="alert alert-info py-2 small d-flex align-items-center gap-2 mb-0">
-                                <i class="bi bi-info-circle fs-5 flex-shrink-0"></i>
-                                <div>Al confirmar, la habitación pasa a <strong>Ocupada</strong> y comienza la estadía.</div>
-                            </div>
+                            <?php if ($problemaCheckin): ?>
+                                <div class="alert alert-danger py-2 small d-flex align-items-start gap-2 mb-0" data-problema-checkin>
+                                    <i class="bi bi-x-octagon fs-5 flex-shrink-0" aria-hidden="true"></i>
+                                    <div><strong>No se puede hacer el check-in.</strong> <?= e($problemaCheckin) ?></div>
+                                </div>
+                            <?php elseif ($esAnticipado): ?>
+                                <div class="alert alert-warning py-2 small mb-0" data-checkin-anticipado>
+                                    <div class="d-flex align-items-start gap-2 mb-2">
+                                        <i class="bi bi-calendar-event fs-5 flex-shrink-0" aria-hidden="true"></i>
+                                        <div><strong>Check-in anticipado.</strong> Esta reserva es desde el <?= fecha_es($reservaSeleccionada['fecha_entrada']) ?>.
+                                            Si el huésped ingresa hoy, la habitación queda ocupada desde ahora. Las noches extra no se cobran solas:
+                                            si corresponde, cambia las fechas de la reserva antes.</div>
+                                    </div>
+                                    <div class="form-check mb-0">
+                                        <input class="form-check-input" type="checkbox" name="anticipado" value="1" id="confirmaAnticipado" required>
+                                        <label class="form-check-label fw-semibold" for="confirmaAnticipado">Confirmo el ingreso anticipado</label>
+                                    </div>
+                                </div>
+                            <?php else: ?>
+                                <div class="alert alert-info py-2 small d-flex align-items-center gap-2 mb-0">
+                                    <i class="bi bi-info-circle fs-5 flex-shrink-0"></i>
+                                    <div>Al confirmar, la habitación pasa a <strong>Ocupada</strong> y comienza la estadía.</div>
+                                </div>
+                            <?php endif; ?>
 
                             <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-success" data-atajo="F9" data-atajo-desc="Confirmar el check-in">
+                                <button type="submit" class="btn btn-success" data-atajo="F9" data-atajo-desc="Confirmar el check-in" <?= $problemaCheckin ? 'disabled' : '' ?>>
                                     <i class="bi bi-check2-circle me-2"></i>Confirmar Check-in
                                 </button>
                             </div>

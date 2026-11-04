@@ -51,6 +51,46 @@ try {
         $totalAlertas += $checkoutsPendientes;
     }
 
+    // 2.1 Salidas vencidas: siguen en estadía pasada su fecha de salida (check-out sin registrar)
+    $stmtVencidas = $dbAlerts->prepare("SELECT COUNT(*) FROM reservas WHERE fecha_salida < :hoy AND estado = 'en_estadia'");
+    $stmtVencidas->execute([':hoy' => $hoy]);
+    $salidasVencidas = (int)$stmtVencidas->fetchColumn();
+    if ($salidasVencidas > 0) {
+        $alertasSistema[] = [
+            'tipo'     => 'vencidas',
+            'icono'    => 'bi-exclamation-octagon',
+            'color'    => 'danger',
+            'titulo'   => $salidasVencidas === 1 ? '1 salida vencida' : "$salidasVencidas salidas vencidas",
+            'desc'     => 'Su fecha de salida ya pasó: registra el check-out o extiende la estadía',
+            'ruta'     => 'recepcion/checkout',
+            'enlace'   => url('recepcion/checkout'),
+            'badge'    => 'Atrasada',
+            'badge_bg' => 'bg-danger-subtle text-danger border border-danger-subtle',
+            'cantidad' => $salidasVencidas,
+        ];
+        $totalAlertas += $salidasVencidas;
+    }
+
+    // 2.2 No presentados: su fecha de entrada pasó y nunca hicieron check-in
+    $stmtAusentes = $dbAlerts->prepare("SELECT COUNT(*) FROM reservas WHERE fecha_entrada < :hoy AND estado IN ('pendiente', 'confirmada')");
+    $stmtAusentes->execute([':hoy' => $hoy]);
+    $noPresentados = (int)$stmtAusentes->fetchColumn();
+    if ($noPresentados > 0) {
+        $alertasSistema[] = [
+            'tipo'     => 'no_presentados',
+            'icono'    => 'bi-person-x',
+            'color'    => 'warning',
+            'titulo'   => $noPresentados === 1 ? '1 huésped no se presentó' : "$noPresentados huéspedes no se presentaron",
+            'desc'     => 'Su fecha de entrada ya pasó: haz el check-in, cambia las fechas o cancela la reserva',
+            'ruta'     => 'recepcion/checkin',
+            'enlace'   => url('recepcion/checkin'),
+            'badge'    => 'Sin llegar',
+            'badge_bg' => 'bg-warning-subtle text-warning-emphasis border border-warning-subtle',
+            'cantidad' => $noPresentados,
+        ];
+        $totalAlertas += $noPresentados;
+    }
+
     // 3. Habitaciones en mantenimiento
     $stmtMant = $dbAlerts->query("SELECT COUNT(*) FROM habitaciones WHERE estado = 'mantenimiento'");
     $habsMantenimiento = (int)$stmtMant->fetchColumn();

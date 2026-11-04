@@ -60,9 +60,15 @@ class RecepcionController extends Controller
             $reservaSeleccionada = $this->reservaModel->obtenerPorId((int)$_GET['reserva_id']);
         }
 
+        // Lo que impediría el ingreso (sin contar el anticipo, que se confirma en el formulario)
+        $problema = $reservaSeleccionada ? $this->estanciaModel->problemaCheckin($reservaSeleccionada, true) : null;
+
         $this->render('recepcion/checkin', [
             'reservas'            => $disponiblesParaCheckin,
-            'reservaSeleccionada' => $reservaSeleccionada
+            'reservaSeleccionada' => $reservaSeleccionada,
+            'problemaCheckin'     => $problema,
+            'esAnticipado'        => $reservaSeleccionada && $reservaSeleccionada['fecha_entrada'] > date('Y-m-d'),
+            'hoy'                 => date('Y-m-d'),
         ], 'Procesar Check-in de Huéspedes');
     }
 
@@ -81,6 +87,18 @@ class RecepcionController extends Controller
         if (!$reservaId) {
             $this->setFlash('danger', 'Debe seleccionar una reserva válida.');
             redirect('recepcion/checkin');
+        }
+
+        // Estado, fechas y habitaciones libres: si algo impide el ingreso, se explica qué
+        $reserva = $this->reservaModel->obtenerPorId($reservaId);
+        $anticipado = ($_POST['anticipado'] ?? '') === '1';
+        $problema = $reserva ? $this->estanciaModel->problemaCheckin($reserva, $anticipado) : 'La reserva elegida no existe.';
+        if ($problema !== null) {
+            $this->setFlash('danger', $problema);
+            redirect('recepcion/checkin' . ($reserva ? '?reserva_id=' . $reservaId : ''));
+        }
+        if ($reserva['fecha_entrada'] > date('Y-m-d')) {
+            $obs = trim('Check-in anticipado (la reserva era desde el ' . fecha_es($reserva['fecha_entrada']) . '). ' . $obs);
         }
 
         $ok = $this->estanciaModel->registrarCheckin($reservaId, null, $obs);
